@@ -1,4 +1,4 @@
 package game;
 
-public interface Game {
+public interface game {
 }
