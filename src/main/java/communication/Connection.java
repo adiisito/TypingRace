@@ -1,4 +1,4 @@
 package communication;
 
-public class connection {
+public class Connection {
 }
