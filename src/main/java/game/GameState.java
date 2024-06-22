@@ -1,5 +1,7 @@
 package game;
 
+import java.util.List;
+
 public class GameState implements Game{
 
     public GameState setGamestate(){
@@ -21,23 +23,25 @@ public class GameState implements Game{
         return null;
     }
 
+
+
     @Override
-    public String setText() {
+    public void startRace() {
+
+    }
+
+    @Override
+    public void updatePlayerProgress(Player player, int progress) {
+
+    }
+
+    @Override
+    public List<Player> getResults() {
         return null;
     }
 
     @Override
-    public String getText() {
-        return null;
-    }
+    public void endRace() {
 
-    @Override
-    public Race startGame() {
-        return null;
-    }
-
-    @Override
-    public Race endGame() {
-        return null;
     }
 }

@@ -6,7 +6,6 @@ public class Car implements Player {
     private int progress;
 
     public Car(Typer player) {
-        this.name = name;
         this.wpm = 0;
         this.progress = 0;
     }
