@@ -1,18 +1,38 @@
 package game;
 
-public class Car implements Player{
+public class Car implements Player {
+    private String name;
+    private int wpm;
+    private int progress;
+
+    public Car(Typer player) {
+        this.name = name;
+        this.wpm = 0;
+        this.progress = 0;
+    }
+
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
-    public double getSpeed() {
-        return 0;
+    public int getWpm() {
+        return wpm;
     }
 
     @Override
-    public double setSpeed() {
-        return 0;
+    public void setWpm(int wpm) {
+        this.wpm = wpm;
+    }
+
+    @Override
+    public int getProgress() {
+        return progress;
+    }
+
+    @Override
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 }
