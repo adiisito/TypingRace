@@ -8,7 +8,7 @@ public class GameState implements Game{
         return null;
     }
 
-    public GameState updateGameState(){
+    public GameState updateGameState(Typer typer, Car car, Text text){
         return null;
     }
 
@@ -16,7 +16,7 @@ public class GameState implements Game{
         return 0;
     }
     public double setTime(){
-        return startGame().incrementTime();
+        return startRace().incrementTime();
     }
 
     public Typer getPlayer(){
