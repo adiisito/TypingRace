@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Race car code
 
 ### Changed
 
 ### Removed
-
+- LoginWindow Class
 ### Fixed
+- Game Interface
+- Player Interface
