@@ -43,7 +43,7 @@ public class Typer implements Player{
 
     @Override
     public void setProgress(int progress) {
-        this.progress=progress;
+        this.progress=TyperProgress();
     }
 
     private int calculateWpm(Player player) {
@@ -57,6 +57,21 @@ public class Typer implements Player{
 
     private void addPlayer(Player newPlayer){
          players.add(newPlayer);
+
+    }
+
+    // gets the player typing progress for getProgress and setProgress
+    public int TyperProgress(){
+        String typedText = Text.getRandomText();
+        int correctChars = 0;
+
+        for (int i = 0; i < typedText.length(); i++) {
+            if (typedText.charAt(i) == Text.getRandomText().charAt(i)) {
+                correctChars++;
+            }
+        }
+
+        return correctChars / Text.getRandomText().length() ;
 
     }
 
