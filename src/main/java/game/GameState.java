@@ -15,9 +15,9 @@ public class GameState implements Game{
     public double getTime(){
         return 0;
     }
-    public double setTime(){
+    /**public double setTime(){
         return startRace().incrementTime();
-    }
+    }*/
 
     public Typer getPlayer(){
         return null;
