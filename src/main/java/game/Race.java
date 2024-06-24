@@ -30,7 +30,6 @@ public class Race implements Game {
     }
 
     private void runRaceForPlayer(Player player) {
-        // Simulate the player typing
         while (isRaceActive && player.getProgress() < text.length()) {
             // Simulate typing progress
             int newProgress = player.getProgress() + 1;
@@ -48,24 +47,22 @@ public class Race implements Game {
     public void updatePlayerProgress(Player player, int progress) {
         player.setProgress(progress);
         player.setWpm(calculateWpm(player));
-        //broadcastProgress(player);
-
+        broadcastProgress(player);
     }
 
     private int calculateWpm(Player player) {
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - startTime;
-        double elapsedTimeInMinutes = elapsedTime / 60000.0; //This is to convert to minutes.
+        double elapsedTimeInMinutes = elapsedTime / 60000.0;
         int wordsTyped = player.getProgress() / 5;
-        // Average word length is considered as 5 characters.
         return (int) (wordsTyped / elapsedTimeInMinutes);
     }
 
-//    private void broadcastProgress(Player player) {
-//        for (Player p : players) {
-//            p.receiveProgressUpdate(player.getName(), player.getProgress(), player.getWpm());
-//        }
-//    }
+    private void broadcastProgress(Player player) {
+        for (Player p : players) {
+            p.receiveProgressUpdate(player.getName(), player.getProgress(), player.getWpm());
+        }
+    }
 
     @Override
     public List<Player> getResults() {
@@ -84,5 +81,9 @@ public class Race implements Game {
         } catch (InterruptedException e) {
             executorService.shutdownNow();
         }
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }
