@@ -2,17 +2,20 @@ package controller.client;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import communication.messages.GameStartNotification;
 import communication.messages.JoinGameRequest;
 import communication.messages.Message;
+import communication.messages.PlayerJoinedNotification;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-// mock client
+// manages network communication with server, receives and sends message
 public class GameClient {
 
     private static final String HOSTNAME = "localhost";
@@ -55,14 +58,16 @@ public class GameClient {
     }
 
 
-    private void processMessage (String message) throws IOException {
-        System.out.println("message from server" + "\n" + "        content: " + message);
+    public void processMessage (String message) throws IOException {
 
         Message messageObject = messageAdapter.fromJson(message);
-        String messageType = messageObject.getMessageType();
-        if (messageObject instanceof JoinGameRequest) {
 
+        if (messageObject instanceof PlayerJoinedNotification playerJoinedNotification) {
+            clientController.newPlayerJoin(playerJoinedNotification);
+        } else if (messageObject instanceof GameStartNotification gameStartNotification) {
+            clientController.handleGameStart(gameStartNotification);
         }
+
     }
 
     public void sendMessage (Message message) {

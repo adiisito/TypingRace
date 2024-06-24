@@ -23,6 +23,10 @@ public class GameState {
         return players;
     }
 
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
     public void startNewRace() {
         currentRace = new Race(players);
         currentRace.startRace();

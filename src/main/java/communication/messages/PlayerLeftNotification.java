@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class PlayerLeftNotification implements Message {
+public class PlayerLeftNotification extends Message {
     String messageType = "PlayerLeftNotification";
     String playerName;
     int numPlayers;
@@ -26,7 +26,6 @@ public class PlayerLeftNotification implements Message {
         this.numPlayers = numPlayers;
     }
 
-    @Override
     public String getMessageType() {
         return messageType;
     }

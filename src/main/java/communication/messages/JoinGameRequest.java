@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class JoinGameRequest implements Message {
+public class JoinGameRequest extends Message {
 
     private final String messageType = "JoinGameRequest";
 

@@ -56,7 +56,6 @@ public class GameEndNotification implements Message {
         this.progress = progress;
     }
 
-    @Override
     public String getMessageType() {
         return messageType;
     }

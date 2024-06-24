@@ -1,6 +1,5 @@
 package communication.messages;
 
-public interface Message {
+public class Message {
 
-    String getMessageType();
 }

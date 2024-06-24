@@ -1,17 +1,16 @@
 package communication.messages;
 
 import game.Player;
-import game.Typer;
+import game.TypingPlayer;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AllJoinedNotification implements Message {
+public class AllJoinedNotification extends Message {
     String messageTye = "AllJoinedNotification";
 
-    private List<Typer> players;
+    private ArrayList<TypingPlayer> players;
 
-
-    @Override
     public String getMessageType() {
         return messageTye;
     }
