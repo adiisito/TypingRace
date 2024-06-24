@@ -21,5 +21,22 @@ GUI Class(with Main Method)
 - Typer Class
 - 
 ### Fixed
+<<<<<<< HEAD
 - Game Interface
 - Player Interface
+=======
+
+
+# NETWORK
+## 22.Jun.2024
+
+### Added
+- new class: message, 
+- 
+
+### Changed
+
+### Removed
+
+### Fixed
+>>>>>>> 8d16d1ea6b6f49b60b94bdb55c112b40ca356cfc

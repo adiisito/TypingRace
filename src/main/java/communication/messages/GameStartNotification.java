@@ -6,7 +6,7 @@ import game.TypingPlayer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameStartNotification implements Message {
+public class GameStartNotification extends Message {
     String messageType = "GameStartNotification";
     String text;
     int numPlayers;
@@ -40,7 +40,6 @@ public class GameStartNotification implements Message {
         this.players = players;
     }
 
-    @Override
     public String getMessageType() {
         return messageType;
     }
