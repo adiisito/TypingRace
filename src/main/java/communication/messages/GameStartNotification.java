@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class GameStartNotification implements Message {
+public class GameStartNotification extends Message {
     String messageType = "GameStartNotification";
     String text;
 

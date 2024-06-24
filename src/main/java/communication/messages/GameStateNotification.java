@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class GameStateNotification implements Message {
+public class GameStateNotification extends Message {
     String messageType = "GameStateNotification";
     String playerName;
     int wpm;

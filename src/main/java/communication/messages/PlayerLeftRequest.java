@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class PlayerLeftRequest implements Message{
+public class PlayerLeftRequest extends Message{
 
     private final String message = "PlayerLeftRequest";
 

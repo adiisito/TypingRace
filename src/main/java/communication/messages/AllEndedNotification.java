@@ -1,5 +1,5 @@
 package communication.messages;
 
-public class AllEndedNotification implements Message {
+public class AllEndedNotification extends Message {
     String messageType = "AllEndedNotification";
 }

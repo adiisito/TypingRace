@@ -18,4 +18,6 @@ public class ClientController {
         JoinGameRequest joinRequest = new JoinGameRequest(playerName);
         clientModel.sendMessage(joinRequest);
     }
+
+
 }

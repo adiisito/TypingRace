@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class AllJoinedNotification implements Message {
+public class AllJoinedNotification extends Message {
     String messageTye = "AllJoinedNotification";
 
 }

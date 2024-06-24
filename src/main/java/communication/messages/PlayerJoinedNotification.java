@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class PlayerJoinedNotification implements Message {
+public class PlayerJoinedNotification extends Message {
     String messageType = "PlayerJoinedNotification";
     String newPlayerName;
     int numPlayers;
