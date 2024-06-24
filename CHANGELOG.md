@@ -14,3 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+
+
+# NETWORK
+## 22.Jun.2024
+
+### Added
+- new class: message, 
+- 
+
+### Changed
+
+### Removed
+
+### Fixed
