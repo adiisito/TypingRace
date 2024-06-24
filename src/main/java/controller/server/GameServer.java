@@ -2,14 +2,9 @@ package controller.server;
 
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.JsonAdapter;
-import communication.messages.JoinGameRequest;
-import communication.messages.Message;
-import game.Game;
+import communication.messages.MessageType;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -21,17 +16,17 @@ public class GameServer {
     private final ServerSocket serverSocket;
     // initialized for analyse and generate the json messages
     private final Moshi moshi;
-    private final JsonAdapter<Message> messageAdapter;
+    private final JsonAdapter<MessageType> messageAdapter;
 
     public GameServer() throws IOException{
 
         this.moshi = new Moshi.Builder().build();
-        this.messageAdapter = moshi.adapter(Message.class);
+        this.messageAdapter = moshi.adapter(MessageType.class);
         this.serverSocket = new ServerSocket(SERVER_PORT);
         System.out.println("Server stated, listening...");
     }
 
-    public void start(int port) {
+    public void start() {
         System.out.println("waiting for client..");
         while(true) {
             try {
@@ -49,16 +44,11 @@ public class GameServer {
     public static void main(String[] args){
         try {
             GameServer server = new GameServer();
-            server.start(8080);
+            server.start();
 
         } catch (IOException e){
             System.out.println("Failed to start the server");
             e.printStackTrace();
         }
     }
-
-
-
-
-
 }

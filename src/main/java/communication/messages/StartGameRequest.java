@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class StartGameRequest extends Message{
+public class StartGameRequest {
 
     private final String messageType = "StartGameRequest";
 

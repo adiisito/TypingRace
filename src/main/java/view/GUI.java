@@ -1,6 +1,7 @@
 package view;
 
 
+import controller.client.ClientController;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class GUI extends JFrame {
     private JTextField playerNameField;
@@ -16,9 +18,13 @@ public class GUI extends JFrame {
     private GameState gameState;
     private Player currentPlayer;
 
-    public GUI(GameState gameState) {
+    private ClientController clientController;
+
+    public GUI(GameState gameState, ClientController clientController) {
         this.gameState = gameState;
         initComponents();
+
+        this.clientController = clientController;
     }
 
     private void initComponents() {
@@ -56,8 +62,15 @@ public class GUI extends JFrame {
                 if (!playerName.isEmpty()) {
                     currentPlayer = new TypingPlayer(playerName); // Changed from ExamplePlayer to TypingPlayer
                     gameState.addPlayer(currentPlayer);
-                    showGameWindow();
-                    startRace();
+
+                    try {
+                        clientController.joinGame(playerName);
+                        showGameWindow();
+                        startRace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -84,6 +97,7 @@ public class GUI extends JFrame {
 
     public static void main(String[] args) {
         GameState gameState = new GameState(); // Assuming GameState has a default constructor
-        SwingUtilities.invokeLater(() -> new GUI(gameState).setVisible(true));
+        ClientController clientController = new ClientController();
+        SwingUtilities.invokeLater(() -> new GUI(gameState, clientController).setVisible(true));
     }
 }

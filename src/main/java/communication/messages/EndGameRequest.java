@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class EndGameRequest extends Message{
+public class EndGameRequest{
 
     private final String messageType = "EndGameRequest";
 

@@ -8,7 +8,7 @@ import java.net.Socket;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.JoinGameRequest;
-import communication.messages.Message;
+import communication.messages.MessageType;
 import communication.messages.PlayerJoinedNotification;
 
 
@@ -16,16 +16,17 @@ public class ConnectionManager extends Thread implements Runnable  {
         private final Socket clientSocket;
         private BufferedReader in;
         private PrintWriter out;
-        private final JsonAdapter<Message> messageAdapter;
+        private final JsonAdapter<MessageType> messageAdapter;
         int numPlayers = 0;
+
+        private final Moshi moshi = new Moshi.Builder().build();
 
         public ConnectionManager(Socket socket) throws IOException {
             this.clientSocket = socket;
             this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             this.out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            Moshi moshi = new Moshi.Builder().build();
-            this.messageAdapter = moshi.adapter(Message.class);
+            this.messageAdapter = moshi.adapter(MessageType.class);
         }
 
 
@@ -35,7 +36,8 @@ public class ConnectionManager extends Thread implements Runnable  {
             try {
                 String messageLine;
                 while ((messageLine = in.readLine()) != null){
-                    System.out.println("receivedd from client...");
+                    System.out.println("received from client...");
+                    System.out.println(messageLine);
                     processMessage(messageLine);
                 }
             } catch(IOException exception) {
@@ -50,16 +52,17 @@ public class ConnectionManager extends Thread implements Runnable  {
                 } catch (IOException e){
                     e.printStackTrace();
                 }
-
             }
-
     }
 
     private void processMessage(String message) throws IOException{
-            Message messageObject = messageAdapter.fromJson(message);
-            if (messageObject instanceof JoinGameRequest) {
-                handleJoinGameRequest((JoinGameRequest) messageObject);
+            MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
+            String messageType = messageObject.getMessageType();
 
+            if (messageType.equals("JoinGameRequest")) {
+                System.out.println("Received JoinGameRequest");
+                JoinGameRequest joinGameRequest = moshi.adapter(JoinGameRequest.class).fromJson(message);
+                handleJoinGameRequest(joinGameRequest);
             }
              // other kinds of messages
 
@@ -69,11 +72,15 @@ public class ConnectionManager extends Thread implements Runnable  {
         System.out.println("Handle join game request for "+ request.getPlayerName());
         numPlayers++;
         // add game logic
-        sendMessage(new PlayerJoinedNotification("Welcome, " + request.getPlayerName(), numPlayers));
+
+        PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), numPlayers);
+        String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
+        sendMessage(json);
     }
 
-    public void sendMessage(Message message) {
-            String json = messageAdapter.toJson(message);
-            out.println(json);
+    public void sendMessage (String message) {
+        System.out.println("Sending JSON: " + message); // Log the JSON being sent
+        out.println(message);
+        out.flush();
     }
 }

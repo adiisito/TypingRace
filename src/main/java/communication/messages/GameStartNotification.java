@@ -1,16 +1,15 @@
 package communication.messages;
 
 import game.Player;
-import game.TypingPlayer;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class GameStartNotification extends Message {
+public class GameStartNotification {
     String messageType = "GameStartNotification";
     String text;
     int numPlayers;
     ArrayList<Player> players;
+    int indexOfCurrentPlayer;
 
     public GameStartNotification(String text) {
         this.text = text;
@@ -42,5 +41,13 @@ public class GameStartNotification extends Message {
 
     public String getMessageType() {
         return messageType;
+    }
+
+    public int getIndexOfCurrentPlayer() {
+        return indexOfCurrentPlayer;
+    }
+
+    public void setIndexOfCurrentPlayer(int indexOfCurrentPlayer) {
+        this.indexOfCurrentPlayer = indexOfCurrentPlayer;
     }
 }

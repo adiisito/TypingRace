@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class PlayerLeftNotification extends Message {
+public class PlayerLeftNotification {
     String messageType = "PlayerLeftNotification";
     String playerName;
     int numPlayers;

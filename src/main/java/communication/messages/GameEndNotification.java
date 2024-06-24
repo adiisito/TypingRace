@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class GameEndNotification extends Message {
+public class GameEndNotification {
     String messageType =" GameEndNotification";
     String playerName;
     int ranking;

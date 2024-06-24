@@ -1,6 +1,6 @@
 package communication.messages;
 
-public class UpdateProgressRequest extends Message{
+public class UpdateProgressRequest {
 
     private final String messageType = "UpdateProgressRequest";
 
