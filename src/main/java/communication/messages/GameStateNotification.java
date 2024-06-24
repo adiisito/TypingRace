@@ -47,4 +47,9 @@ public class GameStateNotification implements Message {
     public void setProgress(int progress) {
         this.progress = progress;
     }
+
+    @Override
+    public String getMessageType() {
+        return messageType;
+    }
 }

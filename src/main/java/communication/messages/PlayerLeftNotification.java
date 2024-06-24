@@ -25,4 +25,9 @@ public class PlayerLeftNotification implements Message {
     public void setNumPlayers(int numPlayers) {
         this.numPlayers = numPlayers;
     }
+
+    @Override
+    public String getMessageType() {
+        return messageType;
+    }
 }
