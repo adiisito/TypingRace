@@ -8,9 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Race code
+- GameScreen Class in View Package
+- Typing Player (instead of Typer)
 
 ### Changed
-
+GUI Class(with Main Method)
 ### Removed
-
+- LoginWindow Class
+- ResultWindow Class
+- GameWindow Class
+- Typer Class
+- 
 ### Fixed
+- Game Interface
+- Player Interface

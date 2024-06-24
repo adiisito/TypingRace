@@ -1,10 +1,11 @@
 package game;
 
 public interface Player {
-
     String getName();
-
-    double getSpeed();
-
-    double setSpeed();
+    int getWpm();
+    void setWpm(int wpm);
+    int getProgress();
+    void setProgress(int progress);
+    void receiveProgressUpdate(String playerName, int progress, int wpm);
 }
+

@@ -1,43 +1,52 @@
 package game;
 
-public class GameState implements Game{
+import java.util.ArrayList;
 
-    public GameState setGamestate(){
-        return null;
-    }
+public class GameState {
+    private ArrayList<Player> players;
+    private Race currentRace;
+    private long startTime;
 
-    public GameState updateGameState(){
-        return null;
-    }
-
-    public double getTime(){
-        return 0;
-    }
-    public double setTime(){
-        return startGame().incrementTime();
+    public GameState() {
+        players = new ArrayList<>();
     }
 
-    public Typer getPlayer(){
-        return null;
+    public void addPlayer(Player player) {
+        players.add(player);
     }
 
-    @Override
-    public String setText() {
-        return null;
+    public void removePlayer(Player player) {
+        players.remove(player);
     }
 
-    @Override
-    public String getText() {
-        return null;
+    public ArrayList getPlayers() {
+        return players;
     }
 
-    @Override
-    public Race startGame() {
-        return null;
+    public void startNewRace() {
+        currentRace = new Race(players);
+        currentRace.startRace();
+        startTime = System.currentTimeMillis();
     }
 
-    @Override
-    public Race endGame() {
-        return null;
+    public void endCurrentRace() {
+        if (currentRace != null) {
+            currentRace.endRace();
+        }
     }
+
+    public ArrayList<Player> getRaceResults() {
+        if (currentRace != null) {
+            return (ArrayList<Player>) currentRace.getResults();
+        }
+        return new ArrayList<>();
+    }
+    public Race getCurrentRace() {
+        return currentRace;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
 }
