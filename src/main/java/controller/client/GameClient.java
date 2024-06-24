@@ -56,7 +56,7 @@ public class GameClient {
 
 
     private void processMessage (String message) throws IOException {
-        System.out.println("[DEBUG] message from server" + "\n" +
+        System.out.println("message from server" + "\n" +
                 "        content: " + message);
 
         Message messageObject = messageAdapter.fromJson(message);
