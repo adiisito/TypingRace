@@ -18,6 +18,7 @@ public class GameScreen extends JPanel {
     private JLabel providedTextLabel;
     private String providedText;
     private Timer timer;
+    private JLabel timeLabel;
 
     public GameScreen(GameState gameState, Player currentPlayer) {
         this.gameState = gameState;
@@ -29,10 +30,25 @@ public class GameScreen extends JPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
 
+        timeLabel = new JLabel("TIME");
+        timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        timeLabel.setOpaque(true);
+        timeLabel.setBackground(Color.GREEN);
+        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JPanel timePanel = new JPanel(new BorderLayout());
+        timePanel.add(timeLabel, BorderLayout.NORTH);
+
+
         // Provided text label
         providedTextLabel = new JLabel("<html><p style=\"width: 600px;\">" + providedText + "</p></html>");
         providedTextLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         providedTextLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        providedTextLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        providedTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
+
+        JPanel providedTextPanel = new JPanel(new BorderLayout());
+        providedTextPanel.add(providedTextLabel, BorderLayout.WEST);
 
         // Typing area
         typingArea = new JTextArea();
@@ -55,13 +71,21 @@ public class GameScreen extends JPanel {
             }
         });
 
+
+
         JScrollPane scrollPane = new JScrollPane(typingArea);
 
+        JPanel typingAreaPanel = new JPanel(new BorderLayout());
+        typingAreaPanel.add(scrollPane, BorderLayout.CENTER);
+
         // Panel for provided text and typing area
-        JPanel textPanel = new JPanel();
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        textPanel.add(providedTextLabel);
-        textPanel.add(scrollPane);
+        //JPanel textPanel = new JPanel();
+        //textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        //textPanel.add(Box.createVerticalGlue());
+        //textPanel.add(providedTextLabel);
+        //textPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        //textPanel.add(scrollPane);
+        //textPanel.add(Box.createVerticalGlue());
 
         //This is the basic info panel, we shall change it later.
         // We shall stick to our Mockup Plan and make it look cooler. ;)
@@ -71,9 +95,21 @@ public class GameScreen extends JPanel {
         infoPanel.add(wpmLabel);
         infoPanel.add(accuracyLabel);
 
+        JPanel infoPanelWrapper = new JPanel(new BorderLayout());
+        infoPanelWrapper.add(infoPanel, BorderLayout.SOUTH);
+
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        mainPanel.add(providedTextPanel);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        mainPanel.add(scrollPane);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        mainPanel.add(infoPanel);
+
         // Positioning; The basic implementation!
-        add(textPanel, BorderLayout.CENTER);
-        add(infoPanel, BorderLayout.SOUTH);
+        add(timePanel, BorderLayout.EAST);
+        add(mainPanel, BorderLayout.SOUTH);
 
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
