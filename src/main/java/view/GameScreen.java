@@ -1,5 +1,6 @@
 package view;
 
+import game.Car;
 import game.GameState;
 import game.Player;
 import game.Text;
@@ -12,6 +13,7 @@ import java.awt.event.KeyEvent;
 public class GameScreen extends JPanel {
     private GameState gameState;
     private Player currentPlayer;
+    private Car car;
     private JTextArea typingArea;
     private JLabel wpmLabel;
     private JLabel accuracyLabel;
@@ -19,6 +21,7 @@ public class GameScreen extends JPanel {
     private String providedText;
     private Timer timer;
     private JLabel timeLabel;
+    private JLabel carLabel;
 
     public GameScreen(GameState gameState, Player currentPlayer) {
         this.gameState = gameState;
