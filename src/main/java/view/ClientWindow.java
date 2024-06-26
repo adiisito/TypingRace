@@ -1,4 +1,3 @@
-//for better understanding you can also call it "lobby"/"waiting room"
 package view;
 
 import controller.client.ClientController;
@@ -15,11 +14,22 @@ public class ClientWindow extends JFrame {
     private ClientController clientController;
     private DefaultListModel<String> playerListModel;
     private GameState gameState;
+    private Font dozerFont;
 
     public ClientWindow(String playerName, GUI mainGui) throws IOException {
         this.playerName = playerName;
         this.gameState = new GameState();
         this.clientController = new ClientController(this, mainGui);
+
+        // Load Dozer Font
+        try {
+            dozerFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/dozer.ttf")).deriveFont(Font.PLAIN, 20);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(dozerFont);
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            dozerFont = new Font("Serif", Font.PLAIN, 20); // Fallback font
+        }
 
         setTitle("Client: " + playerName);
         setSize(800, 600);
@@ -34,22 +44,61 @@ public class ClientWindow extends JFrame {
 
     private void showWaitingRoom() {
         JPanel waitingPanel = new JPanel(new BorderLayout());
-        waitingPanel.add(new JLabel("Waiting for players to join..."), BorderLayout.NORTH);
+        waitingPanel.setBackground(Color.BLACK);
+
+        JLabel waitingLabel = new JLabel("Waiting for players to join...");
+        waitingLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 14));
+        waitingLabel.setForeground(Color.WHITE);
+        waitingPanel.add(waitingLabel, BorderLayout.NORTH);
 
         playerListModel = new DefaultListModel<>();
         JList<String> playerList = new JList<>(playerListModel);
+        playerList.setFont(dozerFont);
+        playerList.setForeground(Color.WHITE);
+        playerList.setBackground(Color.DARK_GRAY);
+        playerList.setBorder(BorderFactory.createBevelBorder(1, Color.WHITE, Color.LIGHT_GRAY));
+
         JScrollPane scrollPane = new JScrollPane(playerList);
+        scrollPane.setPreferredSize(new Dimension(400, 300));
         waitingPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JButton startButton = new JButton("Start Game");
-        startButton.addActionListener(e -> clientController.startGame());
-        waitingPanel.add(startButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.setOpaque(false);
 
-        showExitButton();
+        JButton startButton = create3DButton("Start Game");
+        startButton.addActionListener(e -> clientController.startGame());
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Space between buttons
+        buttonPanel.add(startButton);
+
+        JButton exitButton = create3DButton("Exit");
+        exitButton.addActionListener(e -> {
+            try {
+                clientController.clientModel.sendMessage("{\"messageType\":\"PlayerLeftNotification\", \"playerName\":\"" + playerName + "\"}");
+                dispose();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Space between buttons
+        buttonPanel.add(exitButton);
+
+        waitingPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         setContentPane(waitingPanel);
         revalidate();
         repaint();
+    }
+
+    private JButton create3DButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+        button.setForeground(Color.WHITE);
+        button.setBackground(Color.DARK_GRAY);
+        button.setBorder(BorderFactory.createBevelBorder(1, Color.WHITE, Color.LIGHT_GRAY));
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(200, 40));
+        return button;
     }
 
     public void updatePlayerList(List<String> players) {
@@ -66,7 +115,7 @@ public class ClientWindow extends JFrame {
     }
 
     public void showLobbyFullButton() {
-        JButton lobbyFullButton = new JButton("Lobby full, Start the Game");
+        JButton lobbyFullButton = create3DButton("Lobby full, Start the Game");
         lobbyFullButton.addActionListener(e -> clientController.startGame());
         JPanel waitingPanel = (JPanel) getContentPane();
         waitingPanel.add(lobbyFullButton, BorderLayout.SOUTH);
@@ -74,29 +123,12 @@ public class ClientWindow extends JFrame {
         repaint();
     }
 
-    private void showExitButton() {
-        JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> {
-            try {
-                clientController.clientModel.sendMessage("{\"messageType\":\"PlayerLeftNotification\", \"playerName\":\"" + playerName + "\"}");
-                dispose();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-        JPanel panel = (JPanel) getContentPane();
-        panel.add(exitButton, BorderLayout.SOUTH);
+    public void startGame() {
+        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName));
+        setContentPane(gamePanel);
         revalidate();
         repaint();
     }
-
-//    public void startGame() {
-//        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName));
-//        showExitButton();
-//        setContentPane(gamePanel);
-//        revalidate();
-//        repaint();
-//    }
 
     public String getPlayerName() {
         return playerName;

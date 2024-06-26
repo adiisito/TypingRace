@@ -18,13 +18,11 @@ public class GameScreen extends JPanel {
     private JLabel providedTextLabel;
     private String providedText;
     private Timer timer;
-    private long startTime;
 
     public GameScreen(GameState gameState, Player currentPlayer) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.providedText = Text.getRandomText();
-        this.gameState.startNewRace(); // Ensure a new race is started
         initComponents();
     }
 
@@ -42,12 +40,18 @@ public class GameScreen extends JPanel {
         typingArea.setWrapStyleWord(true);
         typingArea.setFont(new Font("Serif", Font.PLAIN, 18));
         typingArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        typingArea.setEditable(true); // it's basically used, so that the typing area could be edited (means you can see what you are typing)
+        typingArea.setEditable(true); //it's basically used, so that the typing area could be edited(means you can see what you are typing)
 
         typingArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                updateProgress(typingArea.getText());
+                String typedText = typingArea.getText();
+                updateProgress(typedText);
+
+                if (typedText.equals(providedText)) {
+                    timer.stop();
+                    showResults();
+                }
             }
         });
 
@@ -59,7 +63,7 @@ public class GameScreen extends JPanel {
         textPanel.add(providedTextLabel);
         textPanel.add(scrollPane);
 
-        // This is the basic info panel, we shall change it later.
+        //This is the basic info panel, we shall change it later.
         // We shall stick to our Mockup Plan and make it look cooler. ;)
         wpmLabel = new JLabel("WPM: 0");
         accuracyLabel = new JLabel("Accuracy: 100%");
@@ -80,12 +84,14 @@ public class GameScreen extends JPanel {
         int progress = calculateProgress(typedText);
         gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
 
-        int wpm = calculateWPM(typedText);
+        int wpm = currentPlayer.getWpm();
         double accuracy = calculateAccuracy(typedText);
         wpmLabel.setText("WPM: " + wpm);
-        accuracyLabel.setText("Accuracy: " + String.format("%.2f", accuracy) + "%");
+        accuracyLabel.setText("Accuracy: " + accuracy + "%");
     }
 
+    //This method is actually not very useful, I wanted to play with the calculations and see, that's why added it here.
+    //Feel free to modify/Change and Remove it.
     private int calculateProgress(String typedText) {
         int length = Math.min(typedText.length(), providedText.length());
         int correctChars = 0;
@@ -106,34 +112,20 @@ public class GameScreen extends JPanel {
         return totalTypedChars == 0 ? 100 : (correctChars * 100.0) / totalTypedChars;
     }
 
-    private int calculateWPM(String typedText) {
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        double elapsedMinutes = elapsedTime / 60000.0;
-        int wordCount = typedText.split("\\s+").length;
-
-        return (int) (wordCount / elapsedMinutes);
-    }
-
     private void startTimer() {
-        startTime = System.currentTimeMillis();
-        gameState.setStartTime(startTime); // Ensure the game state has the correct start time
-
         timer = new Timer(1000, e -> {
-            long elapsedTime = System.currentTimeMillis() - startTime;
-            if (elapsedTime >= 60000) { // Check if 60 seconds have passed
+            long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
+            if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
                 showResults();
                 timer.stop();
-            } else {
-                // Update WPM and accuracy periodically
-                updateProgress(typingArea.getText());
             }
         });
         timer.start();
     }
 
     private void showResults() {
-        int wpm = calculateWPM(typingArea.getText());
+        int wpm = currentPlayer.getWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
         // Switch to the result screen
