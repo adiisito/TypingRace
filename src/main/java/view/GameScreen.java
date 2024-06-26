@@ -130,7 +130,7 @@ public class GameScreen extends JPanel {
     public void addCar(Player newPlayer) {
         Car newCar = new Car(newPlayer);
         cars.add(newCar);
-        CarShape newCarShape = new CarShape(newCar, 0, cars.size() * 40, 50, 30); // Adjust position for each new car
+        CarShape newCarShape = new CarShape(newCar, 0, cars.size() * 40, 50, 30);
         gameState.addPlayer(newPlayer);
         repaint();
     }
