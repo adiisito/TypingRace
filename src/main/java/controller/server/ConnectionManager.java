@@ -14,6 +14,9 @@ import communication.messages.MessageType;
 import communication.messages.PlayerJoinedNotification;
 import communication.messages.PlayerLeftNotification;
 
+/**
+ * The type Connection manager.
+ */
 public class ConnectionManager extends Thread {
 
     private final Socket clientSocket;
@@ -24,6 +27,13 @@ public class ConnectionManager extends Thread {
     private final Moshi moshi = new Moshi.Builder().build();
     private String playerName;
 
+    /**
+     * Instantiates a new Connection manager.
+     *
+     * @param socket the socket
+     * @param server the server
+     * @throws IOException the io exception
+     */
     public ConnectionManager(Socket socket, GameServer server) throws IOException {
         this.clientSocket = socket;
         this.server = server;
@@ -32,6 +42,9 @@ public class ConnectionManager extends Thread {
         this.messageAdapter = moshi.adapter(MessageType.class);
     }
 
+    /**
+     * Run.
+     */
     @Override
     public void run() {
         try {
@@ -55,6 +68,12 @@ public class ConnectionManager extends Thread {
         }
     }
 
+    /**
+     * Method for process messages.
+     *
+     * @param message messages to client.
+     * @throws IOException for Json messages.
+     */
     private void processMessage(String message) throws IOException {
         MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
         String messageType = messageObject.getMessageType();
@@ -66,29 +85,44 @@ public class ConnectionManager extends Thread {
         } else if (messageType.equals("StartGameRequest")) {
             System.out.println("Received StartGameRequest");
             server.startGame();
-        } else if (messageType.equals("PlayerLeftNotification")) {
+        } else if (messageType.equals("PlayerLeftRequest")) {
             PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
             server.removePlayer(leftNotification.getPlayerName());
         }
         // @yili and @yuanyuan, please add other notifs according to the need!
     }
 
+    /**
+     * Handle join game request.
+     *
+     * @param request from client
+     */
     private void handleJoinGameRequest(JoinGameRequest request) {
         this.playerName = request.getPlayerName();
         System.out.println("Handle join game request for " + playerName);
 
-        PlayerJoinedNotification notification = new PlayerJoinedNotification(playerName, server.getClients().size());
+        PlayerJoinedNotification notification = new PlayerJoinedNotification(playerName, server.getConnectionManagers().size());
         String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
         server.broadcastMessage(json);
         server.addPlayer(playerName);
     }
 
+    /**
+     * Send message.
+     *
+     * @param message the message
+     */
     public void sendMessage(String message) {
         System.out.println("Sending JSON: " + message);
         out.println(message);
         out.flush();
     }
 
+    /**
+     * Gets player name.
+     *
+     * @return the player name
+     */
     public String getPlayerName() {
         return playerName;
     }
