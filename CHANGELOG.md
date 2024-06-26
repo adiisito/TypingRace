@@ -11,9 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Race code
 - GameScreen Class in View Package
 - Typing Player (instead of Typer)
+- Car Shape Class
 
 ### Changed
 GUI Class(with Main Method)
+Car Class
+GameScreen
 ### Removed
 - LoginWindow Class
 - ResultWindow Class
@@ -23,3 +26,4 @@ GUI Class(with Main Method)
 ### Fixed
 - Game Interface
 - Player Interface
+- GameScreen
