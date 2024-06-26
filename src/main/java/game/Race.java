@@ -83,7 +83,4 @@ public class Race implements Game {
         }
     }
 
-    public long getStartTime() {
-        return startTime;
-    }
 }

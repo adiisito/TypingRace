@@ -1,53 +1,33 @@
+
 package communication.messages;
 
-import game.Player;
-
-import java.util.ArrayList;
+import java.util.List;
+import game.TypingPlayer;
 
 public class GameStartNotification {
-    String messageType = "GameStartNotification";
-    String text;
-    int numPlayers;
-    ArrayList<Player> players;
-    int indexOfCurrentPlayer;
 
-    public GameStartNotification(String text) {
-        this.text = text;
-    }
+    private String messageType = "GameStartNotification";
+    private List<TypingPlayer> players;
+    private int indexOfCurrentPlayer;
 
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public int getNumPlayers() {
-        return numPlayers;
-    }
-
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(ArrayList<Player> players) {
+    public GameStartNotification(List<TypingPlayer> players, int indexOfCurrentPlayer) {
         this.players = players;
+        this.indexOfCurrentPlayer = indexOfCurrentPlayer;
     }
 
     public String getMessageType() {
         return messageType;
     }
 
+    public List<TypingPlayer> getPlayers() {
+        return players;
+    }
+
     public int getIndexOfCurrentPlayer() {
         return indexOfCurrentPlayer;
     }
 
-    public void setIndexOfCurrentPlayer(int indexOfCurrentPlayer) {
-        this.indexOfCurrentPlayer = indexOfCurrentPlayer;
+    public int getNumPlayers() {
+        return players.size();
     }
 }

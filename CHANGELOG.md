@@ -11,20 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Race code
 - GameScreen Class in View Package
 - Typing Player (instead of Typer)
+- ClientWindow
 
 ### Changed
 GUI Class(with Main Method)
 ### Removed
-- LoginWindow Class
-- ResultWindow Class
-- GameWindow Class
-- Typer Class
+- LoginWindow Class(instead moved them to view package)
+- ResultWindow Class(instead moved them to view package)
+- GameWindow Class(instead moved them to view package)
+- Typer Class(instead made TypingPlayer)
 - 
 ### Fixed
 <<<<<<< HEAD
 - Game Interface
 - Player Interface
-=======
+- GameState
 
 
 # NETWORK
@@ -32,11 +33,14 @@ GUI Class(with Main Method)
 
 ### Added
 - new class: message, 
-- 
+- new class : PlayerListUpdateNotification in Messages package
 
 ### Changed
 
 ### Removed
 
 ### Fixed
->>>>>>> 8d16d1ea6b6f49b60b94bdb55c112b40ca356cfc
+- GameServer
+- GameClient
+- ClientController
+- 

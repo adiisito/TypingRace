@@ -1,6 +1,7 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameState {
     private ArrayList<Player> players;
@@ -11,20 +12,23 @@ public class GameState {
         players = new ArrayList<>();
     }
 
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
+//    public void addPlayer(Player player) {
+//        players.add(player);
+//    }
+//
+//    public void removePlayer(Player player) {
+//        players.remove(player);
+//    }
 
-    public void removePlayer(Player player) {
-        players.remove(player);
-    }
+//    public ArrayList<Player> getPlayers() {
+//        return players;
+//    }
 
-    public ArrayList getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
-
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
+    public void setPlayers(List<TypingPlayer> players) {
+        this.players = new ArrayList<>(players);
     }
 
     public void startNewRace() {
@@ -39,18 +43,22 @@ public class GameState {
         }
     }
 
-    public ArrayList<Player> getRaceResults() {
+    /*public ArrayList<Player> getRaceResults() {
         if (currentRace != null) {
             return (ArrayList<Player>) currentRace.getResults();
         }
         return new ArrayList<>();
-    }
+    }*/
+
     public Race getCurrentRace() {
         return currentRace;
     }
 
-    public long getStartTime() {
-        return startTime;
-    }
+//    public long getStartTime() {
+//        return startTime;
+//    }
 
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
 }

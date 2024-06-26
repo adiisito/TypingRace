@@ -1,20 +1,20 @@
+// GUI Class
 package view;
 
-
 import game.GameState;
-import game.Player;
-import game.TypingPlayer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 
 public class GUI extends JFrame {
     private JTextField playerNameField;
     private JButton joinButton;
     private GameState gameState;
-    private Player currentPlayer;
+    private DefaultListModel<String> playerListModel;
+    private List<ClientWindow> clientWindows = new ArrayList<>();
 
     public GUI(GameState gameState) {
         this.gameState = gameState;
@@ -30,10 +30,9 @@ public class GUI extends JFrame {
         showLoginWindow();
     }
 
-    // Login Window GUI
     private void showLoginWindow() {
         JPanel loginPanel = new JPanel(new GridBagLayout());
-        loginPanel.setBackground(new Color(173, 216, 230));
+        loginPanel.setBackground(new Color(158, 255, 199));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -41,7 +40,7 @@ public class GUI extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        loginPanel.add(new JLabel("Welcome To Type Race"), gbc);
+        loginPanel.add(new JLabel("Welcome To KeySprint"), gbc);
         loginPanel.add(new JLabel("Please Enter Your Name"), gbc);
 
         playerNameField = new JTextField(20);
@@ -49,18 +48,12 @@ public class GUI extends JFrame {
 
         joinButton = new JButton("Join new Game");
         joinButton.setBackground(Color.green);
-        joinButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String playerName = playerNameField.getText().trim();
-                if (!playerName.isEmpty()) {
-                    currentPlayer = new TypingPlayer(playerName); // Changed from ExamplePlayer to TypingPlayer
-                    gameState.addPlayer(currentPlayer);
-                    showGameWindow();
-                    startRace();
-                } else {
-                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+        joinButton.addActionListener(e -> {
+            String playerName = playerNameField.getText().trim();
+            if (!playerName.isEmpty()) {
+                createNewClient(playerName);
+            } else {
+                JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         loginPanel.add(joinButton, gbc);
@@ -70,20 +63,34 @@ public class GUI extends JFrame {
         repaint();
     }
 
-    // Game Window GUI
-    private void showGameWindow() {
-        JPanel gamePanel = new GameScreen(gameState, currentPlayer);
-        setContentPane(gamePanel);
-        revalidate();
-        repaint();
+    private void createNewClient(String playerName) {
+        try {
+            ClientWindow clientWindow = new ClientWindow(playerName, this);
+            clientWindows.add(clientWindow);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Failed to create new client", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    private void startRace() {
-        gameState.startNewRace();
+    public void updateAllClientWindows(List<String> playerNames) {
+        for (ClientWindow clientWindow : clientWindows) {
+            clientWindow.updatePlayerList(playerNames);
+        }
+    }
+
+    public void updateAllClientWindowsWithPlayerLeft(String playerName) {
+        for (ClientWindow clientWindow : clientWindows) {
+            clientWindow.showPlayerLeftMessage(playerName);
+        }
+        List<String> playerNames = new ArrayList<>();
+        for (ClientWindow clientWindow : clientWindows) {
+            playerNames.add(clientWindow.getPlayerName());
+        }
+        updateAllClientWindows(playerNames); // Update the player list to reflect the player has left
     }
 
     public static void main(String[] args) {
-        GameState gameState = new GameState(); // Assuming GameState has a default constructor
+        GameState gameState = new GameState();
         SwingUtilities.invokeLater(() -> new GUI(gameState).setVisible(true));
     }
 }

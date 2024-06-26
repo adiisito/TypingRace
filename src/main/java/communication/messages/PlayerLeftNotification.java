@@ -9,6 +9,9 @@ public class PlayerLeftNotification {
         this.playerName = playerName;
         this.numPlayers = numPlayers;
     }
+    public PlayerLeftNotification(String playerName) {
+        this.playerName = playerName;
+    }
 
     public String getPlayerName() {
         return playerName;
