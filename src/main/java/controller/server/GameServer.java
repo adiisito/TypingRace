@@ -7,6 +7,12 @@ import communication.messages.MessageType;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import communication.messages.JoinGameRequest;
+import communication.messages.MessageType;
+import game.Game;
 
 public class GameServer {
 
@@ -17,6 +23,9 @@ public class GameServer {
     // initialized for analyse and generate the json messages
     private final Moshi moshi;
     private final JsonAdapter<MessageType> messageAdapter;
+    // save players as a list
+    private List<ConnectionManager> players = new CopyOnWriteArrayList<>();
+
 
     public GameServer() throws IOException{
 
@@ -27,15 +36,15 @@ public class GameServer {
     }
 
     public void start() {
-        System.out.println("waiting for client..");
+        System.out.println("Server waiting for client..");
         while(true) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("client connected...");
+                System.out.println("Server and client connected...");
                 ConnectionManager connectionManager = new ConnectionManager(clientSocket);
                 connectionManager.start();
             } catch (IOException e) {
-                System.out.println("!error by connection!");
+                System.out.println("!Server Error by connection!");
                 e.printStackTrace();
             }
         }
@@ -50,5 +59,14 @@ public class GameServer {
             System.out.println("Failed to start the server");
             e.printStackTrace();
         }
+    }
+
+    // methods to dealing with player-join and player-leaving.
+    public void addPlayers(ConnectionManager cm) {
+        players.add(cm);
+    }
+
+    public void removePlayers(ConnectionManager cm) {
+        players.remove(cm);
     }
 }

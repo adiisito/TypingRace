@@ -21,22 +21,33 @@ GUI Class(with Main Method)
 - Typer Class
 - 
 ### Fixed
-<<<<<<< HEAD
+
 - Game Interface
 - Player Interface
-=======
+
 
 
 # NETWORK
 ## 22.Jun.2024
-
 ### Added
-- new class: message, 
-- 
+- new class: messages, request for server and notis for client
+
+## 24.Jun.2024
+### Added
+- ClientController
+- GameClient
+- GameServer
+- ConnectionManager
+- synchronized the processMessage class
 
 ### Changed
+- Changed the Interface of server and client into two separated interfaces
+- Changed the Message interface to a normal class
+
+
+## 25.Jun.2024
+### Changed
+- Changed the Message class into  MessageType class, no more need to extends from this class
 
 ### Removed
-
-### Fixed
->>>>>>> 8d16d1ea6b6f49b60b94bdb55c112b40ca356cfc
+- all extends are removed 

@@ -55,12 +55,13 @@ public class ConnectionManager extends Thread implements Runnable  {
             }
     }
 
-    private void processMessage(String message) throws IOException{
+    private synchronized void processMessage(String message) throws IOException{
             MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
             String messageType = messageObject.getMessageType();
 
             if (messageType.equals("JoinGameRequest")) {
                 System.out.println("Received JoinGameRequest");
+                // convert the message with moshi
                 JoinGameRequest joinGameRequest = moshi.adapter(JoinGameRequest.class).fromJson(message);
                 handleJoinGameRequest(joinGameRequest);
             }
