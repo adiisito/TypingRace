@@ -27,5 +27,6 @@
 
 ## 05 Feedback to the team and tutor
 - Good, team can respond the messages quickly
+- Team members: before adding or changing the codes, PLS make sure that you are following the right format of the original codes, and also got the appropriate location of the docs !!! -> confusion and chaos 
 - Tutor has given us many suggestions
 - Thumb up.
