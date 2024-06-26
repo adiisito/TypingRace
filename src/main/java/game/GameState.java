@@ -19,7 +19,7 @@ public class GameState {
         players.remove(player);
     }
 
-    public ArrayList getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 

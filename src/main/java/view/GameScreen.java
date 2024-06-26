@@ -1,14 +1,12 @@
 package view;
 
-import game.Car;
-import game.GameState;
-import game.Player;
-import game.Text;
+import game.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
     private GameState gameState;
@@ -21,18 +19,38 @@ public class GameScreen extends JPanel {
     private String providedText;
     private Timer timer;
     private JLabel timeLabel;
-    private JLabel carLabel;
+    private ArrayList<Car> cars;
+    private CarShape carShape;
+    private JPanel carPanel;
+
 
     public GameScreen(GameState gameState, Player currentPlayer) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.providedText = Text.getRandomText();
+        this.cars = new ArrayList();
+        this.car=new Car(currentPlayer);
+        this.carShape= new CarShape(car,0,50,50,30 );
+
+
         initComponents();
     }
 
     private void initComponents() {
         setLayout(new BorderLayout());
 
+        // creating a Car Panel
+        JPanel carPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                carShape.draw(g);
+            }
+        };
+        carPanel.setPreferredSize(new Dimension(1000, 400));
+
+        addCar(currentPlayer);
+        
         timeLabel = new JLabel("TIME");
         timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
         timeLabel.setOpaque(true);
@@ -74,21 +92,10 @@ public class GameScreen extends JPanel {
             }
         });
 
-
-
         JScrollPane scrollPane = new JScrollPane(typingArea);
 
         JPanel typingAreaPanel = new JPanel(new BorderLayout());
         typingAreaPanel.add(scrollPane, BorderLayout.CENTER);
-
-        // Panel for provided text and typing area
-        //JPanel textPanel = new JPanel();
-        //textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        //textPanel.add(Box.createVerticalGlue());
-        //textPanel.add(providedTextLabel);
-        //textPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        //textPanel.add(scrollPane);
-        //textPanel.add(Box.createVerticalGlue());
 
         //This is the basic info panel, we shall change it later.
         // We shall stick to our Mockup Plan and make it look cooler. ;)
@@ -112,11 +119,20 @@ public class GameScreen extends JPanel {
 
         // Positioning; The basic implementation!
         add(timePanel, BorderLayout.EAST);
+        add(carPanel, BorderLayout.WEST);
         add(mainPanel, BorderLayout.SOUTH);
 
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
         startTimer();
+    }
+
+    public void addCar(Player newPlayer) {
+        Car newCar = new Car(newPlayer);
+        cars.add(newCar);
+        CarShape newCarShape = new CarShape(newCar, 0, cars.size() * 40, 50, 30); // Adjust position for each new car
+        gameState.addPlayer(newPlayer);
+        repaint();
     }
 
     private void updateProgress(String typedText) {
@@ -127,6 +143,19 @@ public class GameScreen extends JPanel {
         double accuracy = calculateAccuracy(typedText);
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + accuracy + "%");
+
+        updateCarPositions();
+    }
+
+
+    private void updateCarPositions() {
+        // Update the car positions based on the players' progress
+        for (int i = 0; i < gameState.getPlayers().size(); i++) {
+            Player player = gameState.getPlayers().get(i);
+            int progress = player.getProgress();
+            carShape.setX(progress * 5);
+        }
+        repaint();
     }
 
     //This method is actually not very useful, I wanted to play with the calculations and see, that's why added it here.
@@ -154,6 +183,8 @@ public class GameScreen extends JPanel {
     private void startTimer() {
         timer = new Timer(1000, e -> {
             long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
+            int remainingTime = (int) (60 - (elapsedTime / 1000));
+            timeLabel.setText("TIME: " + remainingTime); // /1000 to convert it into seconds
             if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
                 showResults();
@@ -162,6 +193,8 @@ public class GameScreen extends JPanel {
         });
         timer.start();
     }
+
+
 
     private void showResults() {
         int wpm = currentPlayer.getWpm();
@@ -173,4 +206,5 @@ public class GameScreen extends JPanel {
         frame.revalidate();
         frame.repaint();
     }
+
 }
