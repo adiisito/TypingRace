@@ -7,26 +7,24 @@ public class GameState {
     private ArrayList<Player> players;
     private Race currentRace;
     private long startTime;
+    private String sharedText; // Add this field to store the shared text
 
     public GameState() {
         players = new ArrayList<>();
     }
 
-//    public void addPlayer(Player player) {
-//        players.add(player);
-//    }
-//
-//    public void removePlayer(Player player) {
-//        players.remove(player);
-//    }
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
 
-//    public ArrayList<Player> getPlayers() {
-//        return players;
-//    }
+    public void removePlayer(Player player) {
+        players.remove(player);
+    }
 
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
     public void setPlayers(List<TypingPlayer> players) {
         this.players = new ArrayList<>(players);
     }
@@ -43,22 +41,30 @@ public class GameState {
         }
     }
 
-    /*public ArrayList<Player> getRaceResults() {
+    public ArrayList<Player> getRaceResults() {
         if (currentRace != null) {
             return (ArrayList<Player>) currentRace.getResults();
         }
         return new ArrayList<>();
-    }*/
+    }
 
     public Race getCurrentRace() {
         return currentRace;
     }
 
-//    public long getStartTime() {
-//        return startTime;
-//    }
+    public long getStartTime() {
+        return startTime;
+    }
 
     public void setStartTime(long startTime) {
         this.startTime = startTime;
+    }
+
+    public String getSharedText() {
+        return sharedText;
+    }
+
+    public void setSharedText(String sharedText) {
+        this.sharedText = sharedText;
     }
 }

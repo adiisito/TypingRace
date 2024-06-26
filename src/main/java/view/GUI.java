@@ -1,4 +1,3 @@
-// GUI Class
 package view;
 
 import game.GameState;
@@ -15,10 +14,23 @@ public class GUI extends JFrame {
     private GameState gameState;
     private DefaultListModel<String> playerListModel;
     private List<ClientWindow> clientWindows = new ArrayList<>();
+    private Font dozerFont;
 
     public GUI(GameState gameState) {
         this.gameState = gameState;
+        loadFont();
         initComponents();
+    }
+
+    private void loadFont() {
+        try {
+            dozerFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/dozer.ttf")).deriveFont(Font.PLAIN, 20);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(dozerFont);
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+            dozerFont = new Font("Serif", Font.PLAIN, 20); // Fallback font
+        }
     }
 
     private void initComponents() {
@@ -31,36 +43,52 @@ public class GUI extends JFrame {
     }
 
     private void showLoginWindow() {
-        JPanel loginPanel = new JPanel(new GridBagLayout());
-        loginPanel.setBackground(new Color(158, 255, 199));
+        try {
+            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/LoginScreen.jpeg"));
+            BackgroundPanel loginPanel = new BackgroundPanel(backgroundImage);
+            loginPanel.setLayout(new GridBagLayout());
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 10, 10, 10);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.anchor = GridBagConstraints.CENTER;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(10, 10, 10, 10);
 
-        loginPanel.add(new JLabel("Welcome To KeySprint"), gbc);
-        loginPanel.add(new JLabel("Please Enter Your Name"), gbc);
+            JLabel welcomeLabel = new JLabel("Welcome To KeySprint");
+            welcomeLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 30));
+            welcomeLabel.setForeground(Color.WHITE);
+            loginPanel.add(welcomeLabel, gbc);
 
-        playerNameField = new JTextField(20);
-        loginPanel.add(playerNameField, gbc);
+            JLabel nameLabel = new JLabel("Please Enter Your Name");
+            nameLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            nameLabel.setForeground(Color.WHITE);
+            loginPanel.add(nameLabel, gbc);
 
-        joinButton = new JButton("Join new Game");
-        joinButton.setBackground(Color.green);
-        joinButton.addActionListener(e -> {
-            String playerName = playerNameField.getText().trim();
-            if (!playerName.isEmpty()) {
-                createNewClient(playerName);
-            } else {
-                JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        loginPanel.add(joinButton, gbc);
+            playerNameField = new JTextField(20);
+            playerNameField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            loginPanel.add(playerNameField, gbc);
 
-        setContentPane(loginPanel);
-        revalidate();
-        repaint();
+            joinButton = new JButton("Join new Game");
+            joinButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            joinButton.setBackground(Color.green);
+            joinButton.addActionListener(e -> {
+                String playerName = playerNameField.getText().trim();
+                if (!playerName.isEmpty()) {
+                    createNewClient(playerName);
+                    playerNameField.setText(""); // Clear the text field
+                } else {
+                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+            loginPanel.add(joinButton, gbc);
+
+            setContentPane(loginPanel);
+            revalidate();
+            repaint();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Background image not found", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void createNewClient(String playerName) {
