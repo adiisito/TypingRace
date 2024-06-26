@@ -17,7 +17,7 @@ Planned 3 times group discord meetings on 24.06(Monday) and 25.06(Tuesday). I di
 
 ## 02 What's planned until next week
 
-- Enhance the game logic and full stack development
+- Enhance the game logic and full stack development.
 - LoginScreen new Game modes (Practice and Play Offline)
 - Exit Button on every screen
 - Join Same room with same clients (Option)
