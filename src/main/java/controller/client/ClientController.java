@@ -4,9 +4,12 @@ package controller.client;
 import com.squareup.moshi.Moshi;
 import communication.messages.GameStartNotification;
 import communication.messages.JoinGameRequest;
+import communication.messages.PlayerLeftRequest;
 import communication.messages.PlayerListUpdateNotification;
 import communication.messages.PlayerLeftNotification;
 import communication.messages.MessageType;
+import communication.messages.StartGameRequest;
+import communication.messages.UpdateProgressRequest;
 import game.GameState;
 import game.TypingPlayer;
 import view.ClientWindow;
@@ -18,6 +21,9 @@ import java.io.IOException;
 //import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Client controller.
+ */
 public class ClientController {
 
     public GameClient clientModel;
@@ -51,6 +57,11 @@ public class ClientController {
         }
     }
 
+    /**
+     * Handle game start notification.
+     *
+     * @param gameStartNotification the game start notification
+     */
     public void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
         this.gameState = new GameState();
@@ -66,6 +77,23 @@ public class ClientController {
         System.out.println("Game started");
     }
 
+    /**
+     * Player left.
+     *
+     * @param playerName the player name
+     */
+    public void playerLeft(String playerName){
+        PlayerLeftRequest request = new PlayerLeftRequest(playerName);
+        String json = moshi.adapter(PlayerLeftRequest.class).toJson(request);
+
+        clientModel.sendMessage(json);
+    }
+
+    /**
+     * Handle player left notification.
+     *
+     * @param leftNotification the left notification
+     */
     public void handlePlayerLeft(PlayerLeftNotification leftNotification) {
         SwingUtilities.invokeLater(() -> {
             String playerName = leftNotification.getPlayerName();
@@ -76,27 +104,26 @@ public class ClientController {
         });
     }
 
+    /**
+     * Start game.
+     */
     public void startGame() {
-        clientModel.sendMessage("{\"messageType\":\"StartGameRequest\"}");
+
+        StartGameRequest request = new StartGameRequest();
+        String json = moshi.adapter(StartGameRequest.class).toJson(request);
+
+        clientModel.sendMessage(json);
+        System.out.println("Game started");
     }
 
-//    public void processMessage(String message) throws IOException {
-//        MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
-//        String messageType = messageObject.getMessageType();
-//
-//        if (messageType.equals("PlayerListUpdateNotification")) {
-//            PlayerListUpdateNotification updateNotification = moshi.adapter(PlayerListUpdateNotification.class).fromJson(message);
-//            handlePlayerListUpdate(updateNotification);
-//        } else if (messageType.equals("GameStartNotification")) {
-//            GameStartNotification gameStartNotification = moshi.adapter(GameStartNotification.class).fromJson(message);
-//            handleGameStart(gameStartNotification);
-//        } else if (messageType.equals("LobbyFullNotification")) {
-//            handleLobbyFull();
-//        } else if (messageType.equals("PlayerLeftNotification")) {
-//            PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
-//            handlePlayerLeft(leftNotification);
-//        }
-//    }
+
+    public void updateProgress (String playerName, int wpm, int progress, double accuracy, int time){
+
+        UpdateProgressRequest progressRequest = new UpdateProgressRequest(playerName, wpm, progress, accuracy,time);
+        String json = moshi.adapter(UpdateProgressRequest.class).toJson(progressRequest);
+        clientModel.sendMessage(json);
+    }
+
 
     void handleLobbyFull() {
         SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
