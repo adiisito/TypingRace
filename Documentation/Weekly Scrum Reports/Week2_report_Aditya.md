@@ -31,7 +31,7 @@ Planned 3 times group discord meetings on 24.06(Monday) and 25.06(Tuesday). I di
 - Tips by Francis on Saturday helped a lot
 
 ## 04 What were there problems with
-- In the starting phase of implementing the ClienWindow Class I definitely had some problems, but I solved it step by step by debugging it.
+- In the starting phase of implementing the ClientWindow Class I definitely had some problems, but I solved it step by step by debugging it.
 ## 05 Feedback to the team and tutor
 - The team has been great like the last week. A bit more input from Jun-Wei would have been a great help, I am looking forward to extended input from him this week. 
 - Like I said earlier, Thanks to Francis for helping out with the tips and being responsive all the times.
