@@ -26,11 +26,9 @@ public class GameClient {
     private final ClientController clientController;
 
     private final Moshi moshi;
-    private final JsonAdapter<MessageType> messageAdapter;
 
     public GameClient(ClientController clientController) throws IOException {
         this.moshi = new Moshi.Builder().build();
-        this.messageAdapter = moshi.adapter(MessageType.class);
 
         this.clientController = clientController;
 
