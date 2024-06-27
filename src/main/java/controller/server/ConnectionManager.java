@@ -65,7 +65,7 @@ public class ConnectionManager extends Thread {
             }
         } catch (IOException exception) {
             System.out.println("Error reading client, player disconnected");
-            removePlayer(playerName);
+            server.removePlayer(playerName);
             exception.printStackTrace();
         } finally {
             try {
@@ -101,7 +101,7 @@ public class ConnectionManager extends Thread {
 
         } else if (messageType.equals("PlayerLeftRequest")) {
             PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
-            removePlayer(leftNotification.getPlayerName());
+            server.removePlayer(leftNotification.getPlayerName());
 
         } else if(messageType.equals("UpdateProgressRequest")){
             UpdateProgressRequest updateProgressRequest = moshi.adapter(UpdateProgressRequest.class).fromJson(message);
@@ -125,8 +125,9 @@ public class ConnectionManager extends Thread {
 
         PlayerJoinedNotification notification = new PlayerJoinedNotification(playerName, getConnectionManagers().size());
         String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
-        broadcastMessage(json);
-        addPlayer(playerName);
+        server.broadcastMessage(json);
+
+        server.addPlayer(playerName);
     }
 
     /**
@@ -179,32 +180,6 @@ public class ConnectionManager extends Thread {
         broadcastMessage(json);
     }
 
-    /**
-     * Method for adding new players in the server.
-     *
-     * @param name id of the player.
-     */
-    public void addPlayer(String name) {
-        playerNames.add(name);
-        broadcastPlayerListUpdate();
-        if (playerNames.size() == 6) {
-            broadcastLobbyFull();
-        }
-    }
-
-    /**
-     * Method for remove the players from the server.
-     *
-     * @param name id of the player.
-     */
-    public void removePlayer(String name) {
-        playerNames.remove(name);
-
-        PlayerLeftNotification leftNotification = new PlayerLeftNotification(name);
-        String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
-        broadcastMessage(json);
-        broadcastPlayerListUpdate();
-    }
 
     /**
      * Method to remind when lobby is full.
