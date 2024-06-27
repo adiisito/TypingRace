@@ -60,6 +60,7 @@ public class ConnectionManager extends Thread {
             String messageLine;
             while ((messageLine = in.readLine()) != null) {
                 System.out.println("Received from client: " + messageLine);
+                connectionManagers.add(this);
                 processMessage(messageLine);
             }
         } catch (IOException exception) {
