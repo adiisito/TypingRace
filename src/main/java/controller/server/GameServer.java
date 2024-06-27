@@ -95,7 +95,7 @@ public class GameServer {
         for (String playerName : playerNames) {
             players.add(new TypingPlayer(playerName));
         }
-        GameStartNotification gameStartNotification = new GameStartNotification(players, 0); // Assuming the first player is the current player
+        GameStartNotification gameStartNotification = new GameStartNotification(players, 0, players.size()); // Assuming the first player is the current player
         String json = gameStartNotificationAdapter.toJson(gameStartNotification);
         broadcastMessage(json);
     }

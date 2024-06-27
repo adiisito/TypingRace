@@ -6,14 +6,16 @@ public class UpdateProgressRequest {
 
     private String playerName;
     private int wpm;
-    private int time;
+    //private int time;
     private int progress;
+    private double accuracy;
 
-    public UpdateProgressRequest(String playerName, int wpm, int time, int progress) {
+    public UpdateProgressRequest(String playerName, int wpm, int progress, double accuracy) {
         this.playerName = playerName;
         this.wpm = wpm;
-        this.time = time;
+        //this.time = time;
         this.progress = progress;
+        this.accuracy = accuracy;
     }
 
     public String getMessageType() {
@@ -36,13 +38,13 @@ public class UpdateProgressRequest {
         this.wpm = wpm;
     }
 
-    public int getTime() {
+/*    public int getTime() {
         return time;
     }
 
     public void setTime(int time) {
         this.time = time;
-    }
+    }*/
 
     public int getProgress() {
         return progress;
@@ -50,5 +52,13 @@ public class UpdateProgressRequest {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
     }
 }

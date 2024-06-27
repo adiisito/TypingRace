@@ -78,7 +78,7 @@ public class ClientWindow extends JFrame {
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
             try {
-                clientController.clientModel.sendMessage("{\"messageType\":\"PlayerLeftNotification\", \"playerName\":\"" + playerName + "\"}");
+                clientController.playerLeft(playerName);
                 dispose();
             } catch (Exception ex) {
                 ex.printStackTrace();
