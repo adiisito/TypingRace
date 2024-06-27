@@ -97,7 +97,7 @@ public class ConnectionManager extends Thread {
 
         } else if (messageType.equals("StartGameRequest")) {
             System.out.println("Received StartGameRequest");
-            startGame();
+            server.startGame();
 
         } else if (messageType.equals("PlayerLeftRequest")) {
             PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
@@ -187,23 +187,6 @@ public class ConnectionManager extends Thread {
     private void broadcastLobbyFull() {
         LobbyFullNotification lobbyFullNotification = new LobbyFullNotification();
         String json = moshi.adapter(LobbyFullNotification.class).toJson(lobbyFullNotification);
-        broadcastMessage(json);
-    }
-
-    /**
-     * StartGame method.
-     *
-     * After checked that all the players are there
-     */
-    public void startGame() {
-        System.out.println("Starting the game...");
-        List<TypingPlayer> players = new ArrayList<>();
-        for (String playerName : playerNames) {
-            players.add(new TypingPlayer(playerName));
-        }
-        GameStartNotification gameStartNotification = new GameStartNotification(players, 0); // Assuming the first player is the current player
-
-        String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
         broadcastMessage(json);
     }
 
