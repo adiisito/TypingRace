@@ -1,11 +1,13 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameState {
     private ArrayList<Player> players;
     private Race currentRace;
     private long startTime;
+    private String sharedText; // Add this field to store the shared text
 
     public GameState() {
         players = new ArrayList<>();
@@ -19,12 +21,12 @@ public class GameState {
         players.remove(player);
     }
 
-    public ArrayList getPlayers() {
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
+    public void setPlayers(List<TypingPlayer> players) {
+        this.players = new ArrayList<>(players);
     }
 
     public void startNewRace() {
@@ -45,6 +47,7 @@ public class GameState {
         }
         return new ArrayList<>();
     }
+
     public Race getCurrentRace() {
         return currentRace;
     }
@@ -53,4 +56,15 @@ public class GameState {
         return startTime;
     }
 
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getSharedText() {
+        return sharedText;
+    }
+
+    public void setSharedText(String sharedText) {
+        this.sharedText = sharedText;
+    }
 }

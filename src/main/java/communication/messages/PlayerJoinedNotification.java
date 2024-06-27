@@ -1,32 +1,25 @@
+// PlayerJoinedNotification Class
 package communication.messages;
 
 public class PlayerJoinedNotification {
-    String messageType = "PlayerJoinedNotification";
-    String newPlayerName;
-    int numPlayers;
+    private String messageType = "PlayerJoinedNotification";
+    private String playerName;
+    private int numPlayers;
 
-    public PlayerJoinedNotification(String newPlayerName, int numPlayers) {
-        this.newPlayerName = newPlayerName;
-        this.numPlayers = numPlayers;
-    }
-
-    public String getNewPlayerName() {
-        return newPlayerName;
-    }
-
-    public int getNumPlayers() {
-        return numPlayers;
-    }
-
-    public void setNewPlayerName(String newPlayerName) {
-        this.newPlayerName = newPlayerName;
-    }
-
-    public void setNumPlayers(int numPlayers) {
+    public PlayerJoinedNotification(String playerName, int numPlayers) {
+        this.playerName = playerName;
         this.numPlayers = numPlayers;
     }
 
     public String getMessageType() {
         return messageType;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public int getNumPlayers() {
+        return numPlayers;
     }
 }
