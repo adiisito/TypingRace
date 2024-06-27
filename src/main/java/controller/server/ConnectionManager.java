@@ -60,6 +60,7 @@ public class ConnectionManager extends Thread {
             String messageLine;
             while ((messageLine = in.readLine()) != null) {
                 System.out.println("Received from client: " + messageLine);
+                connectionManagers.add(this);
                 processMessage(messageLine);
             }
         } catch (IOException exception) {
@@ -140,6 +141,22 @@ public class ConnectionManager extends Thread {
         broadcastMessage(json);
     }
 
+    /**
+     * Handle end Game request.
+     * server sends back the noti for each player.
+     *
+     * @param request messages from client.
+     */
+    private void handleEndGameRequest(EndGameRequest request) {
+        this.playerName = request.getPlayerName();
+        // server.
+        recordPlayerFinished(playerName);
+
+        GameEndNotification notification = new GameEndNotification(request.getPlayerName(), request.getTime(), request.getWpm());
+        String json = moshi.adapter(GameEndNotification.class).toJson(notification);
+        broadcastMessage(json);
+    }
+
 
 
     /**
@@ -165,10 +182,10 @@ public class ConnectionManager extends Thread {
     /**
      * Method for adding new players in the server.
      *
-     * @param playerName id of the player.
+     * @param name id of the player.
      */
-    public void addPlayer(String playerName) {
-        playerNames.add(playerName);
+    public void addPlayer(String name) {
+        playerNames.add(name);
         broadcastPlayerListUpdate();
         if (playerNames.size() == 6) {
             broadcastLobbyFull();
@@ -178,12 +195,12 @@ public class ConnectionManager extends Thread {
     /**
      * Method for remove the players from the server.
      *
-     * @param playerName id of the player.
+     * @param name id of the player.
      */
-    public void removePlayer(String playerName) {
-        playerNames.remove(playerName);
+    public void removePlayer(String name) {
+        playerNames.remove(name);
 
-        PlayerLeftNotification leftNotification = new PlayerLeftNotification(playerName);
+        PlayerLeftNotification leftNotification = new PlayerLeftNotification(name);
         String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
         broadcastMessage(json);
         broadcastPlayerListUpdate();
@@ -228,22 +245,6 @@ public class ConnectionManager extends Thread {
     }
 
     /**
-     * Handle end Game request.
-     * server sends back the noti for each player.
-     *
-     * @param request messages from client.
-     */
-    private void handleEndGameRequest(EndGameRequest request) {
-        this.playerName = request.getPlayerName();
-        recordPlayerFinished(playerName);
-
-        GameEndNotification notification = new GameEndNotification(request.getPlayerName(), request.getTime(), request.getWpm());
-        String json = moshi.adapter(GameEndNotification.class).toJson(notification);
-        broadcastMessage(json);
-    }
-
-
-    /**
      * Broadcast to send on the finish window.
      * TODO waiting for the implementation of client to send the result
      */
@@ -258,7 +259,6 @@ public class ConnectionManager extends Thread {
 
          */
     }
-
 
     /**
      * Gets connection managers.
