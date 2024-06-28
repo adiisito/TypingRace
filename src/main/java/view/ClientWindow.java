@@ -74,7 +74,7 @@ public class ClientWindow extends JFrame {
         JButton exitButton = create3DButton("Exit");
         exitButton.addActionListener(e -> {
             try {
-                clientController.clientModel.sendMessage("{\"messageType\":\"PlayerLeftNotification\", \"playerName\":\"" + playerName + "\"}");
+                clientController.playerLeft(playerName);
                 dispose();
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -124,7 +124,7 @@ public class ClientWindow extends JFrame {
     }
 
     public void startGame() {
-        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName));
+        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName), clientController);
         setContentPane(gamePanel);
         revalidate();
         repaint();

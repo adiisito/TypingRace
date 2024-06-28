@@ -4,6 +4,7 @@ package controller.client;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.GameStartNotification;
+import communication.messages.GameStateNotification;
 import communication.messages.MessageType;
 import communication.messages.PlayerListUpdateNotification;
 import communication.messages.PlayerLeftNotification;
@@ -78,8 +79,11 @@ public class GameClient {
         } else if (messageType.equals("PlayerLeftNotification")) {
             PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
             clientController.handlePlayerLeft(leftNotification);
+        } else if (messageType.equals("GameStateNotification")) {
+            GameStateNotification stateNotification = moshi.adapter(GameStateNotification.class).fromJson(message);
+            clientController.handleProgress(stateNotification);
         }
-        // @yili and @yuanyuan, please add other notifs according to the need!
+
     }
 
     public void sendMessage(String message) {
