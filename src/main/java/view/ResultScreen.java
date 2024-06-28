@@ -1,5 +1,6 @@
 package view;
 
+import controller.client.ClientController;
 import game.GameState;
 import game.Player;
 
@@ -13,8 +14,9 @@ public class ResultScreen extends JPanel {
     private double accuracy;
     private GameState gameState;
     private Player currentPlayer;
+    private ClientController clientController;
 
-    public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy) {
+    public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
@@ -52,7 +54,7 @@ public class ResultScreen extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 gameState.startNewRace();
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(ResultScreen.this);
-                frame.setContentPane(new GameScreen(gameState, currentPlayer));
+                frame.setContentPane(new GameScreen(gameState, currentPlayer, clientController));
                 frame.revalidate();
                 frame.repaint();
             }

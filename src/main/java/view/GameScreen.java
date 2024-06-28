@@ -1,5 +1,6 @@
 package view;
 
+import controller.client.ClientController;
 import game.GameState;
 import game.Player;
 import game.Text;
@@ -21,11 +22,14 @@ public class GameScreen extends JPanel {
     private long startTime;
     private int keyPressCount;
 
-    public GameScreen(GameState gameState, Player currentPlayer) {
+    private ClientController clientController;
+
+    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.providedText = Text.getRandomText();
         this.keyPressCount = 0;
+        this.clientController = clientController;
         initComponents();
     }
 
@@ -50,7 +54,21 @@ public class GameScreen extends JPanel {
             public void keyReleased(KeyEvent e) {
                 keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
-                updateProgress(typedText);
+                // updateProgress(typedText);
+
+                // Calculate the time elapsed since the start of typing
+                int timeElapsed = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
+
+                // If the ending conditions are not met, it sends the current wpm, accuracy and progress to the server.
+                if (typedText.equals(providedText) || timeElapsed >= 60) {
+                    timer.stop();
+                    showResults();
+                } else {
+                    int wpm = calculateWpm();
+                    double accuracy = calculateAccuracy(typedText);
+                    int progress = calculateProgress(typedText);
+                    clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
+                }
             }
         });
 
@@ -85,8 +103,25 @@ public class GameScreen extends JPanel {
 
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typedText);
+
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + accuracy + "%");
+    }
+
+    /**
+     * Updates the display. This method should be called to reflect changes in the player's typing performance on UI.
+     *
+     * @param wpm the current wpm
+     * @param progress the current progress
+     * @param accuracy the current accuracy
+     */
+    public void updateProgressDisplay (int wpm, int progress, double accuracy) {
+        // Directly update UI components based on received data
+        SwingUtilities.invokeLater(() -> {
+            wpmLabel.setText("WPM: " + wpm);
+            accuracyLabel.setText("Accuracy: " + accuracy + "%");
+            // Optionally, update a progress bar or similar component if it exists
+        });
     }
 
     private int calculateProgress(String typedText) {
@@ -134,10 +169,13 @@ public class GameScreen extends JPanel {
     private void showResults() {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
+        int timeSpent = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
+
+        clientController.endGame(currentPlayer.getName(), timeSpent, wpm, accuracy);
 
         // Transition to the result screen
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy));
+        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, clientController));
         frame.revalidate();
         frame.repaint();
     }

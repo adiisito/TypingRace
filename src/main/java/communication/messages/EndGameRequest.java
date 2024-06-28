@@ -7,12 +7,14 @@ public class EndGameRequest{
     private String playerName;
     private int time;
     private int wpm;
+    private double accuracy;
 
 
-    public EndGameRequest(String playerName, int time, int wpm) {
+    public EndGameRequest(String playerName, int time, int wpm, double accuracy) {
         this.playerName = playerName;
         this.time = time;
         this.wpm = wpm;
+        this.accuracy = accuracy;
     }
 
     public String getMessageType() {

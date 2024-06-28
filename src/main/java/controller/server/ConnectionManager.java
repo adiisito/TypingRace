@@ -136,7 +136,7 @@ public class ConnectionManager extends Thread {
      * @param request which sended from client.
      */
     private void handleUpdateProgressRequest(UpdateProgressRequest request) {
-        GameStateNotification notification = new GameStateNotification(request.getPlayerName(), request.getProgress(),request.getTime(), request.getWpm());
+        GameStateNotification notification = new GameStateNotification(request.getPlayerName(), request.getProgress(),request.getTime(), request.getWpm(), request.getAccuracy());
         // 4 parameters were needed here: wpm, name, progress and time.
         String json = moshi.adapter(GameStateNotification.class).toJson(notification);
         broadcastMessage(json);
