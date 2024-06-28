@@ -19,6 +19,7 @@ public class GameScreen extends JPanel {
     private Timer timer;
     private JLabel timeLabel;
     private ArrayList<CarShape> carShapes;
+    private JPanel carPanel;
 
     private long startTime;
     private int keyPressCount;
@@ -37,7 +38,7 @@ public class GameScreen extends JPanel {
         setLayout(new BorderLayout());
 
         // Creating a Car Panel
-        JPanel carPanel = new JPanel() {
+        carPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -184,20 +185,20 @@ public class GameScreen extends JPanel {
             timeLabel.setText("TIME: " + remainingTime); // /1000 to convert it into seconds
             if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
-                showResults();
+                showResults(elapsedTime);
                 timer.stop();
             }
         });
         timer.start();
     }
 
-    private void showResults() {
+    private void showResults(long elapsedTime) {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
         // Transition to the result screen
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy));
+        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel));
         frame.revalidate();
         frame.repaint();
     }
