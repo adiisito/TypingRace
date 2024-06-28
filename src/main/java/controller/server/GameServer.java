@@ -11,6 +11,7 @@ import java.util.List;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
+import game.GameState;
 import game.TypingPlayer;
 
 
@@ -19,7 +20,10 @@ public class GameServer {
     private static final int SERVER_PORT = 8080;
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
+    private List<String> playerNamesList;
+            //= new ArrayList<>();
     private final Moshi moshi;
+
 
     /**
      * Constructor for GameServer class.
@@ -29,10 +33,29 @@ public class GameServer {
     public GameServer() throws IOException {
         this.serverSocket = new ServerSocket(SERVER_PORT);
         this.connectionManagers = new ArrayList<>();
+        this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
 
         System.out.println("Server started, listening...");
     }
+
+    /**
+     * StartGame method.
+     *
+     * After checked that all the players are there
+     */
+    public void startGame() {
+        System.out.println("Starting the game...");
+        List<TypingPlayer> players = new ArrayList<>();
+        for (String playerName : playerNamesList) {
+            players.add(new TypingPlayer(playerName));
+        }
+        GameStartNotification gameStartNotification = new GameStartNotification(players, 0); // Assuming the first player is the current player
+
+        String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
+        broadcastMessage(json);
+    }
+
 
     /**
      * Start Method for server socket.
@@ -54,8 +77,73 @@ public class GameServer {
             }
         }
     }
+    /**
+     * Method broadcast each message.
+     *
+     * @param message the string received from connection managers.
+     */
+    public void broadcastMessage(String message) {
+        for (ConnectionManager connectionManager : connectionManagers) {
+            connectionManager.sendMessage(message);
+        }
+    }
+
+    /**
+     * Method for update the player List.
+     */
+    public void broadcastPlayerListUpdate() {
+        PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(playerNamesList);
+        String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
+        broadcastMessage(json);
+    }
+
+    /**
+     * Method for adding new players in the server.
+     *
+     * @param playerName id of the player.
+*/
+    public synchronized void addPlayer(String playerName) {
+        if (!playerNamesList.contains(playerName)) {
+            playerNamesList.add(playerName);
+            broadcastPlayerListUpdate();
+        }
+        if (playerNamesList.size() == 6) {
+            broadcastLobbyFull();
+        }
+    }
+
+    /**
+     * Method to remind when lobby is full.
+     */
+    private void broadcastLobbyFull() {
+        LobbyFullNotification lobbyFullNotification = new LobbyFullNotification();
+        String json = moshi.adapter(LobbyFullNotification.class).toJson(lobbyFullNotification);
+        broadcastMessage(json);
+    }
+
+    /**
+     * Method for remove the players from the server.
+     *
+     * @param name id of the player.
+     */
+    public void removePlayer(String name) {
+        playerNamesList.remove(name);
+
+        PlayerLeftNotification leftNotification = new PlayerLeftNotification(name);
+        String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
+        broadcastMessage(json);
+        broadcastPlayerListUpdate();
+    }
 
 
+    /**
+     * Gets connection managers.
+     *
+     * @return the connection managers
+     */
+    public List<ConnectionManager> getConnectionManagers() {
+        return connectionManagers;
+    }
 
 
     /**
