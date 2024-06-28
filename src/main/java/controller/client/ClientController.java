@@ -161,7 +161,8 @@ public class ClientController {
         SwingUtilities.invokeLater(() -> {
            if (view != null && notification.getPlayerName().equals(currentPlayer.getName())) {
                // update the game screen with the latest progress, wpm, and accuracy
-               view.updateProgressDisplay(notification.getWpm(), notification.getProgress(), notification.getAccuracy());
+               view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+               view.updateCarPositions(notification.getProgress());
            }
         });
 

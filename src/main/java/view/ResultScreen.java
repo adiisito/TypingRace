@@ -21,6 +21,7 @@ public class ResultScreen extends JPanel {
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
+        this.clientController = clientController;
         initComponents();
     }
 
