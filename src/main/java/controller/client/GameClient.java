@@ -78,8 +78,10 @@ public class GameClient {
         } else if (messageType.equals("PlayerLeftNotification")) {
             PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
             clientController.handlePlayerLeft(leftNotification);
+        } else if (messageType.equals("UpdateProgressNotification")) {
+
         }
-        // @yili and @yuanyuan, please add other notifs according to the need!
+
     }
 
     public void sendMessage(String message) {
