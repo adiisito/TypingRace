@@ -1,11 +1,12 @@
 package game;
 
-public abstract class Car implements Player {
+public class Car implements Player {
     private String name;
     private int wpm;
     private int progress;
 
-    public Car(TypingPlayer player) {
+
+    public Car(Player player) {
         this.wpm = 0;
         this.progress = 0;
     }
@@ -34,4 +35,11 @@ public abstract class Car implements Player {
     public void setProgress(int progress) {
         this.progress = progress;
     }
+
+    @Override
+    public void receiveProgressUpdate(String playerName, int progress, int wpm) {
+        System.out.println(playerName + " progress: " + progress + ", WPM: " + wpm);
+    }
+
+
 }

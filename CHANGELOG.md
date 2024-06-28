@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Methods in _ClientController_: HandlePlayerListUpdate(), HandleLobbyFull()
 - Methods in _GameServer_: BroadcastPlayerListUpdate(), BroadcastMessages(), BroadcastLobbyFull()
 - New Text samples in _Text Class_
+- Car Shape Class
 
 ### Changed
 - GUI Class(with Main Method)
@@ -74,3 +75,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GameClient
 - ClientController
 
+- GameScreen
