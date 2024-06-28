@@ -69,6 +69,7 @@ public class GameScreen extends JPanel {
                     int progress = calculateProgress(typedText);
                     clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
                 }
+
             }
         });
 
@@ -103,7 +104,6 @@ public class GameScreen extends JPanel {
 
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typedText);
-
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + accuracy + "%");
     }
@@ -123,6 +123,7 @@ public class GameScreen extends JPanel {
             // Optionally, update a progress bar or similar component if it exists
         });
     }
+
 
     private int calculateProgress(String typedText) {
         int length = Math.min(typedText.length(), providedText.length());
@@ -169,9 +170,6 @@ public class GameScreen extends JPanel {
     private void showResults() {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
-        int timeSpent = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
-
-        clientController.endGame(currentPlayer.getName(), timeSpent, wpm, accuracy);
 
         // Transition to the result screen
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
