@@ -35,10 +35,15 @@ public class ResultScreen extends JPanel {
         wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         wpmLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel accuracyLabel = new JLabel("Accuracy: " + accuracy + "%");
+        JLabel accuracyLabel = new JLabel("Accuracy: " + String.format("%.2f", accuracy) + "%");
         accuracyLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         accuracyLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JPanel statsPanel = new JPanel();
+        statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
+        statsPanel.add(wpmLabel);
+        statsPanel.add(accuracyLabel);
 
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Serif", Font.PLAIN, 16));
@@ -67,8 +72,7 @@ public class ResultScreen extends JPanel {
         buttonPanel.add(exitButton);
 
         add(resultLabel, BorderLayout.NORTH);
-        add(wpmLabel, BorderLayout.CENTER);
-        add(accuracyLabel, BorderLayout.SOUTH);
+        add(statsPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 }

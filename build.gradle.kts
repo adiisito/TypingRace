@@ -12,6 +12,13 @@ dependencies {
   // Use JUnit Jupiter for testing.
   testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
 
+  // Add Moshi dependencies
+  implementation("com.squareup.moshi:moshi:1.12.0")
+  implementation("com.squareup.moshi:moshi-adapters:1.12.0")
+  implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
+
+  implementation ("org.json:json:20240303")
+
 }
 
 application {
@@ -41,5 +48,3 @@ tasks.named<Test>("test") {
 //       "javafx.media",
 //       "javafx.web")
 // }
-
-

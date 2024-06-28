@@ -27,9 +27,7 @@ public class Text {
             "The Space Race between the United States and the Soviet Union during the Cold War led to significant advancements in space exploration. The U.S. landing of Apollo 11 on the moon in 1969 was a landmark achievement in human history."
     };
 
-
     public static String getRandomText() {
-        //gets a random texts from the list of texts we have
         return TextLibrary[new Random().nextInt(TextLibrary.length)];
     }
 }
