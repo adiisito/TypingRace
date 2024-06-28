@@ -69,6 +69,7 @@ public class ClientController {
 
         this.gameState.setPlayers(players);
         this.view = new GameScreen(this.gameState, players.get(gameStartNotification.getIndexOfCurrentPlayer()));
+        this.gameState.startNewRace();
         SwingUtilities.invokeLater(() -> {
             clientWindow.setContentPane(view);
             clientWindow.revalidate();

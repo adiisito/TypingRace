@@ -18,6 +18,7 @@ public class GameScreen extends JPanel {
     private JLabel providedTextLabel;
     private String providedText;
     private Timer timer;
+    private long startTime;
 
     public GameScreen(GameState gameState, Player currentPlayer) {
         this.gameState = gameState;
@@ -113,8 +114,10 @@ public class GameScreen extends JPanel {
     }
 
     private void startTimer() {
+        startTime = System.currentTimeMillis();  // set startTime when the game actually begins
+        gameState.setStartTime(startTime);
         timer = new Timer(1000, e -> {
-            long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
+            long elapsedTime = System.currentTimeMillis() - startTime;
             if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
                 showResults();
