@@ -2,6 +2,7 @@ package view;
 
 import controller.client.ClientController;
 import game.GameState;
+import game.Player;
 import game.TypingPlayer;
 
 import javax.swing.*;
@@ -106,6 +107,9 @@ public class ClientWindow extends JFrame {
             playerListModel.clear();
             for (String player : players) {
                 playerListModel.addElement(player);
+                Player newPlayer = new TypingPlayer(player);
+                gameState.addPlayer(newPlayer);
+
             }
         });
     }

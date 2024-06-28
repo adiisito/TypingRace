@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
+    private final ArrayList<CarShape> carShapes;
     private GameState gameState;
     private Player currentPlayer;
     private JTextArea typingArea;
@@ -19,7 +20,8 @@ public class GameScreen extends JPanel {
     private String providedText;
     private Timer timer;
     private JLabel timeLabel;
-    private ArrayList<CarShape> carShapes;
+    private java.util.List<Player> racers;
+
 
     private long startTime;
     private int keyPressCount;
@@ -33,6 +35,7 @@ public class GameScreen extends JPanel {
         this.keyPressCount = 0;
         this.carShapes = new ArrayList<>();
         this.clientController = clientController;
+        this.racers=gameState.getPlayers();
 
         initComponents();
     }
@@ -50,10 +53,12 @@ public class GameScreen extends JPanel {
                 }
             }
         };
-        carPanel.setPreferredSize(new Dimension(1000, 400));
+        carPanel.setPreferredSize(new Dimension(600, 400));
         add(carPanel, BorderLayout.NORTH);
 
-        addCar(currentPlayer);
+
+
+        //addCar(currentPlayer);
 
         timeLabel = new JLabel("TIME");
         timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
@@ -84,7 +89,7 @@ public class GameScreen extends JPanel {
             public void keyReleased(KeyEvent e) {
                 keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
-                // updateProgress(typedText);
+                 updateProgress(typedText);
 
                 // Calculate the time elapsed since the start of typing
                 int timeElapsed = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
@@ -126,15 +131,20 @@ public class GameScreen extends JPanel {
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
         startTimer();
+        addCars();
     }
 
-    public void addCar(Player newPlayer) {
-        Car newCar = new Car(newPlayer);
-        gameState.addPlayer(newPlayer);
-        CarShape newCarShape = new CarShape(newCar, 0, carShapes.size() * 40, 50, 30);
-        carShapes.add(newCarShape);
-        repaint();
-    }
+    public void addCars() {
+        for (Player player : racers){
+            Car newCar = new Car(player);
+            //gameState.addPlayer(player);
+            CarShape newCarShape = new CarShape(newCar, 0, carShapes.size() * 40, 50, 30);
+            carShapes.add(newCarShape);
+            repaint();
+        }
+
+        }
+
 
     private void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
@@ -147,7 +157,7 @@ public class GameScreen extends JPanel {
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
 
-        // updateCarPositions();
+         updateCarPositions(calculateProgress(typedText));
     }
 
     /**

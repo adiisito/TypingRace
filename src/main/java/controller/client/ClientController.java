@@ -2,17 +2,7 @@
 package controller.client;
 
 import com.squareup.moshi.Moshi;
-import communication.messages.EndGameRequest;
-import communication.messages.GameEndNotification;
-import communication.messages.GameStartNotification;
-import communication.messages.GameStateNotification;
-import communication.messages.JoinGameRequest;
-import communication.messages.PlayerLeftRequest;
-import communication.messages.PlayerListUpdateNotification;
-import communication.messages.PlayerLeftNotification;
-import communication.messages.MessageType;
-import communication.messages.StartGameRequest;
-import communication.messages.UpdateProgressRequest;
+import communication.messages.*;
 import game.GameState;
 import game.TypingPlayer;
 import view.ClientWindow;
@@ -21,7 +11,6 @@ import view.GameScreen;
 
 import javax.swing.*;
 import java.io.IOException;
-//import java.util.ArrayList;
 import java.util.List;
 
 /**
