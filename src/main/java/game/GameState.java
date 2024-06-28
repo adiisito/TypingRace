@@ -7,7 +7,6 @@ public class GameState {
     private ArrayList<Player> players;
     private Race currentRace;
     private long startTime;
-    private String sharedText; // Add this field to store the shared text
 
     public GameState() {
         players = new ArrayList<>();
@@ -58,13 +57,5 @@ public class GameState {
 
     public void setStartTime(long startTime) {
         this.startTime = startTime;
-    }
-
-    public String getSharedText() {
-        return sharedText;
-    }
-
-    public void setSharedText(String sharedText) {
-        this.sharedText = sharedText;
     }
 }

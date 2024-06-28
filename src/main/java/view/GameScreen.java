@@ -18,11 +18,14 @@ public class GameScreen extends JPanel {
     private JLabel providedTextLabel;
     private String providedText;
     private Timer timer;
+    private long startTime;
+    private int keyPressCount;
 
     public GameScreen(GameState gameState, Player currentPlayer) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.providedText = Text.getRandomText();
+        this.keyPressCount = 0;
         initComponents();
     }
 
@@ -40,18 +43,14 @@ public class GameScreen extends JPanel {
         typingArea.setWrapStyleWord(true);
         typingArea.setFont(new Font("Serif", Font.PLAIN, 18));
         typingArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        typingArea.setEditable(true); //it's basically used, so that the typing area could be edited(means you can see what you are typing)
+        typingArea.setEditable(true);
 
         typingArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
                 updateProgress(typedText);
-
-                if (typedText.equals(providedText)) {
-                    timer.stop();
-                    showResults();
-                }
             }
         });
 
@@ -63,15 +62,13 @@ public class GameScreen extends JPanel {
         textPanel.add(providedTextLabel);
         textPanel.add(scrollPane);
 
-        //This is the basic info panel, we shall change it later.
-        // We shall stick to our Mockup Plan and make it look cooler. ;)
+        // Info panel for WPM and Accuracy
         wpmLabel = new JLabel("WPM: 0");
         accuracyLabel = new JLabel("Accuracy: 100%");
         JPanel infoPanel = new JPanel(new GridLayout(1, 2));
         infoPanel.add(wpmLabel);
         infoPanel.add(accuracyLabel);
 
-        // Positioning; The basic implementation!
         add(textPanel, BorderLayout.CENTER);
         add(infoPanel, BorderLayout.SOUTH);
 
@@ -82,16 +79,16 @@ public class GameScreen extends JPanel {
 
     private void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
-        gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
+        if (gameState.getCurrentRace() != null) {
+            gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
+        }
 
-        int wpm = currentPlayer.getWpm();
+        int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typedText);
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + accuracy + "%");
     }
 
-    //This method is actually not very useful, I wanted to play with the calculations and see, that's why added it here.
-    //Feel free to modify/Change and Remove it.
     private int calculateProgress(String typedText) {
         int length = Math.min(typedText.length(), providedText.length());
         int correctChars = 0;
@@ -112,9 +109,19 @@ public class GameScreen extends JPanel {
         return totalTypedChars == 0 ? 100 : (correctChars * 100.0) / totalTypedChars;
     }
 
+    private int calculateWpm() {
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        double elapsedMinutes = elapsedTime / 60000.0;
+        int totalWords = keyPressCount / 5;
+        return (int) (totalWords / elapsedMinutes);
+    }
+
     private void startTimer() {
+        startTime = System.currentTimeMillis();
+        gameState.setStartTime(startTime);
+
         timer = new Timer(1000, e -> {
-            long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
+            long elapsedTime = System.currentTimeMillis() - startTime;
             if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
                 showResults();
@@ -125,10 +132,10 @@ public class GameScreen extends JPanel {
     }
 
     private void showResults() {
-        int wpm = currentPlayer.getWpm();
+        int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
-        // Switch to the result screen
+        // Transition to the result screen
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy));
         frame.revalidate();
