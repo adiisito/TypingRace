@@ -155,36 +155,35 @@ public class GameScreen extends JPanel {
         add(carPanel, BorderLayout.WEST);
         add(mainBottomPanel, BorderLayout.SOUTH);
 
-
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
         startTimer();
-        addCars();
+        // addCars();
     }
 
     public void addCars() {
         for (Player player : racers){
             Car newCar = new Car(player);
             //gameState.addPlayer(player);
-            CarShape newCarShape = new CarShape(newCar, 0, carShapes.size() * 40 + 20, 30, 30);
+            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 50, 30);
             carShapes.add(newCarShape);
             repaint();
         }
+    }
 
-        }
 
     private void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
-            if (gameState.getCurrentRace() != null) {
-                gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
-                updateCarPositions(progress);
-
-
-            int wpm = calculateWpm();
-            double accuracy = calculateAccuracy(typedText);
-            wpmLabel.setText("WPM: " + wpm);
-            accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
+        if (gameState.getCurrentRace() != null) {
+            gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
         }
+
+        int wpm = calculateWpm();
+        double accuracy = calculateAccuracy(typedText);
+        wpmLabel.setText("WPM: " + wpm);
+        accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
+
+        // updateCarPositions(currentPlayer.getName(), calculateProgress(typedText));
     }
 
     /**
@@ -203,11 +202,16 @@ public class GameScreen extends JPanel {
     }
 
 
-    public void updateCarPositions(int progress) {
-        // Update the car positions based on the players' progress
-        int playerIndex = gameState.getPlayers().indexOf(currentPlayer);
-        if (playerIndex < carShapes.size()) {
-            carShapes.get(playerIndex).setX(progress * 5);
+    public void updateCarPositions(String playerName, int progress) {
+
+        for (CarShape carShape : carShapes) {
+
+            if (carShape.getPlayer().getName().equals(playerName)) {
+                int newXposition = progress * 5;
+                carShape.setX(newXposition);
+                System.out.println("Updating car position for player " + playerName + " to " + newXposition);
+                break;
+            }
         }
         repaint();
     }
@@ -268,3 +272,4 @@ public class GameScreen extends JPanel {
         frame.repaint();
     }
 }
+
