@@ -7,6 +7,7 @@ public class Car implements Player {
 
 
     public Car(Player player) {
+        this.name= player.getName();
         this.wpm = 0;
         this.progress = 0;
     }

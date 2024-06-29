@@ -175,11 +175,10 @@ public class GameScreen extends JPanel {
 
     private void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
-        for (Player player : racers) {
             if (gameState.getCurrentRace() != null) {
-                gameState.getCurrentRace().updatePlayerProgress(player, progress);
-                //updateCarPositions();
-            }
+                gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
+                updateCarPositions(progress);
+
 
             int wpm = calculateWpm();
             double accuracy = calculateAccuracy(typedText);
@@ -204,12 +203,11 @@ public class GameScreen extends JPanel {
     }
 
 
-    public void updateCarPositions() {
+    public void updateCarPositions(int progress) {
         // Update the car positions based on the players' progress
-        for (int i = 0; i < gameState.getPlayers().size(); i++) {
-            Player player = gameState.getPlayers().get(i);
-            int progress = player.getProgress();
-            carShapes.get(i).setX(progress * 5);
+        int playerIndex = gameState.getPlayers().indexOf(currentPlayer);
+        if (playerIndex < carShapes.size()) {
+            carShapes.get(playerIndex).setX(progress * 5);
         }
         repaint();
     }
