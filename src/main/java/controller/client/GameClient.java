@@ -28,10 +28,14 @@ public class GameClient {
 
     private final Moshi moshi;
 
-    public GameClient(ClientController clientController) throws IOException {
+    private String playerName;
+
+    public GameClient(ClientController clientController, String playerName) throws IOException {
         this.moshi = new Moshi.Builder().build();
 
         this.clientController = clientController;
+
+        this.playerName = playerName;
 
         try {
             this.socket = new Socket(HOSTNAME, SERVER_PORT);
@@ -90,5 +94,10 @@ public class GameClient {
         System.out.println("Sending JSON: " + message);
         out.println(message);
         out.flush();
+    }
+
+    public String getPlayerName() {
+
+        return clientController.getCurrentPlayerName();
     }
 }

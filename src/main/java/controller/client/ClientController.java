@@ -4,6 +4,7 @@ package controller.client;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
 import game.GameState;
+import game.Player;
 import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
@@ -40,11 +41,13 @@ public class ClientController {
      * @throws IOException if there is an issue sending the join game request over the network
      */
     public void joinGame(String playerName) throws IOException {
-        this.clientModel = new GameClient(this);
+        this.clientModel = new GameClient(this, playerName);
         JoinGameRequest joinRequest = new JoinGameRequest(playerName);
         String json = moshi.adapter(JoinGameRequest.class).toJson(joinRequest);
         clientModel.sendMessage(json);
         System.out.println("Welcome " + playerName + ". You joined the game");
+
+        this.currentPlayer = new TypingPlayer(playerName);
     }
 
     /**
@@ -66,22 +69,31 @@ public class ClientController {
      *
      * @param gameStartNotification the game start notification
      */
-    public void handleGameStart(GameStartNotification gameStartNotification) {
+    public synchronized void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
         this.gameState = new GameState();
         this.numPlayers = gameStartNotification.getNumPlayers();
 
-        this.currentPlayer = players.get(gameStartNotification.getIndexOfCurrentPlayer());
+        // this.currentPlayer = players.get(gameStartNotification.getIndexOfCurrentPlayer());
+
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getName().equals(this.clientModel.getPlayerName())) {
+                this.currentPlayer = players.get(i);
+                break;
+            }
+        }
+
 
         this.gameState.setPlayers(players);
         this.view = new GameScreen(this.gameState, currentPlayer, this);
         this.gameState.startNewRace();
+        this.view.addCars();
         SwingUtilities.invokeLater(() -> {
             clientWindow.setContentPane(view);
             clientWindow.revalidate();
             clientWindow.repaint();
         });
-        System.out.println("Game started");
+        System.out.println("Game started with " + players.size() + " players.");
     }
 
     /**
@@ -135,7 +147,7 @@ public class ClientController {
      */
     public void updateProgress (String playerName, int wpm, int progress, double accuracy, int time){
 
-        UpdateProgressRequest progressRequest = new UpdateProgressRequest(playerName, wpm, progress, accuracy,time);
+        UpdateProgressRequest progressRequest = new UpdateProgressRequest(currentPlayer.getName(), wpm, progress, accuracy,time);
         String json = moshi.adapter(UpdateProgressRequest.class).toJson(progressRequest);
         clientModel.sendMessage(json);
     }
@@ -147,14 +159,33 @@ public class ClientController {
      */
     public void handleProgress (GameStateNotification notification) {
 
+        view.updateCarPositions(notification.getPlayerName(), notification.getProgress());
         SwingUtilities.invokeLater(() -> {
-           if (view != null && notification.getPlayerName().equals(currentPlayer.getName())) {
-               // update the game screen with the latest progress, wpm, and accuracy
-               view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
-               view.updateCarPositions(notification.getProgress());
-           }
-        });
 
+            if (view != null) {
+
+                Player player = findPlayerByName(notification.getPlayerName());
+
+                if (player != null) {
+                    // update the game screen with the latest progress, wpm, and accuracy
+                    currentPlayer.setProgress(notification.getProgress());
+                    currentPlayer.setWpm(notification.getWpm());
+                    currentPlayer.setAccuracy(notification.getAccuracy());
+                    view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+
+                }
+
+            }
+        });
+    }
+
+    public Player findPlayerByName (String playerName) {
+        for (Player player: gameState.getPlayers()) {
+            if (player.getName().equals(playerName)) {
+                return player;
+            }
+        }
+        return null;
     }
 
     /**
@@ -190,5 +221,9 @@ public class ClientController {
      */
     void handleLobbyFull() {
         SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
+    }
+
+    public String getCurrentPlayerName() {
+        return currentPlayer.getName();
     }
 }

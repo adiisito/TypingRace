@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class GameScreen extends JPanel {
     private final ArrayList<CarShape> carShapes;
@@ -89,7 +90,7 @@ public class GameScreen extends JPanel {
             public void keyReleased(KeyEvent e) {
                 keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
-                 updateProgress(typedText);
+                updateProgress(typedText);
 
                 // Calculate the time elapsed since the start of typing
                 int timeElapsed = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
@@ -131,19 +132,18 @@ public class GameScreen extends JPanel {
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
         startTimer();
-        addCars();
+        // addCars();
     }
 
     public void addCars() {
         for (Player player : racers){
             Car newCar = new Car(player);
             //gameState.addPlayer(player);
-            CarShape newCarShape = new CarShape(newCar, 0, carShapes.size() * 40, 50, 30);
+            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 50, 30);
             carShapes.add(newCarShape);
             repaint();
         }
-
-        }
+    }
 
 
     private void updateProgress(String typedText) {
@@ -157,7 +157,7 @@ public class GameScreen extends JPanel {
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
 
-         updateCarPositions(calculateProgress(typedText));
+        // updateCarPositions(currentPlayer.getName(), calculateProgress(typedText));
     }
 
     /**
@@ -176,16 +176,15 @@ public class GameScreen extends JPanel {
     }
 
 
-    public void updateCarPositions(int progress) {
-        // Update the car positions based on the players' progress
-        int playerCount = gameState.getPlayers().size();
-        for (int i = 0; i < playerCount; i++) {
-            if (i < carShapes.size()) {
-                Player player = gameState.getPlayers().get(i);
-                // int progress = player.getProgress();
-                int newXPosition = progress * 5;
-                System.out.println("Updating car position for player " + player.getName() + " to " + newXPosition);
-                carShapes.get(i).setX(newXPosition); // Update the x position based on progress
+    public void updateCarPositions(String playerName, int progress) {
+
+        for (CarShape carShape : carShapes) {
+
+            if (carShape.getPlayer().getName().equals(playerName)) {
+                int newXposition = progress * 5;
+                carShape.setX(newXposition);
+                System.out.println("Updating car position for player " + playerName + " to " + newXposition);
+                break;
             }
         }
         repaint();

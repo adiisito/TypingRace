@@ -8,12 +8,12 @@ public class GameStartNotification {
 
     private String messageType = "GameStartNotification";
     private List<TypingPlayer> players;
-    private int indexOfCurrentPlayer;
+    // private int indexOfCurrentPlayer;
     // private int numPlayers;
 
-    public GameStartNotification(List<TypingPlayer> players, int indexOfCurrentPlayer) {
+    public GameStartNotification(List<TypingPlayer> players) {
         this.players = players;
-        this.indexOfCurrentPlayer = indexOfCurrentPlayer;
+        //this.indexOfCurrentPlayer = indexOfCurrentPlayer;
         // this.numPlayers = numPlayers;
     }
 
@@ -29,9 +29,9 @@ public class GameStartNotification {
         return players;
     }
 
-    public int getIndexOfCurrentPlayer() {
-        return indexOfCurrentPlayer;
-    }
+//    public int getIndexOfCurrentPlayer() {
+//        return indexOfCurrentPlayer;
+//    }
 
     public int getNumPlayers() {
         return players.size();
