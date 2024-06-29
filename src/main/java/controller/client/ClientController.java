@@ -171,7 +171,11 @@ public class ClientController {
                     currentPlayer.setProgress(notification.getProgress());
                     currentPlayer.setWpm(notification.getWpm());
                     currentPlayer.setAccuracy(notification.getAccuracy());
-                    view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+
+                    if (notification.getPlayerName().equals(currentPlayer.getName())) {
+                        view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+                    }
+
 
                 }
 
