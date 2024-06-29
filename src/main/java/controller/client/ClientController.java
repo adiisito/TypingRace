@@ -151,7 +151,7 @@ public class ClientController {
            if (view != null && notification.getPlayerName().equals(currentPlayer.getName())) {
                // update the game screen with the latest progress, wpm, and accuracy
                view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
-               view.updateCarPositions(notification.getProgress());
+               view.updateCarPositions();
            }
         });
 

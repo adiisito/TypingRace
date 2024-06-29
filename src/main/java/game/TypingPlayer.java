@@ -40,4 +40,6 @@ public class TypingPlayer implements Player {
     public void receiveProgressUpdate(String playerName, int progress, int wpm) {
         System.out.println(playerName + " progress: " + progress + ", WPM: " + wpm);
     }
+
+
 }

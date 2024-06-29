@@ -7,5 +7,6 @@ public interface Player {
     int getProgress();
     void setProgress(int progress);
     void receiveProgressUpdate(String playerName, int progress, int wpm);
+
 }
 

@@ -53,13 +53,14 @@ public class GameScreen extends JPanel {
                 }
             }
         };
+        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         carPanel.setPreferredSize(new Dimension(600, 400));
         add(carPanel, BorderLayout.NORTH);
 
 
 
         //addCar(currentPlayer);
-
+        /*
         timeLabel = new JLabel("TIME");
         timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
         timeLabel.setOpaque(true);
@@ -69,12 +70,16 @@ public class GameScreen extends JPanel {
         JPanel timePanel = new JPanel(new BorderLayout());
         timePanel.add(timeLabel, BorderLayout.NORTH);
         add(timePanel, BorderLayout.EAST);
+         */
 
         // Provided text label
-        providedTextLabel = new JLabel("<html><p style=\"width: 600px;\">" + providedText + "</p></html>");
+        providedTextLabel = new JLabel("<html><p style=\"width: 350px;\">" + providedText + "</p></html>");
         providedTextLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         providedTextLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         providedTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        providedTextLabel.setPreferredSize(new Dimension(450, 150));
+
+
 
         // Typing area
         typingArea = new JTextArea();
@@ -82,14 +87,17 @@ public class GameScreen extends JPanel {
         typingArea.setWrapStyleWord(true);
         typingArea.setFont(new Font("Serif", Font.PLAIN, 18));
         typingArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        typingArea.setPreferredSize(providedTextLabel.getPreferredSize());
         typingArea.setEditable(true);
+
 
         typingArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
-                 updateProgress(typedText);
+                updateProgress(typedText);
+
 
                 // Calculate the time elapsed since the start of typing
                 int timeElapsed = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
@@ -110,23 +118,43 @@ public class GameScreen extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(typingArea);
 
-        // Panel for provided text and typing area
-        JPanel textPanel = new JPanel(new BorderLayout());
-        textPanel.add(providedTextLabel, BorderLayout.NORTH);
-        textPanel.add(scrollPane, BorderLayout.CENTER);
-        add(textPanel, BorderLayout.CENTER);
-
-        // This is the basic info panel, we shall change it later.
-        // We shall stick to our Mockup Plan and make it look cooler. ;)
+        // WPM label
         wpmLabel = new JLabel("WPM: 0");
-        accuracyLabel = new JLabel("Accuracy: 100%");
-        JPanel infoPanel = new JPanel(new GridLayout(1, 2));
-        infoPanel.add(wpmLabel);
-        infoPanel.add(accuracyLabel);
+        wpmLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JPanel infoPanelWrapper = new JPanel(new BorderLayout());
-        infoPanelWrapper.add(infoPanel, BorderLayout.SOUTH);
-        add(infoPanelWrapper, BorderLayout.SOUTH);
+        // Accuracy label
+        accuracyLabel = new JLabel("Accuracy: 100%");
+        accuracyLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Time label
+        timeLabel = new JLabel("TIME");
+        timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        timeLabel.setOpaque(true);
+        timeLabel.setBackground(Color.GREEN);
+        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // Layout for provided text and typing area
+        JPanel textTypingPanel = new JPanel(new BorderLayout());
+        textTypingPanel.add(providedTextLabel, BorderLayout.NORTH);
+        textTypingPanel.add(scrollPane, BorderLayout.CENTER);
+
+        // Panel for accuracy and timer
+        JPanel accuracyTimePanel = new JPanel(new GridLayout(2, 1));
+        accuracyTimePanel.add(accuracyLabel);
+        accuracyTimePanel.add(timeLabel);
+
+        // Main bottom panel
+        JPanel mainBottomPanel = new JPanel(new BorderLayout());
+        mainBottomPanel.add(textTypingPanel, BorderLayout.WEST);
+        mainBottomPanel.add(accuracyTimePanel, BorderLayout.EAST);
+
+        // Final layout
+        add(wpmLabel, BorderLayout.EAST);
+        add(carPanel, BorderLayout.WEST);
+        add(mainBottomPanel, BorderLayout.SOUTH);
+
 
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
@@ -138,26 +166,26 @@ public class GameScreen extends JPanel {
         for (Player player : racers){
             Car newCar = new Car(player);
             //gameState.addPlayer(player);
-            CarShape newCarShape = new CarShape(newCar, 0, carShapes.size() * 40, 50, 30);
+            CarShape newCarShape = new CarShape(newCar, 0, carShapes.size() * 40 + 20, 30, 30);
             carShapes.add(newCarShape);
             repaint();
         }
 
         }
 
-
     private void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
-        if (gameState.getCurrentRace() != null) {
-            gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
+        for (Player player : racers) {
+            if (gameState.getCurrentRace() != null) {
+                gameState.getCurrentRace().updatePlayerProgress(player, progress);
+                //updateCarPositions();
+            }
+
+            int wpm = calculateWpm();
+            double accuracy = calculateAccuracy(typedText);
+            wpmLabel.setText("WPM: " + wpm);
+            accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
         }
-
-        int wpm = calculateWpm();
-        double accuracy = calculateAccuracy(typedText);
-        wpmLabel.setText("WPM: " + wpm);
-        accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
-
-         updateCarPositions(calculateProgress(typedText));
     }
 
     /**
@@ -176,17 +204,12 @@ public class GameScreen extends JPanel {
     }
 
 
-    public void updateCarPositions(int progress) {
+    public void updateCarPositions() {
         // Update the car positions based on the players' progress
-        int playerCount = gameState.getPlayers().size();
-        for (int i = 0; i < playerCount; i++) {
-            if (i < carShapes.size()) {
-                Player player = gameState.getPlayers().get(i);
-                // int progress = player.getProgress();
-                int newXPosition = progress * 5;
-                System.out.println("Updating car position for player " + player.getName() + " to " + newXPosition);
-                carShapes.get(i).setX(newXPosition); // Update the x position based on progress
-            }
+        for (int i = 0; i < gameState.getPlayers().size(); i++) {
+            Player player = gameState.getPlayers().get(i);
+            int progress = player.getProgress();
+            carShapes.get(i).setX(progress * 5);
         }
         repaint();
     }
