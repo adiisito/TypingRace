@@ -109,7 +109,7 @@ public class GUI extends JFrame {
 
     public void updateAllClientWindowsWithPlayerLeft(String playerName) {
         for (ClientWindow clientWindow : clientWindows) {
-            clientWindow.showPlayerLeftMessage(playerName);
+            // clientWindow.showPlayerLeftMessage(playerName);
         }
         List<String> playerNames = new ArrayList<>();
         for (ClientWindow clientWindow : clientWindows) {

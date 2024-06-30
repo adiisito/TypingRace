@@ -89,6 +89,7 @@ public class ConnectionManager extends Thread {
         MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
         String messageType = messageObject.getMessageType();
 
+        System.out.println("MessageType in processMessage is " + messageType);
 
         if (messageType.equals("JoinGameRequest")) {
             System.out.println("Received JoinGameRequest");
@@ -100,8 +101,9 @@ public class ConnectionManager extends Thread {
             server.startGame();
 
         } else if (messageType.equals("PlayerLeftRequest")) {
-            PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
-            server.removePlayer(leftNotification.getPlayerName());
+            PlayerLeftRequest leftRequest = moshi.adapter(PlayerLeftRequest.class).fromJson(message);
+            System.out.println("Player leaving: " + leftRequest.getPlayerName());
+            server.removePlayer(leftRequest.getPlayerName());
 
         } else if(messageType.equals("UpdateProgressRequest")){
             UpdateProgressRequest updateProgressRequest = moshi.adapter(UpdateProgressRequest.class).fromJson(message);
@@ -113,8 +115,6 @@ public class ConnectionManager extends Thread {
         }
         // @yili and @yuanyuan, please add other notifs according to the need!
     }
-
-
 
     /**
      * Handle update progress request.

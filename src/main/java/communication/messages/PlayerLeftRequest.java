@@ -2,7 +2,7 @@ package communication.messages;
 
 public class PlayerLeftRequest {
 
-    private final String message = "PlayerLeftRequest";
+    private final String messageType = "PlayerLeftRequest";
 
     private String playerName;
 
@@ -11,7 +11,7 @@ public class PlayerLeftRequest {
     }
 
     public String getMessage() {
-        return message;
+        return messageType;
     }
 
     public String getPlayerName() {
