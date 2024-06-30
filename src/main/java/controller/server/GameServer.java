@@ -97,20 +97,6 @@ public class GameServer {
         broadcastMessage(json);
     }
 
-    /**
-     * Handle join game request.
-     *
-     * @param request from client
-     */
-    synchronized void handleJoinGameRequest(JoinGameRequest request) {
-        // this.playerName = request.getPlayerName();
-        System.out.println("Handle join game request for " + request.getPlayerName());
-        addPlayer(request.getPlayerName());
-
-        PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), connectionManagers.size());
-        String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
-        broadcastMessage(json);
-    }
 
     /**
      * Method for adding new players in the server.
