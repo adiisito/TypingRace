@@ -10,15 +10,18 @@ public class CarShape {
     private String name;
     private Car car;
 
+    private Player player;
 
 
-    public CarShape(Car car,int x, int y, int width, int height) {
+
+    public CarShape(Car car, Player player, int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.name = car.getName();
         this.car = car;
+        this.player = player;
     }
 
 
@@ -36,6 +39,12 @@ public class CarShape {
         }
     }
 
+    public Player getPlayer() {
+        return player;
+    }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
 }
 

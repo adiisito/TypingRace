@@ -125,7 +125,7 @@ public class ConnectionManager extends Thread {
         GameStateNotification notification = new GameStateNotification(request.getPlayerName(), request.getWpm(), request.getTime(), request.getProgress(), request.getAccuracy());
         // 4 parameters were needed here: wpm, name, progress and time.
         String json = moshi.adapter(GameStateNotification.class).toJson(notification);
-        broadcastMessage(json);
+        server.broadcastMessage(json);
     }
 
     /**
@@ -141,20 +141,7 @@ public class ConnectionManager extends Thread {
 
         GameEndNotification notification = new GameEndNotification(request.getPlayerName(), request.getTime(), request.getWpm());
         String json = moshi.adapter(GameEndNotification.class).toJson(notification);
-        broadcastMessage(json);
-    }
-
-
-
-    /**
-     * Method broadcast each message.
-     *
-     * @param message the string received from connection managers.
-     */
-    public void broadcastMessage(String message) {
-        for (ConnectionManager connectionManager : connectionManagers) {
-            connectionManager.sendMessage(message);
-        }
+        server.broadcastMessage(json);
     }
 
     /**
@@ -163,7 +150,7 @@ public class ConnectionManager extends Thread {
     public void broadcastPlayerListUpdate() {
         PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(playerNames);
         String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
-        broadcastMessage(json);
+        server.broadcastMessage(json);
     }
 
 
@@ -173,7 +160,7 @@ public class ConnectionManager extends Thread {
     private void broadcastLobbyFull() {
         LobbyFullNotification lobbyFullNotification = new LobbyFullNotification();
         String json = moshi.adapter(LobbyFullNotification.class).toJson(lobbyFullNotification);
-        broadcastMessage(json);
+        server.broadcastMessage(json);
     }
 
     /**

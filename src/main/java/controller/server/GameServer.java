@@ -50,7 +50,7 @@ public class GameServer {
         for (String playerName : playerNamesList) {
             players.add(new TypingPlayer(playerName));
         }
-        GameStartNotification gameStartNotification = new GameStartNotification(players, 0); // Assuming the first player is the current player
+        GameStartNotification gameStartNotification = new GameStartNotification(players);
 
         String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
         broadcastMessage(json);
@@ -94,6 +94,21 @@ public class GameServer {
     public void broadcastPlayerListUpdate() {
         PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(new ArrayList<>(playerNamesList));
         String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
+        broadcastMessage(json);
+    }
+
+    /**
+     * Handle join game request.
+     *
+     * @param request from client
+     */
+    synchronized void handleJoinGameRequest(JoinGameRequest request) {
+        // this.playerName = request.getPlayerName();
+        System.out.println("Handle join game request for " + request.getPlayerName());
+        addPlayer(request.getPlayerName());
+
+        PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), connectionManagers.size());
+        String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
         broadcastMessage(json);
     }
 

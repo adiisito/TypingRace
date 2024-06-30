@@ -9,7 +9,6 @@ public class GameStateNotification {
     double accuracy;
 
 
-
     public GameStateNotification(String playerName, int wpm, int time, int progress, double accuracy) {
         this.playerName = playerName;
         this.wpm = wpm;
