@@ -92,7 +92,7 @@ public class GameServer {
      * Method for update the player List.
      */
     public void broadcastPlayerListUpdate() {
-        PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(playerNamesList);
+        PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(new ArrayList<>(playerNamesList));
         String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
         broadcastMessage(json);
     }
@@ -128,13 +128,28 @@ public class GameServer {
      */
     public void removePlayer(String name) {
         playerNamesList.remove(name);
+        int numPlayer = playerNamesList.size();
 
-        PlayerLeftNotification leftNotification = new PlayerLeftNotification(name);
+        PlayerLeftNotification leftNotification = new PlayerLeftNotification(name, numPlayer);
         String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
         broadcastMessage(json);
         broadcastPlayerListUpdate();
     }
 
+    /**
+     * Handle join game request.
+     *
+     * @param request from client
+     */
+    synchronized void handleJoinGameRequest(JoinGameRequest request) {
+        // this.playerName = request.getPlayerName();
+        System.out.println("Handle join game request for " + request.getPlayerName());
+        addPlayer(request.getPlayerName());
+
+        PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), connectionManagers.size());
+        String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
+        broadcastMessage(json);
+    }
 
     /**
      * Gets connection managers.

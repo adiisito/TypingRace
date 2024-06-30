@@ -104,7 +104,7 @@ public class ClientController {
     public void handlePlayerLeft(PlayerLeftNotification leftNotification) {
         SwingUtilities.invokeLater(() -> {
             String playerName = leftNotification.getPlayerName();
-            clientWindow.showPlayerLeftMessage(playerName);
+            // clientWindow.showPlayerLeftMessage(playerName);
             if (mainGui != null) {
                 mainGui.updateAllClientWindowsWithPlayerLeft(playerName);
             }
