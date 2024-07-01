@@ -104,7 +104,9 @@ public class GameScreen extends JPanel {
                     startTimer();
                     timerStarted = true;
                 }
-                keyPressCount++; // Increment key press count on each key release
+                if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
+                    keyPressCount++; // Increment key press count on each key release
+                }
                 String typedText = typingArea.getText();
                 updateProgress(typedText);
 
@@ -242,7 +244,13 @@ public class GameScreen extends JPanel {
     }
 
     private double calculateAccuracy(String typedText) {
-        int correctChars = calculateProgress(typedText);
+        int maxLength = Math.min(typedText.length(), providedText.length());
+        int correctChars = 0;
+        for (int i = 0; i < maxLength; i++) {
+            if (typedText.charAt(i) == providedText.charAt(i)) {
+                correctChars++;
+            }
+        }
         return keyPressCount == 0 ? 100 : (correctChars * 100.0) / keyPressCount;
     }
 
