@@ -6,27 +6,51 @@ import game.Player;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 
+
+/**
+ * Creates a result screen when the game ends.
+ */
 public class ResultScreen extends JPanel {
-    private int wpm;
-    private double accuracy;
-    private GameState gameState;
-    private Player currentPlayer;
+    private final int wpm;
+    private final double accuracy;
+    private final GameState gameState;
+    private final Player currentPlayer;
+    private final JPanel endState;
+    private final double time;
     private ClientController clientController;
 
-    public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy, ClientController clientController) {
+    /**
+     * Creates a window with game results.
+     * @param gameState the final game state
+     * @param currentPlayer the player to display the window for
+     * @param wpm the words per minute counter
+     * @param accuracy the amount of correctly typed characters
+     * @param elapsedTime the time spent in the game
+     * @param carPanel the final race track display
+     * @param clientController the client controller for this window
+     */
+    public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy,
+                        long elapsedTime, JPanel carPanel, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
+        this.endState = carPanel;
+        this.time = (double) elapsedTime / 1000;
         this.clientController = clientController;
         initComponents();
     }
 
+    /**
+     * Builds the results screen for the GUI.
+     */
     private void initComponents() {
         setLayout(new BorderLayout());
+
+        setBackground(new Color(57, 174, 207));
 
         JLabel resultLabel = new JLabel("Game Over");
         resultLabel.setFont(new Font("Serif", Font.BOLD, 24));
@@ -38,44 +62,64 @@ public class ResultScreen extends JPanel {
         wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         wpmLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel accuracyLabel = new JLabel("Accuracy: " + String.format("%.2f", accuracy) + "%");
+        JLabel accuracyLabel = new JLabel("Accuracy: " + accuracy + "%");
         accuracyLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         accuracyLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JPanel statsPanel = new JPanel();
-        statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
-        statsPanel.add(wpmLabel);
-        statsPanel.add(accuracyLabel);
-
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Serif", Font.PLAIN, 16));
-        newGameButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameState.startNewRace();
-                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(ResultScreen.this);
-                frame.setContentPane(new GameScreen(gameState, currentPlayer, clientController));
-                frame.revalidate();
-                frame.repaint();
-            }
+        newGameButton.addActionListener(e -> {
+            gameState.startNewRace();
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(ResultScreen.this);
+            frame.setContentPane(new GameScreen(gameState, currentPlayer, clientController));
+            frame.revalidate();
+            frame.repaint();
         });
 
         JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Serif", Font.PLAIN, 16));
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitButton.addActionListener(e -> System.exit(0));
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(newGameButton);
         buttonPanel.add(exitButton);
 
+        String stat_text = "<html>WPM: " + wpm + " <br> Accuracy: " +
+                (double) Math.round(accuracy * 100) / 100 + "% <br> Time: " + time + " seconds </html>";
+        JLabel stats = new JLabel(stat_text);
+        stats.setFont(new Font("Consolas", Font.PLAIN, 24));
+        stats.setOpaque(true);
+        stats.setBackground(new Color(184, 112, 247));
+
+        //Create a sorted results table
+        String[] header = { "Rank", "Player", "WPM" };
+        List<Player> players = gameState.getPlayers();
+        Set<Player> set = new HashSet<>(players);
+        players.clear();
+        players.addAll(set);
+        players.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));
+        String[][] tableContent = new String[players.size()][players.size()];
+        for (int i = 0; i < players.size(); i++) {
+            Player rankPlayer = players.get(i);
+            tableContent[i] = new String[]{String.valueOf(i + 1), rankPlayer.getName(), String.valueOf(rankPlayer.getWpm())};
+        }
+        JTable playerTable = new JTable(tableContent, header);
+        JScrollPane tableScrollPane = new JScrollPane(playerTable);
+        tableScrollPane.setPreferredSize(new Dimension(300, 300));
+
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.add(tableScrollPane, BorderLayout.SOUTH);
+
+        endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
+        JPanel westPanel = new JPanel(new BorderLayout());
+        westPanel.add(stats, BorderLayout.SOUTH);
+        westPanel.add(endState, BorderLayout.NORTH);
+
         add(resultLabel, BorderLayout.NORTH);
-        add(statsPanel, BorderLayout.CENTER);
+        add(tablePanel, BorderLayout.EAST);
+        add(westPanel, BorderLayout.WEST);
+        add(accuracyLabel, BorderLayout.SOUTH);
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 }

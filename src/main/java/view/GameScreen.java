@@ -21,6 +21,7 @@ public class GameScreen extends JPanel {
     private Timer timer;
     private JLabel timeLabel;
     private java.util.List<Player> racers;
+    private JPanel carPanel;
 
 
     private long startTime;
@@ -44,7 +45,7 @@ public class GameScreen extends JPanel {
         setLayout(new BorderLayout());
 
         // Creating a Car Panel
-        JPanel carPanel = new JPanel() {
+        carPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -94,6 +95,10 @@ public class GameScreen extends JPanel {
         typingArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                //Don't count the input if it's not a character
+                if(e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
+                    return;
+                }
                 keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
                 updateProgress(typedText);
@@ -105,7 +110,7 @@ public class GameScreen extends JPanel {
                 // If the ending conditions are not met, it sends the current wpm, accuracy and progress to the server.
                 if (typedText.equals(providedText) || timeElapsed >= 60) {
                     timer.stop();
-                    showResults();
+                    showResults(timeElapsed);
                 } else {
                     int wpm = calculateWpm();
                     double accuracy = calculateAccuracy(typedText);
@@ -232,9 +237,7 @@ public class GameScreen extends JPanel {
 
     private double calculateAccuracy(String typedText) {
         int correctChars = calculateProgress(typedText);
-        int totalTypedChars = typedText.length();
-
-        return totalTypedChars == 0 ? 100 : (correctChars * 100.0) / totalTypedChars;
+        return keyPressCount == 0 ? 100 : (correctChars * 100.0) / keyPressCount;
     }
 
     private int calculateWpm() {
@@ -254,20 +257,20 @@ public class GameScreen extends JPanel {
             timeLabel.setText("TIME: " + remainingTime); // /1000 to convert it into seconds
             if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
-                showResults();
+                showResults(elapsedTime);
                 timer.stop();
             }
         });
         timer.start();
     }
 
-    private void showResults() {
+    private void showResults(long elapsedTime) {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
         // Transition to the result screen
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, clientController));
+        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
         frame.revalidate();
         frame.repaint();
     }
