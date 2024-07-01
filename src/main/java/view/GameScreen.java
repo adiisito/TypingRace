@@ -22,6 +22,7 @@ public class GameScreen extends JPanel {
     private JLabel timeLabel;
     private java.util.List<Player> racers;
     private JPanel carPanel;
+    private boolean timerStarted = false;
 
 
     private long startTime;
@@ -78,7 +79,7 @@ public class GameScreen extends JPanel {
         providedTextLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         providedTextLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         providedTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        providedTextLabel.setPreferredSize(new Dimension(450, 150));
+        providedTextLabel.setPreferredSize(new Dimension(500, 150));
 
 
 
@@ -98,6 +99,10 @@ public class GameScreen extends JPanel {
                 //Don't count the input if it's not a character
                 if(e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
                     return;
+                }
+                if (!timerStarted) {
+                    startTimer();
+                    timerStarted = true;
                 }
                 keyPressCount++; // Increment key press count on each key release
                 String typedText = typingArea.getText();
@@ -162,7 +167,8 @@ public class GameScreen extends JPanel {
 
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
-        startTimer();
+        // Timer now starts when the first key is pressed
+        // startTimer();
         // addCars();
     }
 
