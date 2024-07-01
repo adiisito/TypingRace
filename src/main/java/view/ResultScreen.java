@@ -6,6 +6,7 @@ import game.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -71,10 +72,15 @@ public class ResultScreen extends JPanel {
         newGameButton.setFont(new Font("Serif", Font.PLAIN, 16));
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
-            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(ResultScreen.this);
-            frame.setContentPane(new GameScreen(gameState, currentPlayer, clientController));
-            frame.revalidate();
-            frame.repaint();
+          try {
+              JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+              frame.setVisible(false);
+              frame = new ClientWindow(currentPlayer.getName(), clientController.getMainGui());
+              frame.revalidate();
+              frame.repaint();
+          } catch (IOException ex) {
+            throw new RuntimeException(ex);
+          }
         });
 
         JButton exitButton = new JButton("Exit");

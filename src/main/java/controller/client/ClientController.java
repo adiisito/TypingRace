@@ -230,4 +230,8 @@ public class ClientController {
     public String getCurrentPlayerName() {
         return currentPlayer.getName();
     }
+
+    public GUI getMainGui() {
+        return mainGui;
+    }
 }
