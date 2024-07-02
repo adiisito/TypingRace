@@ -67,7 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed the Message class into  MessageType class, no more need to extends from this class
 
 ### Removed
-
 - all extends are removed
 
 ### Fixed
@@ -76,3 +75,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ClientController
 
 - GameScreen
+
+## 28.Jun.2024
+### Added
+- ClientController, GameScreen: Update the player's game status on the GameScreen with the player's progress in the GameStateNotification sent by the server.
+
+## 29.Jun.2024
+### Fixed
+- Server: Player will be deleted from player list when they exit, also in playing window and ranking window.
+- GameScreen: Fixed car movement and the screen synchronization
+
+## 02.Jul.2024
+### Added
+- ClientController, ResultScreen: Update the personal result screen according to the result in GameEndedNotification.
+
+### Fixed
+- Server, GameScreen: Every client game screen will show the same text at the same round.
+- ClientView, ConnectionManager: Fixed that no player list shows in lobby after the click of start new game and player cannot be deleted when they exit.
+
+

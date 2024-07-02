@@ -8,5 +8,7 @@ public interface Player {
     void setProgress(int progress);
     void receiveProgressUpdate(String playerName, int progress, int wpm);
     String getId();
+    void setAccuracy(double accuracy);
+    double getAccuracy();
 }
 

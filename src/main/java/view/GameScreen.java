@@ -282,11 +282,20 @@ public class GameScreen extends JPanel {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
-        // Transition to the result screen
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
-        frame.revalidate();
-        frame.repaint();
+        currentPlayer.setWpm(wpm);
+        currentPlayer.setAccuracy(accuracy);
+
+        clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
+
+        // use clientcontroller to transition to the result screen
+//        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+//        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
+//        frame.revalidate();
+//        frame.repaint();
+    }
+
+    public JPanel getCarPanel() {
+        return this.carPanel;
     }
 }
 

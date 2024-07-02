@@ -3,6 +3,7 @@ package controller.client;
 
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
+import game.Game;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
@@ -10,6 +11,7 @@ import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
+import view.ResultScreen;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -207,7 +209,7 @@ public class ClientController {
      * @param wpm words per minute rate
      * @param accuracy the end accuracy
      */
-    public void endGame(String playerName, int time, int wpm, double accuracy) {
+    public void endGame(String playerName, long time, int wpm, double accuracy) {
 
         EndGameRequest request = new EndGameRequest(playerName, time, wpm, accuracy);
         String json = moshi.adapter(EndGameRequest.class).toJson(request);
@@ -222,9 +224,28 @@ public class ClientController {
      */
     public void handleGameEnd (GameEndNotification notification) {
 
-        System.out.println("Game ended");
+        if (notification.getPlayerName().equals(currentPlayer.getName())) {
+            currentPlayer.setWpm(notification.getWpm());
+            currentPlayer.setAccuracy(notification.getAccuracy());
 
+            SwingUtilities.invokeLater(() -> {
+                //update result screen
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(view);
+                frame.setContentPane(new ResultScreen(
+                        gameState,
+                        currentPlayer,
+                        notification.getWpm(),
+                        notification.getAccuracy(),
+                        notification.getTime(),
+                        view.getCarPanel(),
+                        this
+                ));
+                frame.revalidate();
+                frame.repaint();
+            });
 
+            System.out.println("Game ended");
+        }
     }
 
     /**

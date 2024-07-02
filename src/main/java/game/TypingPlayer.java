@@ -22,6 +22,7 @@ public class TypingPlayer implements Player {
         return accuracy;
     }
 
+    @Override
     public void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
     }
