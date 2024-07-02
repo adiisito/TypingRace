@@ -106,8 +106,12 @@ public class GameServer {
     public synchronized void addPlayer(String playerName) {
         if (!playerNamesList.contains(playerName)) {
             playerNamesList.add(playerName);
-            broadcastPlayerListUpdate();
+            System.out.println("Player added: " + playerName);
+
+        }else {
+            System.out.println("Player rejoined: " + playerName);
         }
+        broadcastPlayerListUpdate();
         if (playerNamesList.size() == 6) {
             broadcastLobbyFull();
         }
@@ -129,12 +133,14 @@ public class GameServer {
      */
     public void removePlayer(String name) {
         playerNamesList.remove(name);
+
         int numPlayer = playerNamesList.size();
 
         PlayerLeftNotification leftNotification = new PlayerLeftNotification(name, numPlayer);
         String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
         broadcastMessage(json);
         broadcastPlayerListUpdate();
+        System.out.println("Player " + name + " has left the game.");
     }
 
     /**
