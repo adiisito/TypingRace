@@ -3,6 +3,7 @@ package controller.client;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import communication.messages.GameEndNotification;
 import communication.messages.GameStartNotification;
 import communication.messages.GameStateNotification;
 import communication.messages.MessageType;
@@ -72,6 +73,8 @@ public class GameClient {
         MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
         String messageType = messageObject.getMessageType();
 
+        System.out.println("received messageType: " + messageType);
+
         if (messageType.equals("PlayerListUpdateNotification")) {
             PlayerListUpdateNotification updateNotification = moshi.adapter(PlayerListUpdateNotification.class).fromJson(message);
             clientController.handlePlayerListUpdate(updateNotification);
@@ -86,6 +89,9 @@ public class GameClient {
         } else if (messageType.equals("GameStateNotification")) {
             GameStateNotification stateNotification = moshi.adapter(GameStateNotification.class).fromJson(message);
             clientController.handleProgress(stateNotification);
+        } else if (messageType.equals("GameEndNotification")) {
+            GameEndNotification gameEndNotification = moshi.adapter(GameEndNotification.class).fromJson(message);
+            clientController.handleGameEnd(gameEndNotification);
         }
 
     }

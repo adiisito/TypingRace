@@ -1,7 +1,7 @@
 package communication.messages;
 
 public class GameEndNotification {
-    String messageType =" GameEndNotification";
+    String messageType = "GameEndNotification";
     String playerName;
     int wpm;
     long time;

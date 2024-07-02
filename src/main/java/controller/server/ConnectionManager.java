@@ -131,7 +131,7 @@ public class ConnectionManager extends Thread {
      *
      * @param request messages from client.
      */
-    private void handleEndGameRequest(EndGameRequest request) {
+    public void handleEndGameRequest(EndGameRequest request) {
         this.playerName = request.getPlayerName();
         // server.
         recordPlayerFinished(playerName);

@@ -3,6 +3,7 @@ package controller.client;
 
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
+import game.Game;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
@@ -10,6 +11,7 @@ import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
+import view.ResultScreen;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -220,11 +222,30 @@ public class ClientController {
      *
      * @param notification game end notification
      */
-    public void handleGameEnd (AllEndedNotification notification) {
+    public void handleGameEnd (GameEndNotification notification) {
 
-        System.out.println("Game ended");
+        if (notification.getPlayerName().equals(currentPlayer.getName())) {
+            currentPlayer.setWpm(notification.getWpm());
+            currentPlayer.setAccuracy(notification.getAccuracy());
 
+            SwingUtilities.invokeLater(() -> {
+                //update result screen
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(view);
+                frame.setContentPane(new ResultScreen(
+                        gameState,
+                        currentPlayer,
+                        notification.getWpm(),
+                        notification.getAccuracy(),
+                        notification.getTime(),
+                        view.getCarPanel(),
+                        this
+                ));
+                frame.revalidate();
+                frame.repaint();
+            });
 
+            System.out.println("Game ended");
+        }
     }
 
     /**

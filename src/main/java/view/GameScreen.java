@@ -287,11 +287,15 @@ public class GameScreen extends JPanel {
 
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
 
-        // Transition to the result screen
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
-        frame.revalidate();
-        frame.repaint();
+        // use clientcontroller to transition to the result screen
+//        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+//        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
+//        frame.revalidate();
+//        frame.repaint();
+    }
+
+    public JPanel getCarPanel() {
+        return this.carPanel;
     }
 }
 
