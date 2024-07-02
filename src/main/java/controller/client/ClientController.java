@@ -61,6 +61,7 @@ public class ClientController {
     public void handlePlayerListUpdate(PlayerListUpdateNotification updateNotification) {
         List<String> playerNames = updateNotification.getPlayerNames();
         clientWindow.updatePlayerList(playerNames);
+        System.out.println("Updated player list in client: " + playerNames);
         mainGui.updateAllClientWindows(playerNames);
         if (playerNames.size() == 6) {
             clientWindow.showLobbyFullButton();
@@ -111,6 +112,7 @@ public class ClientController {
         String json = moshi.adapter(PlayerLeftRequest.class).toJson(request);
 
         clientModel.sendMessage(json);
+        System.out.println("Player " + playerName + " is leaving the game.");
     }
 
     /**
