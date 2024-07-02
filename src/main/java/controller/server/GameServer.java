@@ -39,7 +39,7 @@ public class GameServer {
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
 
-        this.providedText = Text.getRandomText();
+
 
         System.out.println("Server started, listening...");
     }
@@ -55,6 +55,7 @@ public class GameServer {
         for (String playerName : playerNamesList) {
             players.add(new TypingPlayer(playerName));
         }
+        this.providedText = Text.getRandomText();
         GameStartNotification gameStartNotification = new GameStartNotification(players, providedText);
 
         String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);

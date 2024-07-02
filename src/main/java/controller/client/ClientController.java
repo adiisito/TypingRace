@@ -6,6 +6,7 @@ import communication.messages.*;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
+import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
