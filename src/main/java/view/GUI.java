@@ -95,7 +95,7 @@ public class GUI extends JFrame {
         try {
             ClientWindow clientWindow = new ClientWindow(playerName, this);
             clientWindows.add(clientWindow);
-            // this.dispose();
+            this.dispose();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Failed to create new client", "Error", JOptionPane.ERROR_MESSAGE);
         }
