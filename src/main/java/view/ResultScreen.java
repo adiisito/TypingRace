@@ -85,7 +85,11 @@ public class ResultScreen extends JPanel {
 
         JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Serif", Font.PLAIN, 16));
-        exitButton.addActionListener(e -> System.exit(0));
+        exitButton.addActionListener(e -> {
+            clientController.playerLeft(currentPlayer.getName());
+            System.exit(0);
+
+        });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(newGameButton);
