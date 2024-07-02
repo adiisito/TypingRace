@@ -205,6 +205,8 @@ public class GameScreen extends JPanel {
         updateCarPositions(currentPlayer.getName(), progress);
     }
 
+    //The updated method is at the end to find!
+
 //    /**
 //     * Updates the display. This method should be called to reflect changes in the player's typing performance on UI.
 //     *
