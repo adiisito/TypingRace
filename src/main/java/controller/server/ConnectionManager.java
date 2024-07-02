@@ -10,13 +10,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
-import game.Player;
-import game.TypingPlayer;
 
 /**
  * The type Connection manager.
@@ -139,29 +136,11 @@ public class ConnectionManager extends Thread {
         // server.
         recordPlayerFinished(playerName);
 
-        GameEndNotification notification = new GameEndNotification(request.getPlayerName(), request.getTime(), request.getWpm());
+        GameEndNotification notification = new GameEndNotification(request.getPlayerName(), request.getWpm(), request.getAccuracy(), request.getTime());
         String json = moshi.adapter(GameEndNotification.class).toJson(notification);
         server.broadcastMessage(json);
     }
 
-    /**
-     * Method for update the player List.
-     */
-    public void broadcastPlayerListUpdate() {
-        PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(playerNames);
-        String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
-        server.broadcastMessage(json);
-    }
-
-
-    /**
-     * Method to remind when lobby is full.
-     */
-    private void broadcastLobbyFull() {
-        LobbyFullNotification lobbyFullNotification = new LobbyFullNotification();
-        String json = moshi.adapter(LobbyFullNotification.class).toJson(lobbyFullNotification);
-        server.broadcastMessage(json);
-    }
 
     /**
      * Method to count the number of players who had finished their games.

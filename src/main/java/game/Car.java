@@ -6,6 +6,7 @@ public class Car implements Player {
     private int wpm;
     private int progress;
     private Player player;
+    private double accuracy;
 
 
     public Car(Player player) {
@@ -50,6 +51,16 @@ public class Car implements Player {
     @Override
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    @Override
+    public double getAccuracy() {
+        return this.accuracy;
     }
 
     public Player getPlayer() {
