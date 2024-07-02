@@ -6,6 +6,7 @@ import communication.messages.*;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
+import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -28,6 +29,8 @@ public class ClientController {
     private ClientWindow clientWindow;
     private GUI mainGui;
     private TypingPlayer currentPlayer;
+
+    private String providedText;
 
     public ClientController(ClientWindow clientWindow, GUI mainGui) {
         this.clientWindow = clientWindow;
@@ -73,6 +76,8 @@ public class ClientController {
         this.players = gameStartNotification.getPlayers();
         this.gameState = new GameState();
         this.numPlayers = gameStartNotification.getNumPlayers();
+        this.providedText = gameStartNotification.getText();
+
 
         // this.currentPlayer = players.get(gameStartNotification.getIndexOfCurrentPlayer());
 
@@ -85,7 +90,7 @@ public class ClientController {
 
 
         this.gameState.setPlayers(players);
-        this.view = new GameScreen(this.gameState, currentPlayer, this);
+        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText);
         this.gameState.startNewRace();
         this.view.addCars();
         SwingUtilities.invokeLater(() -> {

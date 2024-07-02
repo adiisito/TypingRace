@@ -30,10 +30,10 @@ public class GameScreen extends JPanel {
 
     private ClientController clientController;
 
-    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController) {
+    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
-        this.providedText = Text.getRandomText();
+        this.providedText = providedText;
         this.keyPressCount = 0;
         this.carShapes = new ArrayList<>();
         this.clientController = clientController;

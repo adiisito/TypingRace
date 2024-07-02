@@ -12,6 +12,7 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
 import game.GameState;
+import game.Text;
 import game.TypingPlayer;
 
 
@@ -24,6 +25,8 @@ public class GameServer {
             //= new ArrayList<>();
     private final Moshi moshi;
 
+    private String providedText;
+
 
     /**
      * Constructor for GameServer class.
@@ -35,6 +38,8 @@ public class GameServer {
         this.connectionManagers = new ArrayList<>();
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
+
+
 
         System.out.println("Server started, listening...");
     }
@@ -50,7 +55,8 @@ public class GameServer {
         for (String playerName : playerNamesList) {
             players.add(new TypingPlayer(playerName));
         }
-        GameStartNotification gameStartNotification = new GameStartNotification(players);
+        this.providedText = Text.getRandomText();
+        GameStartNotification gameStartNotification = new GameStartNotification(players, providedText);
 
         String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
         broadcastMessage(json);
