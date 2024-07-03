@@ -1,6 +1,6 @@
-package controller;
+package controller.client;
 
-public interface Client {
+public interface IClient {
     /**
      * Sends a request to join the game.
      */
