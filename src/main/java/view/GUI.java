@@ -122,4 +122,5 @@ public class GUI extends JFrame {
         GameState gameState = new GameState();
         SwingUtilities.invokeLater(() -> new GUI(gameState).setVisible(true));
     }
+
 }
