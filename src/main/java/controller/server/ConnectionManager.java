@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.squareup.moshi.JsonAdapter;
@@ -30,6 +32,7 @@ public class ConnectionManager extends Thread {
     private final List<ConnectionManager> connectionManagers;
     private final List<String> playerNames;
     private final Set<String> finishedPlayers = new HashSet<>();
+    private final Map<String, Integer> playerResults;
 
     /**
      * Instantiates a new Connection manager.
@@ -46,6 +49,7 @@ public class ConnectionManager extends Thread {
         this.messageAdapter = moshi.adapter(MessageType.class);
         this.connectionManagers = new ArrayList<>();
         this.playerNames = new ArrayList<>();
+        this.playerResults = new HashMap<>();
     }
 
     /**

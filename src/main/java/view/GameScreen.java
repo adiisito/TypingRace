@@ -274,7 +274,7 @@ public class GameScreen extends JPanel {
         gameState.setStartTime(startTime);
 
         timer = new Timer(1000, e -> {
-            long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
+            int elapsedTime = (int) (System.currentTimeMillis() - gameState.getStartTime());
             int remainingTime = (int) (60 - (elapsedTime / 1000));
             timeLabel.setText("TIME: " + remainingTime); // /1000 to convert it into seconds
             if (elapsedTime >= 60000) {
@@ -286,7 +286,7 @@ public class GameScreen extends JPanel {
         timer.start();
     }
 
-    private void showResults(long elapsedTime) {
+    private void showResults(int elapsedTime) {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 

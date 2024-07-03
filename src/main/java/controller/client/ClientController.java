@@ -209,7 +209,7 @@ public class ClientController {
      * @param wpm words per minute rate
      * @param accuracy the end accuracy
      */
-    public void endGame(String playerName, long time, int wpm, double accuracy) {
+    public void endGame(String playerName, int time, int wpm, double accuracy) {
 
         EndGameRequest request = new EndGameRequest(playerName, time, wpm, accuracy);
         String json = moshi.adapter(EndGameRequest.class).toJson(request);

@@ -20,7 +20,7 @@ public class ResultScreen extends JPanel {
     private final GameState gameState;
     private final Player currentPlayer;
     private final JPanel endState;
-    private final double time;
+    private final int time;
     private ClientController clientController;
 
     /**
@@ -34,13 +34,14 @@ public class ResultScreen extends JPanel {
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy,
-                        long elapsedTime, JPanel carPanel, ClientController clientController) {
+                        int elapsedTime, JPanel carPanel, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
         this.endState = carPanel;
-        this.time = (double) elapsedTime / 1000;
+        // this.time = (double) elapsedTime / 1000;
+        this.time = elapsedTime;
         this.clientController = clientController;
         initComponents();
     }
