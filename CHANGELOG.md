@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Game Interface
 - Player Interface
 - GameState
+- Typed Text Colors according to if its correct or incorrect & BG Color
+- WPM & Accuracy
 
 
 
