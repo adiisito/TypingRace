@@ -4,11 +4,11 @@ public class GameEndNotification {
     String messageType = "GameEndNotification";
     String playerName;
     int wpm;
-    long time;
+    int time;
     double accuracy;
 
 
-    public GameEndNotification(String playerName, int wpm, double accuracy, long time) {
+    public GameEndNotification(String playerName, int wpm, double accuracy, int time) {
         this.playerName = playerName;
         this.wpm = wpm;
         this.accuracy = accuracy;
@@ -32,7 +32,7 @@ public class GameEndNotification {
         return wpm;
     }
 
-    public long getTime() {
+    public int getTime() {
         return time;
     }
 
@@ -44,7 +44,7 @@ public class GameEndNotification {
         this.wpm = wpm;
     }
 
-    public void setTime(long time) {
+    public void setTime(int time) {
         this.time = time;
     }
 

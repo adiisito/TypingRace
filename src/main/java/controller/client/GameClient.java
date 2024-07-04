@@ -3,6 +3,7 @@ package controller.client;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.GameEndNotification;
 import communication.messages.GameStartNotification;
 import communication.messages.GameStateNotification;
@@ -10,6 +11,9 @@ import communication.messages.MessageType;
 import communication.messages.PlayerListUpdateNotification;
 import communication.messages.PlayerLeftNotification;
 import communication.messages.LobbyFullNotification;
+import communication.messages.RankingNotification;
+import game.Player;
+import game.TypingPlayer;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -92,6 +96,9 @@ public class GameClient {
         } else if (messageType.equals("GameEndNotification")) {
             GameEndNotification gameEndNotification = moshi.adapter(GameEndNotification.class).fromJson(message);
             clientController.handleGameEnd(gameEndNotification);
+        } else if (messageType.equals("RankingNotification")) {
+            RankingNotification rankingNotification = moshi.adapter(RankingNotification.class).fromJson(message);
+            clientController.handleRankingNotification(rankingNotification);
         }
 
     }

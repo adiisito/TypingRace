@@ -5,12 +5,12 @@ public class EndGameRequest{
     private final String messageType = "EndGameRequest";
 
     private String playerName;
-    private long time;
+    private int time;
     private int wpm;
     private double accuracy;
 
 
-    public EndGameRequest(String playerName, long time, int wpm, double accuracy) {
+    public EndGameRequest(String playerName, int time, int wpm, double accuracy) {
         this.playerName = playerName;
         this.time = time;
         this.wpm = wpm;
@@ -37,11 +37,11 @@ public class EndGameRequest{
         this.playerName = playerName;
     }
 
-    public long getTime() {
+    public int getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(int time) {
         this.time = time;
     }
 
