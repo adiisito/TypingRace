@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-# NETWORK
+# NETWORK 
 ## 22.Jun.2024
 ### Added
 
@@ -94,5 +94,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Server, GameScreen: Every client game screen will show the same text at the same round.
 - ClientView, ConnectionManager: Fixed that no player list shows in lobby after the click of start new game and player cannot be deleted when they exit.
+
+## 04.Jul.2024
+### Added 
+- new MessageTypes: UpdateRankingRequest, RankingNotification
+- hostname -> online multiplayer mode on different computers
+
+### Fixed
+- ranking list update and synchronization
+
 
 
