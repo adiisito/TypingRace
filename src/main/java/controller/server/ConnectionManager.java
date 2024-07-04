@@ -113,6 +113,11 @@ public class ConnectionManager extends Thread {
         } else if (messageType.equals("EndGameRequest")){
             EndGameRequest endGameRequest = moshi.adapter(EndGameRequest.class).fromJson(message);
             handleEndGameRequest(endGameRequest);
+
+        } else if(messageType.equals("UpdateRankingRequest")){
+            UpdateRankingRequest rankingRequest = moshi.adapter(UpdateRankingRequest.class).fromJson(message);
+            handleUpdateRankingRequest(rankingRequest);
+
         }
     }
 
@@ -157,6 +162,13 @@ public class ConnectionManager extends Thread {
         }
     }
 
+    public void handleUpdateRankingRequest(UpdateRankingRequest request) {
+
+        RankingNotification notification = new RankingNotification(request.getPlayers());
+        String json = moshi.adapter(RankingNotification.class).toJson(notification);
+        server.broadcastMessage(json);
+
+    }
     /**
      * Broadcast to send on the finish window.
      * TODO waiting for the implementation of client to send the result
