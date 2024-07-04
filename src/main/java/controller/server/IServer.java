@@ -1,15 +1,17 @@
-package controller;
+package controller.server;
 
-public interface Server {
+import controller.client.IClient;
+
+public interface IServer {
     /**
      * Processes the request from a client to join the game.
      */
-    void processJoinGameRequest(Client client);
+    void processJoinGameRequest(IClient client);
 
     /**
      * Sends a notification to all clients that a player has joined.
      */
-    void sendPlayerJoinedNotification(Client client);
+    void sendPlayerJoinedNotification(IClient client);
 
     /**
      * Sends a notification to all clients that all players have joined.
@@ -29,7 +31,7 @@ public interface Server {
     /**
      * Processes the progress update request from a client.
      */
-    void processUpdateProgressRequest(Client client, int progress);
+    void processUpdateProgressRequest(IClient client, int progress);
 
     /**
      * Sends a notification to all clients with the current game state.
@@ -39,7 +41,7 @@ public interface Server {
     /**
      * Processes the request from a client to end the game.
      */
-    void processEndGameRequest(Client client);
+    void processEndGameRequest(IClient client);
 
     /**
      * Sends a notification to all clients that the game has ended.
@@ -55,11 +57,11 @@ public interface Server {
      * Processes the request from a client indicating that the player left the game.
      * (opt.)
      */
-    void processPlayerLeftRequest(Client client);
+    void processPlayerLeftRequest(IClient client);
 
     /**
      * Sends a notification to all clients that a player has left the game.
      * (opt.)
      */
-    void sendPlayerLeftNotification(Client client);
+    void sendPlayerLeftNotification(IClient client);
 }

@@ -1,45 +1,21 @@
 package game;
 
-public class Race implements Game{
+import java.util.HashMap;
+import java.util.Map;
 
+public class Race {
+    private Map<Player, Integer> playerProgress;
 
-    public void handleInput(){
-
+    public Race() {
+        playerProgress = new HashMap<>();
     }
 
-    public double incrementTime(){
-        return 0;
+    public void updatePlayerProgress(Player player, int progress) {
+        playerProgress.put(player, progress);
+        player.setProgress(progress); // Update the progress in the Player object as well
     }
 
-    public double getTime(){
-        return 0;
-    }
-
-    public double setTime(){
-        return incrementTime();
-    }
-
-    public Typer addPlayer(){
-        return null;
-    }
-
-    @Override
-    public String setText() {
-        return null;
-    }
-
-    @Override
-    public String getText() {
-        return null;
-    }
-
-    @Override
-    public Race startGame() {
-        return null;
-    }
-
-    @Override
-    public Race endGame() {
-        return null;
+    public int getPlayerProgress(Player player) {
+        return playerProgress.getOrDefault(player, 0);
     }
 }
