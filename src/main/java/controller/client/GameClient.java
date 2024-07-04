@@ -24,7 +24,7 @@ import java.net.Socket;
 
 public class GameClient {
 
-    private static final String HOSTNAME = "localhost";
+    private static final String HOSTNAME = "10.181.89.185";
     private static final int SERVER_PORT = 8080;
 
     private final Socket socket;
