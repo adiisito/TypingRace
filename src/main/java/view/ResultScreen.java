@@ -3,10 +3,13 @@ package view;
 import controller.client.ClientController;
 import game.GameState;
 import game.Player;
+import game.TypingPlayer;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class ResultScreen extends JPanel {
     private final JPanel endState;
     private final int time;
     private ClientController clientController;
+    private DefaultTableModel rankingModel;
 
     /**
      * Creates a window with game results.
@@ -40,7 +44,6 @@ public class ResultScreen extends JPanel {
         this.wpm = wpm;
         this.accuracy = accuracy;
         this.endState = carPanel;
-        // this.time = (double) elapsedTime / 1000;
         this.time = elapsedTime;
         this.clientController = clientController;
         initComponents();
@@ -103,24 +106,9 @@ public class ResultScreen extends JPanel {
         stats.setOpaque(true);
         stats.setBackground(new Color(184, 112, 247));
 
-        //Create a sorted results table
-        String[] header = { "Rank", "Player", "WPM" };
-        List<Player> players = gameState.getPlayers();
-        Set<Player> set = new HashSet<>(players);
-        players.clear();
-        players.addAll(set);
-        players.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));
-        String[][] tableContent = new String[players.size()][players.size()];
-        for (int i = 0; i < players.size(); i++) {
-            Player rankPlayer = players.get(i);
-            tableContent[i] = new String[]{String.valueOf(i + 1), rankPlayer.getName(), String.valueOf(rankPlayer.getWpm())};
-        }
-        JTable playerTable = new JTable(tableContent, header);
-        JScrollPane tableScrollPane = new JScrollPane(playerTable);
-        tableScrollPane.setPreferredSize(new Dimension(300, 300));
-
-        JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.add(tableScrollPane, BorderLayout.SOUTH);
+        setUpRankingTable();
+        gameState.setPlayers(computeRankings(gameState.getPlayers()));
+        // updateRankingTable(gameState.getPlayers());
 
         endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
         JPanel westPanel = new JPanel(new BorderLayout());
@@ -128,9 +116,42 @@ public class ResultScreen extends JPanel {
         westPanel.add(endState, BorderLayout.NORTH);
 
         add(resultLabel, BorderLayout.NORTH);
-        add(tablePanel, BorderLayout.EAST);
+        // add(tablePanel, BorderLayout.EAST);
         add(westPanel, BorderLayout.WEST);
         add(accuracyLabel, BorderLayout.SOUTH);
         add(buttonPanel, BorderLayout.PAGE_END);
+    }
+
+    private void setUpRankingTable() {
+        String[] columnNames = {"Rank", "Player", "WPM"};
+        rankingModel = new DefaultTableModel(columnNames, 0);
+        JTable rankingTable = new JTable(rankingModel);
+
+        HighlightRenderer highlightRenderer = new HighlightRenderer(currentPlayer.getName());
+        rankingTable.setDefaultRenderer(Object.class, highlightRenderer);
+
+        JScrollPane scrollPane = new JScrollPane(rankingTable);
+        scrollPane.setPreferredSize(new Dimension(185, 150));
+
+        JPanel tableContainer = new JPanel(new BorderLayout());
+        tableContainer.add(scrollPane, BorderLayout.CENTER);
+        tableContainer.setPreferredSize(new Dimension(185, 150));
+
+        add(tableContainer, BorderLayout.EAST);
+    }
+
+    public void updateRankingTable(List<TypingPlayer> rankedPlayers) {
+        SwingUtilities.invokeLater(() -> {
+            rankingModel.setRowCount(0);
+            for (int i = 0; i < rankedPlayers.size(); i++) {
+                Player p = rankedPlayers.get(i);
+                rankingModel.addRow(new Object[]{i + 1, p.getName(), p.getWpm()});
+            }
+        });
+    }
+
+    public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
+        completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
+        return completedPlayers;
     }
 }

@@ -114,7 +114,6 @@ public class ConnectionManager extends Thread {
             EndGameRequest endGameRequest = moshi.adapter(EndGameRequest.class).fromJson(message);
             handleEndGameRequest(endGameRequest);
         }
-        // @yili and @yuanyuan, please add other notifs according to the need!
     }
 
     /**

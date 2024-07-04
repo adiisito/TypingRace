@@ -33,7 +33,7 @@ public class CarShape {
     public void draw(Graphics g) {
         g.setColor(Color.RED);
         g.fillOval(x, y, width, height);
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         if (name != null) {
             g.drawString(name, x, y + height + 15);
         }
