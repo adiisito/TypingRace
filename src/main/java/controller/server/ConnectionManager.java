@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.squareup.moshi.JsonAdapter;
@@ -30,6 +32,7 @@ public class ConnectionManager extends Thread {
     private final List<ConnectionManager> connectionManagers;
     private final List<String> playerNames;
     private final Set<String> finishedPlayers = new HashSet<>();
+    private final Map<String, Integer> playerResults;
 
     /**
      * Instantiates a new Connection manager.
@@ -46,6 +49,7 @@ public class ConnectionManager extends Thread {
         this.messageAdapter = moshi.adapter(MessageType.class);
         this.connectionManagers = new ArrayList<>();
         this.playerNames = new ArrayList<>();
+        this.playerResults = new HashMap<>();
     }
 
     /**
@@ -109,8 +113,12 @@ public class ConnectionManager extends Thread {
         } else if (messageType.equals("EndGameRequest")){
             EndGameRequest endGameRequest = moshi.adapter(EndGameRequest.class).fromJson(message);
             handleEndGameRequest(endGameRequest);
+
+        } else if(messageType.equals("UpdateRankingRequest")){
+            UpdateRankingRequest rankingRequest = moshi.adapter(UpdateRankingRequest.class).fromJson(message);
+            handleUpdateRankingRequest(rankingRequest);
+
         }
-        // @yili and @yuanyuan, please add other notifs according to the need!
     }
 
     /**
@@ -154,6 +162,13 @@ public class ConnectionManager extends Thread {
         }
     }
 
+    public void handleUpdateRankingRequest(UpdateRankingRequest request) {
+
+        RankingNotification notification = new RankingNotification(request.getPlayers());
+        String json = moshi.adapter(RankingNotification.class).toJson(notification);
+        server.broadcastMessage(json);
+
+    }
     /**
      * Broadcast to send on the finish window.
      * TODO waiting for the implementation of client to send the result

@@ -2,6 +2,7 @@
 package controller.client;
 
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
 import game.Game;
 import game.GameState;
@@ -27,16 +28,21 @@ public class ClientController {
     private List<TypingPlayer> players;
     private GameScreen view;
     private int numPlayers;
-    private final Moshi moshi = new Moshi.Builder().build();
+    private final Moshi moshi;
     private ClientWindow clientWindow;
     private GUI mainGui;
     private TypingPlayer currentPlayer;
+    private ResultScreen resultScreen;
 
     private String providedText;
 
     public ClientController(ClientWindow clientWindow, GUI mainGui) {
         this.clientWindow = clientWindow;
         this.mainGui = mainGui;
+        this.moshi = new Moshi.Builder()
+                .add(PolymorphicJsonAdapterFactory.of(Player.class, "type")
+                        .withSubtype(TypingPlayer.class, "typing"))
+                .build();
     }
 
     /**
@@ -209,7 +215,7 @@ public class ClientController {
      * @param wpm words per minute rate
      * @param accuracy the end accuracy
      */
-    public void endGame(String playerName, long time, int wpm, double accuracy) {
+    public void endGame(String playerName, int time, int wpm, double accuracy) {
 
         EndGameRequest request = new EndGameRequest(playerName, time, wpm, accuracy);
         String json = moshi.adapter(EndGameRequest.class).toJson(request);
@@ -223,15 +229,25 @@ public class ClientController {
      * @param notification game end notification
      */
     public void handleGameEnd (GameEndNotification notification) {
+        gameState.setPlayers(players);
+
+        for (Player player : players) {
+            if (player.getName().equals(notification.getPlayerName())) {
+                player.setWpm(notification.getWpm());
+                player.setAccuracy(notification.getAccuracy());
+                player.setHasFinished(true);
+            }
+        }
 
         if (notification.getPlayerName().equals(currentPlayer.getName())) {
             currentPlayer.setWpm(notification.getWpm());
             currentPlayer.setAccuracy(notification.getAccuracy());
+            currentPlayer.setHasFinished(true);
 
             SwingUtilities.invokeLater(() -> {
                 //update result screen
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(view);
-                frame.setContentPane(new ResultScreen(
+                this.resultScreen = new ResultScreen(
                         gameState,
                         currentPlayer,
                         notification.getWpm(),
@@ -239,12 +255,33 @@ public class ClientController {
                         notification.getTime(),
                         view.getCarPanel(),
                         this
-                ));
+                );
+                frame.setContentPane(this.resultScreen);
                 frame.revalidate();
                 frame.repaint();
+                List<TypingPlayer> rankings = resultScreen.computeRankings(gameState.getCompletedPlayers());
+                updateRanking(rankings);
             });
 
             System.out.println("Game ended");
+
+        }
+    }
+
+    public void updateRanking (List<TypingPlayer> rankings) {
+
+        UpdateRankingRequest request = new UpdateRankingRequest(rankings);
+        String json = moshi.adapter(UpdateRankingRequest.class).toJson(request);
+        clientModel.sendMessage(json);
+
+    }
+
+    public void handleRankingNotification (RankingNotification notification) {
+
+        if (resultScreen != null) {
+            SwingUtilities.invokeLater(() -> {
+                resultScreen.updateRankingTable(notification.getRankings());
+            });
         }
     }
 

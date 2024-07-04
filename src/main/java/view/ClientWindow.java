@@ -107,7 +107,7 @@ public class ClientWindow extends JFrame {
             playerListModel.clear();
             for (String player : players) {
                 playerListModel.addElement(player);
-                Player newPlayer = new TypingPlayer(player);
+                TypingPlayer newPlayer = new TypingPlayer(player);
                 gameState.addPlayer(newPlayer);
 
             }

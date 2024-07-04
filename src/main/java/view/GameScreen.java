@@ -21,9 +21,10 @@ public class GameScreen extends JPanel {
     private String providedText;
     private Timer timer;
     private JLabel timeLabel;
-    private java.util.List<Player> racers;
+    private java.util.List<TypingPlayer> racers;
     private JPanel carPanel;
     private boolean timerStarted = false;
+    private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
 
 
     private long startTime;
@@ -58,31 +59,16 @@ public class GameScreen extends JPanel {
             }
         };
         carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        carPanel.setPreferredSize(new Dimension(600, 100));
+        carPanel.setPreferredSize(new Dimension(600, 300));
         carPanel.setBackground(Color.BLACK);
         add(carPanel, BorderLayout.NORTH);
-
-
-
-        //addCar(currentPlayer);
-        /*
-        timeLabel = new JLabel("TIME");
-        timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
-        timeLabel.setOpaque(true);
-        timeLabel.setBackground(Color.GREEN);
-        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JPanel timePanel = new JPanel(new BorderLayout());
-        timePanel.add(timeLabel, BorderLayout.NORTH);
-        add(timePanel, BorderLayout.EAST);
-         */
 
         // Provided text label
         providedTextLabel = new JLabel("<html><p style=\"width: 350px; color: white;\">" + providedText + "</p></html>");
         providedTextLabel.setFont(new Font("Serif", Font.PLAIN, 18));
         providedTextLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         providedTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        providedTextLabel.setPreferredSize(new Dimension(500, 150));
+        providedTextLabel.setPreferredSize(new Dimension(500, 100));
         providedTextLabel.setForeground(Color.WHITE);
 
         // Typing area
@@ -109,7 +95,7 @@ public class GameScreen extends JPanel {
                     keyPressCount++; // Increment key press count on each key release
                 }
                 String typedText = typingArea.getText();
-                updateProgress(typedText);
+                // updateProgress(typedText); This function should be done by the client
                 updateTextColor(typedText);
 
                 // Calculate the time elapsed since the start of typing
@@ -130,6 +116,7 @@ public class GameScreen extends JPanel {
         });
 
         JScrollPane scrollPane = new JScrollPane(typingArea);
+        scrollPane.setPreferredSize(new Dimension(500, 100));
 
         // WPM label
         wpmLabel = new JLabel("WPM: 0");
@@ -175,9 +162,6 @@ public class GameScreen extends JPanel {
 
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
-        // Timer now starts when the first key is pressed
-        // startTimer();
-        // addCars();
     }
 
     public void addCars() {
@@ -274,9 +258,9 @@ public class GameScreen extends JPanel {
         gameState.setStartTime(startTime);
 
         timer = new Timer(1000, e -> {
-            long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
-            int remainingTime = (int) (60 - (elapsedTime / 1000));
-            timeLabel.setText("TIME: " + remainingTime); // /1000 to convert it into seconds
+            int elapsedTime = (int) ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
+            int remainingTime = 60 - elapsedTime;
+            timeLabel.setText("TIME: " + remainingTime);
             if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
                 showResults(elapsedTime);
@@ -286,7 +270,7 @@ public class GameScreen extends JPanel {
         timer.start();
     }
 
-    private void showResults(long elapsedTime) {
+    private void showResults(int elapsedTime) {
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
