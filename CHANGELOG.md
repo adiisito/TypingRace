@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-# NETWORK 
+# NETWORK @Yili Li, @Yuanyuan Qu
 ## 22.Jun.2024
 ### Added
 
@@ -103,5 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - ranking list update and synchronization
 
+### Changed
+- Newest Sequence Diagramm according to our current version 
+- Newest Json Protocal according to our current version
 
 
