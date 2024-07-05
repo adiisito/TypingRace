@@ -84,6 +84,7 @@ public class GameScreen extends JPanel {
         }
     }
 
+
     private void initComponents() {
         setLayout(new BorderLayout());
 
