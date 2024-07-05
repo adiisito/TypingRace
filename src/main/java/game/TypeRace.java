@@ -6,10 +6,11 @@ import view.GameScreen;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TypeRace {
 
-    private GameState gameState;
+    private static GameState gameState;
     private static long startTime;
 
     public TypeRace(GameState gameState){
@@ -42,7 +43,7 @@ public class TypeRace {
     }
 
     public static int calculateWpm() {
-        long elapsedTime = System.currentTimeMillis() - startTime;
+        long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
         double elapsedMinutes = elapsedTime / 60000.0;
         int totalWords = GameScreen.keyPressCount / 5;
         return (int) (totalWords / elapsedMinutes);

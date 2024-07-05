@@ -3,6 +3,7 @@ package view;
 import controller.client.ClientController;
 import game.GameState;
 import game.Player;
+import game.TypeRace;
 import game.TypingPlayer;
 
 import javax.swing.*;
@@ -26,6 +27,7 @@ public class ResultScreen extends JPanel {
     private final int time;
     private ClientController clientController;
     private DefaultTableModel rankingModel;
+    private TypeRace typeRace;
 
     /**
      * Creates a window with game results.

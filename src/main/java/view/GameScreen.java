@@ -155,7 +155,7 @@ public class GameScreen extends JPanel {
                     timer.stop();
                     showResults(timeElapsed);
                 } else {
-                    int wpm = calculateWpm();
+                    int wpm = typerace.calculateWpm();
                     double accuracy = calculateAccuracy(typedText);
                     int progress = TypeRace.calculateProgress(typedText);
                     clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
