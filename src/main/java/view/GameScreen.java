@@ -232,24 +232,6 @@ public class GameScreen extends JPanel {
         updateCarPositions(currentPlayer.getName(), progress);
     }
 
-    //The updated method is at the end to find!
-
-//    /**
-//     * Updates the display. This method should be called to reflect changes in the player's typing performance on UI.
-//     *
-//     * @param wpm the current wpm
-//     * @param accuracy the current accuracy
-//     */
-//    public void updateProgressDisplay (int wpm, double accuracy) {
-//        // Directly update UI components based on received data
-//        SwingUtilities.invokeLater(() -> {
-//            wpmLabel.setText("WPM: " + wpm);
-//            accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
-//            // Optionally, update a progress bar or similar component if it exists
-//        });
-//    }
-
-
     public void updateCarPositions(String playerName, int progress) {
         int totalLength = providedText.length();
         int roadLength = (int) (carPanel.getWidth() * 0.7); // 70% of the panel width
