@@ -128,10 +128,12 @@ public class GameScreen extends JPanel {
                 if (e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
                     return;
                 }
+                /* Doesn't really make sense in our multiplayer game
                 if (!timerStarted) {
                     startTimer();
                     timerStarted = true;
                 }
+                 */
                 if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                     keyPressCount++; // Increment key press count on each key release
                 }
@@ -203,6 +205,7 @@ public class GameScreen extends JPanel {
         add(carPanel, BorderLayout.NORTH);
         add(mainBottomPanel, BorderLayout.CENTER);
 
+        startTimer();
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
     }
@@ -287,7 +290,7 @@ public class GameScreen extends JPanel {
             int elapsedTime = (int) ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
             int remainingTime = 60 - elapsedTime;
             timeLabel.setText("TIME: " + remainingTime);
-            if (elapsedTime >= 60000) {
+            if (elapsedTime >= 60) {
                 gameState.endCurrentRace();
                 showResults(elapsedTime);
                 timer.stop();
