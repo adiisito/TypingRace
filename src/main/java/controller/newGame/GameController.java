@@ -2,9 +2,12 @@ package controller.newGame;
 
 import game.Game;
 import game.GameState;
+import game.Player;
 import view.GUI;
+import view.GameScreen;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
 
 public class GameController {
 

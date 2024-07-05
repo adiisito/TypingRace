@@ -19,7 +19,7 @@ import game.TypingPlayer;
 
 public class GameServer {
 
-    private static final int SERVER_PORT = 8080;
+    private static final int SERVER_PORT = 12345;
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
