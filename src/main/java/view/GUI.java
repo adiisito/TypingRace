@@ -118,9 +118,6 @@ public class GUI extends JFrame {
         updateAllClientWindows(playerNames); // Update the player list to reflect the player has left
     }
 
-    public static void main(String[] args) {
-        GameState gameState = new GameState();
-        SwingUtilities.invokeLater(() -> new GUI(gameState).setVisible(true));
-    }
+
 
 }

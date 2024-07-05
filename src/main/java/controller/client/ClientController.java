@@ -4,11 +4,10 @@ package controller.client;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
-import game.Game;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
-import game.TypingPlayer;
+import game.typerace;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -33,6 +32,7 @@ public class ClientController {
     private GUI mainGui;
     private TypingPlayer currentPlayer;
     private ResultScreen resultScreen;
+    private typerace typerace;
 
     private String providedText;
 
@@ -86,6 +86,7 @@ public class ClientController {
         this.gameState = new GameState();
         this.numPlayers = gameStartNotification.getNumPlayers();
         this.providedText = gameStartNotification.getText();
+        this.typerace= new typerace();
 
 
         // this.currentPlayer = players.get(gameStartNotification.getIndexOfCurrentPlayer());
@@ -99,9 +100,9 @@ public class ClientController {
 
 
         this.gameState.setPlayers(players);
-        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText);
+        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText, typerace);
         this.gameState.startNewRace();
-        this.view.addCars();
+        this.typerace.addCars();
         SwingUtilities.invokeLater(() -> {
             clientWindow.setContentPane(view);
             clientWindow.revalidate();
@@ -174,7 +175,7 @@ public class ClientController {
      */
     public void handleProgress (GameStateNotification notification) {
 
-        view.updateCarPositions(notification.getPlayerName(), notification.getProgress());
+        typerace.updateCarPositions(notification.getPlayerName(), notification.getProgress());
         SwingUtilities.invokeLater(() -> {
 
             if (view != null) {
@@ -188,7 +189,7 @@ public class ClientController {
                     currentPlayer.setAccuracy(notification.getAccuracy());
 
                     if (notification.getPlayerName().equals(currentPlayer.getName())) {
-                        view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+                        typerace.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
                     }
 
 
