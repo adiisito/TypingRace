@@ -48,4 +48,9 @@ public class TypeRace {
         int totalWords = GameScreen.keyPressCount / 5;
         return (int) (totalWords / elapsedMinutes);
     }
+
+    public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
+        completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
+        return completedPlayers;
+    }
 }

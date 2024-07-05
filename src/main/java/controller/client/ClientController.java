@@ -255,12 +255,13 @@ public class ClientController {
                         notification.getAccuracy(),
                         notification.getTime(),
                         view.getCarPanel(),
-                        this
+                        this,
+                        typerace
                 );
                 frame.setContentPane(this.resultScreen);
                 frame.revalidate();
                 frame.repaint();
-                List<TypingPlayer> rankings = resultScreen.computeRankings(gameState.getCompletedPlayers());
+                List<TypingPlayer> rankings = typerace.computeRankings(gameState.getCompletedPlayers());
                 updateRanking(rankings);
             });
 
