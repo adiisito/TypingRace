@@ -2,11 +2,12 @@ package view;
 
 import controller.client.ClientController;
 import game.GameState;
-import game.Player;
 import game.TypingPlayer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.List;
 
@@ -38,6 +39,20 @@ public class ClientWindow extends JFrame {
         setLocationRelativeTo(null);
 
         clientController.joinGame(playerName);
+
+        // Removes player from game when clicking the window's close button
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    clientController.playerLeft(playerName);
+                    dispose();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                e.getWindow().dispose();
+            }
+        });
 
         showWaitingRoom();
         setVisible(true);
