@@ -148,6 +148,7 @@ public class ResultScreen extends JPanel {
         resultLabel.setOpaque(false);
         westPanel.setOpaque(false);
         accuracyLabel.setOpaque(false);
+        buttonPanel.setOpaque(false);
 
         add(resultLabel, BorderLayout.NORTH);
         // add(tablePanel, BorderLayout.EAST);
