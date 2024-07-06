@@ -1,16 +1,18 @@
 package view;
 
 import controller.client.ClientController;
+import game.CarShape;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,6 +29,10 @@ public class ResultScreen extends JPanel {
     private ClientController clientController;
     private DefaultTableModel rankingModel;
 
+    private ArrayList<CarShape> carShapes;
+    private Image backgroundImage;
+    private int textLength;
+
     /**
      * Creates a window with game results.
      * @param gameState the final game state
@@ -37,16 +43,28 @@ public class ResultScreen extends JPanel {
      * @param carPanel the final race track display
      * @param clientController the client controller for this window
      */
-    public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy,
-                        int elapsedTime, JPanel carPanel, ClientController clientController) {
+    public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
+                        double accuracy, int elapsedTime, JPanel carPanel, int textLength,
+                        ArrayList<CarShape> carShapes, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
-        this.endState = carPanel;
         this.time = elapsedTime;
+        this.endState = carPanel;
+        this.textLength = textLength;
+        this.carShapes = carShapes;
         this.clientController = clientController;
         initComponents();
+
+        // Using a final array because of the lambda expression
+        final int[] excessTime = {60 - time};
+        Timer timer = new Timer (1000, e -> {
+            while(excessTime[0] > 0) {
+                carPanel.repaint();
+                excessTime[0]--;
+            }
+        });
     }
 
     /**
@@ -55,12 +73,22 @@ public class ResultScreen extends JPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        setBackground(new Color(57, 174, 207));
+        try {
+            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("GameScreenBG.jpeg");
+            if (imageStream != null) {
+                backgroundImage = ImageIO.read(imageStream);
+            } else {
+                System.err.println("Image not found");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         JLabel resultLabel = new JLabel("Game Over");
         resultLabel.setFont(new Font("Serif", Font.BOLD, 24));
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
         resultLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        resultLabel.setForeground(Color.WHITE);
 
         JLabel wpmLabel = new JLabel("WPM: " + wpm);
         wpmLabel.setFont(new Font("Serif", Font.PLAIN, 18));
@@ -103,8 +131,10 @@ public class ResultScreen extends JPanel {
                 (double) Math.round(accuracy * 100) / 100 + "% <br> Time: " + time + " seconds </html>";
         JLabel stats = new JLabel(stat_text);
         stats.setFont(new Font("Consolas", Font.PLAIN, 24));
-        stats.setOpaque(true);
-        stats.setBackground(new Color(184, 112, 247));
+        stats.setForeground(Color.WHITE);
+        stats.setOpaque(false);
+        stats.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        //stats.setBackground(new Color(184, 112, 247));
 
         setUpRankingTable();
         gameState.setPlayers(computeRankings(gameState.getPlayers()));
@@ -114,6 +144,10 @@ public class ResultScreen extends JPanel {
         JPanel westPanel = new JPanel(new BorderLayout());
         westPanel.add(stats, BorderLayout.SOUTH);
         westPanel.add(endState, BorderLayout.NORTH);
+
+        resultLabel.setOpaque(false);
+        westPanel.setOpaque(false);
+        accuracyLabel.setOpaque(false);
 
         add(resultLabel, BorderLayout.NORTH);
         // add(tablePanel, BorderLayout.EAST);
@@ -126,16 +160,28 @@ public class ResultScreen extends JPanel {
         String[] columnNames = {"Rank", "Player", "WPM"};
         rankingModel = new DefaultTableModel(columnNames, 0);
         JTable rankingTable = new JTable(rankingModel);
+        rankingTable.getTableHeader().setFont(new Font("Consolas", Font.PLAIN, 16));
+        rankingTable.getTableHeader().setBackground(Color.BLACK);
+        rankingTable.getTableHeader().setForeground(Color.WHITE);
+        rankingTable.setRowHeight(18);
 
         HighlightRenderer highlightRenderer = new HighlightRenderer(currentPlayer.getName());
         rankingTable.setDefaultRenderer(Object.class, highlightRenderer);
 
         JScrollPane scrollPane = new JScrollPane(rankingTable);
         scrollPane.setPreferredSize(new Dimension(185, 150));
+        scrollPane.getViewport().setBackground(Color.BLACK);
+        //scrollPane.getViewport().setBackground(new Color(20, 5, 30));
 
         JPanel tableContainer = new JPanel(new BorderLayout());
         tableContainer.add(scrollPane, BorderLayout.CENTER);
-        tableContainer.setPreferredSize(new Dimension(185, 150));
+        tableContainer.setPreferredSize(new Dimension(185, 150));;
+
+        rankingTable.setOpaque(false);
+        scrollPane.setOpaque(false);
+        rankingTable.setShowGrid(false);
+        highlightRenderer.setOpaque(false);
+        highlightRenderer.setBorder(null);
 
         add(tableContainer, BorderLayout.EAST);
     }
@@ -153,5 +199,13 @@ public class ResultScreen extends JPanel {
     public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
         completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
         return completedPlayers;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }

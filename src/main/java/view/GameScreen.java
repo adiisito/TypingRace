@@ -319,6 +319,14 @@ public class GameScreen extends JPanel {
         return this.carPanel;
     }
 
+    public ArrayList<CarShape> getCarShapes() {
+        return this.carShapes;
+    }
+
+    public int getTextLength() {
+        return providedText.length();
+    }
+
     private void updateTextColor(String typedText) {
         StyledDocument doc = typingArea.getStyledDocument();
         StyleContext context = new StyleContext();

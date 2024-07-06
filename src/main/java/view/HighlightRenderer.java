@@ -45,12 +45,12 @@ public class HighlightRenderer extends DefaultTableCellRenderer {
                                                    int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         if (table.getModel().getValueAt(row, 1).equals(playerName)) {
-            setBackground(Color.GRAY);
-            setForeground(Color.BLACK);
+            setForeground(Color.YELLOW);
         } else {
-            setBackground(Color.WHITE);
-            setForeground(Color.BLACK);
+            setForeground(Color.WHITE);
         }
+            setBackground(Color.BLACK);
+            setFont(new Font("Consolas", Font.BOLD, 14));
         return this;
     }
 
