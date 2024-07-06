@@ -12,6 +12,7 @@ before_script:
 
 stages:
   - build
+  - javadoc
   - test
 
 build:
@@ -29,3 +30,12 @@ test:
       junit: build/test-results/test/*.xml
     paths:
       - build/reports/tests/test
+
+javadoc:
+  stage: javadoc
+  script:
+    - gradle javadoc
+  artifacts:
+    paths:
+      - build/docs/javadoc
+    expire_in: 2 weeks
