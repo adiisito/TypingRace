@@ -319,10 +319,18 @@ public class GameScreen extends JPanel {
         return this.carPanel;
     }
 
+    /**
+     * Gets the list of car entities that move according to progress.
+     * @return the car shapes
+     */
     public ArrayList<CarShape> getCarShapes() {
         return this.carShapes;
     }
 
+    /**
+     * Gets the length of the initial provided text.
+     * @return the length of the provided text
+     */
     public int getTextLength() {
         return providedText.length();
     }

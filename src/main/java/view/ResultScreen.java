@@ -40,7 +40,9 @@ public class ResultScreen extends JPanel {
      * @param wpm the words per minute counter
      * @param accuracy the amount of correctly typed characters
      * @param elapsedTime the time spent in the game
-     * @param carPanel the final race track display
+     * @param carPanel for the final race track display
+     * @param textLength the length of the original text
+     * @param carShapes the car entities that are to move
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
@@ -157,6 +159,9 @@ public class ResultScreen extends JPanel {
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 
+    /**
+     * Creates the ranking list for the results.
+     */
     private void setUpRankingTable() {
         String[] columnNames = {"Rank", "Player", "WPM"};
         rankingModel = new DefaultTableModel(columnNames, 0);
@@ -187,6 +192,10 @@ public class ResultScreen extends JPanel {
         add(tableContainer, BorderLayout.EAST);
     }
 
+    /**
+     * Updates the ranking table.
+     * @param rankedPlayers the list of players to be displayed
+     */
     public void updateRankingTable(List<TypingPlayer> rankedPlayers) {
         SwingUtilities.invokeLater(() -> {
             rankingModel.setRowCount(0);
@@ -197,11 +206,20 @@ public class ResultScreen extends JPanel {
         });
     }
 
+    /**
+     * Sorts the players according to their rankings (from highest to lowest).
+     * @param completedPlayers the list of players that finished the race
+     * @return a sorted list of players
+     */
     public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
         completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
         return completedPlayers;
     }
 
+    /**
+     * Paints the background image on the result screen.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
