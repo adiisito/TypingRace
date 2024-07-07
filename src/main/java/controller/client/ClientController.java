@@ -2,6 +2,7 @@
 package controller.client;
 
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
 import game.Game;
 import game.GameState;
@@ -27,16 +28,21 @@ public class ClientController {
     private List<TypingPlayer> players;
     private GameScreen view;
     private int numPlayers;
-    private final Moshi moshi = new Moshi.Builder().build();
+    private final Moshi moshi;
     private ClientWindow clientWindow;
     private GUI mainGui;
     private TypingPlayer currentPlayer;
+    private ResultScreen resultScreen;
 
     private String providedText;
 
     public ClientController(ClientWindow clientWindow, GUI mainGui) {
         this.clientWindow = clientWindow;
         this.mainGui = mainGui;
+        this.moshi = new Moshi.Builder()
+                .add(PolymorphicJsonAdapterFactory.of(Player.class, "type")
+                        .withSubtype(TypingPlayer.class, "typing"))
+                .build();
     }
 
     /**
@@ -81,16 +87,12 @@ public class ClientController {
         this.numPlayers = gameStartNotification.getNumPlayers();
         this.providedText = gameStartNotification.getText();
 
-
-        // this.currentPlayer = players.get(gameStartNotification.getIndexOfCurrentPlayer());
-
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equals(this.clientModel.getPlayerName())) {
                 this.currentPlayer = players.get(i);
                 break;
             }
         }
-
 
         this.gameState.setPlayers(players);
         this.view = new GameScreen(this.gameState, currentPlayer, this, providedText);
@@ -136,7 +138,6 @@ public class ClientController {
      * Start game.
      */
     public void startGame() {
-
         StartGameRequest request = new StartGameRequest();
         String json = moshi.adapter(StartGameRequest.class).toJson(request);
 
@@ -155,7 +156,6 @@ public class ClientController {
      * @param time current time elapsed in the game
      */
     public void updateProgress (String playerName, int wpm, int progress, double accuracy, int time){
-
         UpdateProgressRequest progressRequest = new UpdateProgressRequest(currentPlayer.getName(), wpm, progress, accuracy,time);
         String json = moshi.adapter(UpdateProgressRequest.class).toJson(progressRequest);
         clientModel.sendMessage(json);
@@ -170,9 +170,7 @@ public class ClientController {
 
         view.updateCarPositions(notification.getPlayerName(), notification.getProgress());
         SwingUtilities.invokeLater(() -> {
-
             if (view != null) {
-
                 Player player = findPlayerByName(notification.getPlayerName());
 
                 if (player != null) {
@@ -184,14 +182,17 @@ public class ClientController {
                     if (notification.getPlayerName().equals(currentPlayer.getName())) {
                         view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
                     }
-
-
                 }
-
             }
         });
     }
 
+    /**
+     * Finds a player object based on the given player name.
+     *
+     * @param playerName the name of the player to search for
+     * @return the Player object with the specified name, or null if no such player exists
+     */
     public Player findPlayerByName (String playerName) {
         for (Player player: gameState.getPlayers()) {
             if (player.getName().equals(playerName)) {
@@ -209,7 +210,7 @@ public class ClientController {
      * @param wpm words per minute rate
      * @param accuracy the end accuracy
      */
-    public void endGame(String playerName, long time, int wpm, double accuracy) {
+    public void endGame(String playerName, int time, int wpm, double accuracy) {
 
         EndGameRequest request = new EndGameRequest(playerName, time, wpm, accuracy);
         String json = moshi.adapter(EndGameRequest.class).toJson(request);
@@ -223,28 +224,68 @@ public class ClientController {
      * @param notification game end notification
      */
     public void handleGameEnd (GameEndNotification notification) {
+        gameState.setPlayers(players);
+
+        for (Player player : players) {
+            if (player.getName().equals(notification.getPlayerName())) {
+                player.setWpm(notification.getWpm());
+                player.setAccuracy(notification.getAccuracy());
+                player.setHasFinished(true);
+            }
+        }
 
         if (notification.getPlayerName().equals(currentPlayer.getName())) {
             currentPlayer.setWpm(notification.getWpm());
             currentPlayer.setAccuracy(notification.getAccuracy());
+            currentPlayer.setHasFinished(true);
 
             SwingUtilities.invokeLater(() -> {
                 //update result screen
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(view);
-                frame.setContentPane(new ResultScreen(
+                this.resultScreen = new ResultScreen(
                         gameState,
                         currentPlayer,
                         notification.getWpm(),
                         notification.getAccuracy(),
                         notification.getTime(),
                         view.getCarPanel(),
+                        view.getTextLength(),
+                        view.getCarShapes(),
                         this
-                ));
+                );
+                frame.setContentPane(this.resultScreen);
                 frame.revalidate();
                 frame.repaint();
+                List<TypingPlayer> rankings = resultScreen.computeRankings(gameState.getCompletedPlayers());
+                updateRanking(rankings);
             });
 
             System.out.println("Game ended");
+        }
+    }
+
+    /**
+     * Updates the ranking information on the server.
+     *
+     * @param rankings a list of TypingPlayer objects representing the updated rankings
+     */
+    public void updateRanking (List<TypingPlayer> rankings) {
+        UpdateRankingRequest request = new UpdateRankingRequest(rankings);
+        String json = moshi.adapter(UpdateRankingRequest.class).toJson(request);
+        clientModel.sendMessage(json);
+    }
+
+    /**
+     * Handles a notification containing updated ranking information.
+     * Updates the ranking table on the result screen if it exists.
+     *
+     * @param notification a RankingNotification object containing the updated rankings
+     */
+    public void handleRankingNotification (RankingNotification notification) {
+        if (resultScreen != null) {
+            SwingUtilities.invokeLater(() -> {
+                resultScreen.updateRankingTable(notification.getRankings());
+            });
         }
     }
 
@@ -255,10 +296,20 @@ public class ClientController {
         SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
     }
 
+    /**
+     * Retrieves the name of the current player.
+     *
+     * @return the name of the current player
+     */
     public String getCurrentPlayerName() {
         return currentPlayer.getName();
     }
 
+    /**
+     * Retrieves the main GUI instance.
+     *
+     * @return the main GUI instance
+     */
     public GUI getMainGui() {
         return mainGui;
     }

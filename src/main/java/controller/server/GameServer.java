@@ -2,6 +2,7 @@
 package controller.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -18,7 +19,7 @@ import game.TypingPlayer;
 
 public class GameServer {
 
-    private static final int SERVER_PORT = 8080;
+    private static final int SERVER_PORT = 12345;
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
@@ -34,7 +35,7 @@ public class GameServer {
      * @throws IOException for ServerSocket.
      */
     public GameServer() throws IOException {
-        this.serverSocket = new ServerSocket(SERVER_PORT);
+        this.serverSocket = new ServerSocket(SERVER_PORT, 50, InetAddress.getByName("0.0.0.0"));
         this.connectionManagers = new ArrayList<>();
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
