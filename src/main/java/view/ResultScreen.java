@@ -1,6 +1,6 @@
 package view;
 
-import controller.client.ClientController;
+import network.client.ClientController;
 import game.GameState;
 import game.Player;
 import game.TypeRace;
@@ -10,8 +10,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.*;
 import java.util.List;
 
 

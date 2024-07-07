@@ -1,4 +1,4 @@
-package controller.client;
+package network.client;
 
 public interface IClient {
     /**

@@ -1,11 +1,7 @@
 package game;
 
-import controller.client.ClientController;
-import view.ResultScreen;
 import view.GameScreen;
 
-import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TypeRace {

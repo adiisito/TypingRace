@@ -1,6 +1,6 @@
 package view;
 
-import controller.client.ClientController;
+import network.client.ClientController;
 import game.*;
 
 import javax.imageio.ImageIO;
@@ -131,10 +131,12 @@ public class GameScreen extends JPanel {
                 if (e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
                     return;
                 }
+                /* Doesn't really make sense in our multiplayer game
                 if (!timerStarted) {
                     startTimer();
                     timerStarted = true;
                 }
+                 */
                 if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                     keyPressCount++; // Increment key press count on each key release
                 }
@@ -206,6 +208,7 @@ public class GameScreen extends JPanel {
         add(carPanel, BorderLayout.NORTH);
         add(mainBottomPanel, BorderLayout.CENTER);
 
+        startTimer();
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
     }

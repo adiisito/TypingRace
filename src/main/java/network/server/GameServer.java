@@ -1,5 +1,5 @@
 
-package controller.server;
+package network.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -9,10 +9,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
-import game.GameState;
 import game.Text;
 import game.TypingPlayer;
 
@@ -21,7 +19,7 @@ public class GameServer {
 
     private static final int SERVER_PORT = 12345;
     private final ServerSocket serverSocket;
-    private final List<ConnectionManager> connectionManagers;
+    private final List<network.server.ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
             //= new ArrayList<>();
     private final Moshi moshi;
@@ -74,7 +72,7 @@ public class GameServer {
             try {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Client connected...");
-                ConnectionManager connectionManager = new ConnectionManager(clientSocket, this);
+                network.server.ConnectionManager connectionManager = new network.server.ConnectionManager(clientSocket, this);
                 connectionManagers.add(connectionManager);
                 connectionManager.start();
             } catch (IOException e) {
@@ -90,7 +88,7 @@ public class GameServer {
      * @param message the string received from connection managers.
      */
     public void broadcastMessage(String message) {
-        for (ConnectionManager connectionManager : connectionManagers) {
+        for (network.server.ConnectionManager connectionManager : connectionManagers) {
             connectionManager.sendMessage(message);
         }
     }
@@ -170,7 +168,7 @@ public class GameServer {
      *
      * @return the connection managers
      */
-    public List<ConnectionManager> getConnectionManagers() {
+    public List<network.server.ConnectionManager> getConnectionManagers() {
         return connectionManagers;
     }
 

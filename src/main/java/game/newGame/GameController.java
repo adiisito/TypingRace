@@ -1,4 +1,4 @@
-package controller.newGame;
+package game.newGame;
 
 import game.Game;
 import game.GameState;
