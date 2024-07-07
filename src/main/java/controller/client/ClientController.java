@@ -96,7 +96,7 @@ public class ClientController {
         }
 
         this.gameState.setPlayers(players);
-        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText);
+        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText, typerace);
         this.gameState.startNewRace();
         this.view.addCars();
         SwingUtilities.invokeLater(() -> {

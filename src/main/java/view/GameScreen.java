@@ -37,7 +37,9 @@ public class GameScreen extends JPanel {
     private Image backgroundImage;
     private Font customFont;
 
-    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
+    public TypeRace typeRace;
+
+    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText, TypeRace typeRace) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.providedText = providedText;
@@ -45,6 +47,7 @@ public class GameScreen extends JPanel {
         this.carShapes = new ArrayList<>();
         this.clientController = clientController;
         this.racers = gameState.getPlayers();
+        this.typeRace = new TypeRace(gameState);
 
         // to use the background image
         try {
@@ -147,9 +150,9 @@ public class GameScreen extends JPanel {
                     timer.stop();
                     showResults(timeElapsed);
                 } else {
-                    int wpm = calculateWpm();
-                    double accuracy = calculateAccuracy(typedText);
-                    int progress = calculateProgress(typedText);
+                    int wpm = typeRace.calculateWpm();
+                    double accuracy = typeRace.calculateAccuracy(typedText);
+                    int progress = typeRace.calculateProgress(typedText);
                     clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
                     updateProgressDisplay(wpm, accuracy);
                     updateCarPositions(currentPlayer.getName(), progress);
@@ -219,13 +222,13 @@ public class GameScreen extends JPanel {
 
 
     private void updateProgress(String typedText) {
-        int progress = calculateProgress(typedText);
+        int progress = typeRace.calculateProgress(typedText);
         if (gameState.getCurrentRace() != null) {
             gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
         }
 
-        int wpm = calculateWpm();
-        double accuracy = calculateAccuracy(typedText);
+        int wpm = typeRace.calculateWpm();
+        double accuracy = typeRace.calculateAccuracy(typedText);
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
 
@@ -265,38 +268,6 @@ public class GameScreen extends JPanel {
         carPanel.repaint();
     }
 
-    private int calculateProgress(String typedText) {
-        int maxLength = Math.min(typedText.length(), providedText.length());
-        int correctChars = 0;
-        for (int i = 0; i < maxLength; i++) {
-            if (typedText.charAt(i) == providedText.charAt(i)) {
-                correctChars++;
-            } else {
-                break; // Stop at the first incorrect character
-            }
-        }
-        System.out.println("Calculated progress: " + correctChars + " characters");
-        return correctChars;
-    }
-
-    private double calculateAccuracy(String typedText) {
-        int maxLength = Math.min(typedText.length(), providedText.length());
-        int correctChars = 0;
-        for (int i = 0; i < maxLength; i++) {
-            if (typedText.charAt(i) == providedText.charAt(i)) {
-                correctChars++;
-            }
-        }
-        return keyPressCount == 0 ? 100 : (correctChars * 100.0) / keyPressCount;
-    }
-
-    private int calculateWpm() {
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        double elapsedMinutes = elapsedTime / 60000.0;
-        int totalWords = keyPressCount / 5;
-        return (int) (totalWords / elapsedMinutes);
-    }
-
     private void startTimer() {
         startTime = System.currentTimeMillis();
         gameState.setStartTime(startTime);
@@ -315,8 +286,8 @@ public class GameScreen extends JPanel {
     }
 
     private void showResults(int elapsedTime) {
-        int wpm = calculateWpm();
-        double accuracy = calculateAccuracy(typingArea.getText());
+        int wpm = typeRace.calculateWpm();
+        double accuracy = typeRace.calculateAccuracy(typingArea.getText());
 
         currentPlayer.setWpm(wpm);
         currentPlayer.setAccuracy(accuracy);
