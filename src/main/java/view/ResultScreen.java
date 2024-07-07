@@ -78,23 +78,23 @@ public class ResultScreen extends JPanel {
         }
 
         JLabel resultLabel = new JLabel("Game Over");
-        resultLabel.setFont(new Font("Serif", Font.BOLD, 24));
+        resultLabel.setFont(new Font("Nougat", Font.BOLD, 24));
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
         resultLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         resultLabel.setForeground(Color.WHITE);
 
         JLabel wpmLabel = new JLabel("WPM: " + wpm);
-        wpmLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        wpmLabel.setFont(new Font("Nougat", Font.PLAIN, 18));
         wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         wpmLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel accuracyLabel = new JLabel("Accuracy: " + accuracy + "%");
-        accuracyLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        accuracyLabel.setFont(new Font("Nougat", Font.PLAIN, 18));
         accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         accuracyLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JButton newGameButton = new JButton("New Game");
-        newGameButton.setFont(new Font("Serif", Font.PLAIN, 16));
+        newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
           try {
@@ -109,7 +109,7 @@ public class ResultScreen extends JPanel {
         });
 
         JButton exitButton = new JButton("Exit");
-        exitButton.setFont(new Font("Serif", Font.PLAIN, 16));
+        exitButton.setFont(new Font("Nougat", Font.PLAIN, 16));
         exitButton.addActionListener(e -> {
             clientController.playerLeft(currentPlayer.getName());
             System.exit(0);
@@ -123,7 +123,7 @@ public class ResultScreen extends JPanel {
         String stat_text = "<html>WPM: " + wpm + " <br> Accuracy: " +
                 (double) Math.round(accuracy * 100) / 100 + "% <br> Time: " + time + " seconds </html>";
         JLabel stats = new JLabel(stat_text);
-        stats.setFont(new Font("Consolas", Font.PLAIN, 24));
+        stats.setFont(new Font("Nougat", Font.PLAIN, 24));
         stats.setForeground(Color.WHITE);
         stats.setOpaque(false);
         stats.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
