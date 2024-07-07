@@ -1,6 +1,6 @@
-package controller.server;
+package network.server;
 
-import controller.client.IClient;
+import network.client.IClient;
 
 public interface IServer {
     /**

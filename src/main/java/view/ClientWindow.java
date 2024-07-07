@@ -1,6 +1,6 @@
 package view;
 
-import controller.client.ClientController;
+import network.client.ClientController;
 import game.GameState;
 import game.TypingPlayer;
 

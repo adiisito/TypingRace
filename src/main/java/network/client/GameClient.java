@@ -1,19 +1,14 @@
 
-package controller.client;
+package network.client;
 
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.GameEndNotification;
 import communication.messages.GameStartNotification;
 import communication.messages.GameStateNotification;
 import communication.messages.MessageType;
 import communication.messages.PlayerListUpdateNotification;
 import communication.messages.PlayerLeftNotification;
-import communication.messages.LobbyFullNotification;
 import communication.messages.RankingNotification;
-import game.Player;
-import game.TypingPlayer;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -34,7 +29,7 @@ public class GameClient {
 
     private final Socket socket;
     private final PrintWriter out;
-    private final ClientController clientController;
+    private final network.client.ClientController clientController;
 
     private final Moshi moshi;
 
@@ -47,7 +42,7 @@ public class GameClient {
      * @param playerName the name of the player
      * @throws IOException if an I/O error occurs when creating the socket
      */
-    public GameClient(ClientController clientController, String playerName) throws IOException {
+    public GameClient(network.client.ClientController clientController, String playerName) throws IOException {
         this.moshi = new Moshi.Builder().build();
 
         this.clientController = clientController;

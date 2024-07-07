@@ -1,5 +1,5 @@
 
-package controller.server;
+package network.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
