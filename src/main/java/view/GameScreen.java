@@ -28,7 +28,7 @@ public class GameScreen extends JPanel {
     private JPanel carPanel;
     private boolean timerStarted = false;
     private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
-
+    private double trackMultiplier = 0.7;
 
     private long startTime;
     private int keyPressCount;
@@ -89,19 +89,7 @@ public class GameScreen extends JPanel {
         setLayout(new BorderLayout());
 
         // Creating a Car Panel
-        carPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                int roadLength = (int) (getWidth() * 0.7); // 70% of the panel width
-                for (CarShape carShape : carShapes) {
-                    carShape.draw(g, roadLength);
-                }
-            }
-        };
-        carPanel.setOpaque(false);
-        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        carPanel.setPreferredSize(new Dimension(600, 300));
+        createCarPanel();
         add(carPanel, BorderLayout.NORTH);
 
         // Provided text label
@@ -237,7 +225,7 @@ public class GameScreen extends JPanel {
 
     public void updateCarPositions(String playerName, int progress) {
         int totalLength = providedText.length();
-        int roadLength = (int) (carPanel.getWidth() * 0.7); // 70% of the panel width
+        int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
 
             if (carShape.getPlayer().getName().equals(playerName)) {
@@ -306,6 +294,10 @@ public class GameScreen extends JPanel {
         currentPlayer.setWpm(wpm);
         currentPlayer.setAccuracy(accuracy);
 
+        trackMultiplier = 0.9;
+        createCarPanel();
+        timer.stop();
+
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
 
         // use clientcontroller to transition to the result screen
@@ -313,6 +305,22 @@ public class GameScreen extends JPanel {
 //        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
 //        frame.revalidate();
 //        frame.repaint();
+    }
+
+    private void createCarPanel() {
+        carPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
+                for (CarShape carShape : carShapes) {
+                    carShape.draw(g, roadLength);
+                }
+            }
+        };
+        carPanel.setOpaque(false);
+        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        carPanel.setPreferredSize(new Dimension(600, 300));
     }
 
     public JPanel getCarPanel() {

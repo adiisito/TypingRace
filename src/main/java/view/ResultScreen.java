@@ -58,15 +58,6 @@ public class ResultScreen extends JPanel {
         this.carShapes = carShapes;
         this.clientController = clientController;
         initComponents();
-
-        // Using a final array because of the lambda expression
-        final int[] excessTime = {60 - time};
-        Timer timer = new Timer (1000, e -> {
-            while(excessTime[0] > 0) {
-                carPanel.repaint();
-                excessTime[0]--;
-            }
-        });
     }
 
     /**
