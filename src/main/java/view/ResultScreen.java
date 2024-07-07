@@ -3,6 +3,7 @@ package view;
 import controller.client.ClientController;
 import game.GameState;
 import game.Player;
+import game.TypeRace;
 import game.TypingPlayer;
 
 import javax.swing.*;
@@ -26,6 +27,7 @@ public class ResultScreen extends JPanel {
     private final int time;
     private ClientController clientController;
     private DefaultTableModel rankingModel;
+    private TypeRace typeRace;
 
     /**
      * Creates a window with game results.
@@ -38,7 +40,7 @@ public class ResultScreen extends JPanel {
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm, double accuracy,
-                        int elapsedTime, JPanel carPanel, ClientController clientController) {
+                        int elapsedTime, JPanel carPanel, ClientController clientController, TypeRace typeRace) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
@@ -46,6 +48,7 @@ public class ResultScreen extends JPanel {
         this.endState = carPanel;
         this.time = elapsedTime;
         this.clientController = clientController;
+        this.typeRace = typeRace;
         initComponents();
     }
 
@@ -107,7 +110,7 @@ public class ResultScreen extends JPanel {
         stats.setBackground(new Color(184, 112, 247));
 
         setUpRankingTable();
-        gameState.setPlayers(computeRankings(gameState.getPlayers()));
+        gameState.setPlayers(typeRace.computeRankings(gameState.getPlayers()));
         // updateRankingTable(gameState.getPlayers());
 
         endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
@@ -150,8 +153,4 @@ public class ResultScreen extends JPanel {
         });
     }
 
-    public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
-        completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
-        return completedPlayers;
-    }
 }

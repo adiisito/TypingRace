@@ -4,11 +4,10 @@ package controller.client;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
-import game.Game;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
-import game.TypingPlayer;
+import game.TypeRace;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -33,6 +32,7 @@ public class ClientController {
     private GUI mainGui;
     private TypingPlayer currentPlayer;
     private ResultScreen resultScreen;
+    private TypeRace typerace;
 
     private String providedText;
 
@@ -86,6 +86,7 @@ public class ClientController {
         this.gameState = new GameState();
         this.numPlayers = gameStartNotification.getNumPlayers();
         this.providedText = gameStartNotification.getText();
+        this.typerace= new TypeRace(gameState);
 
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equals(this.clientModel.getPlayerName())) {
@@ -249,12 +250,13 @@ public class ClientController {
                         notification.getAccuracy(),
                         notification.getTime(),
                         view.getCarPanel(),
-                        this
+                        this,
+                        typerace
                 );
                 frame.setContentPane(this.resultScreen);
                 frame.revalidate();
                 frame.repaint();
-                List<TypingPlayer> rankings = resultScreen.computeRankings(gameState.getCompletedPlayers());
+                List<TypingPlayer> rankings = typerace.computeRankings(gameState.getCompletedPlayers());
                 updateRanking(rankings);
             });
 

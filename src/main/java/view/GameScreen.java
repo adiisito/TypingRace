@@ -21,7 +21,7 @@ public class GameScreen extends JPanel {
     private JLabel wpmLabel;
     private JLabel accuracyLabel;
     private JLabel providedTextLabel;
-    private String providedText;
+    public static String providedText;
     private Timer timer;
     private JLabel timeLabel;
     private java.util.List<TypingPlayer> racers;
@@ -31,7 +31,7 @@ public class GameScreen extends JPanel {
 
 
     private long startTime;
-    private int keyPressCount;
+    public static int keyPressCount;
 
     private ClientController clientController;
     private Image backgroundImage;
@@ -128,12 +128,10 @@ public class GameScreen extends JPanel {
                 if (e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
                     return;
                 }
-                /* Doesn't really make sense in our multiplayer game
                 if (!timerStarted) {
                     startTimer();
                     timerStarted = true;
                 }
-                 */
                 if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                     keyPressCount++; // Increment key press count on each key release
                 }
@@ -205,7 +203,6 @@ public class GameScreen extends JPanel {
         add(carPanel, BorderLayout.NORTH);
         add(mainBottomPanel, BorderLayout.CENTER);
 
-        startTimer();
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
     }
@@ -234,6 +231,24 @@ public class GameScreen extends JPanel {
 
         updateCarPositions(currentPlayer.getName(), progress);
     }
+
+    //The updated method is at the end to find!
+
+//    /**
+//     * Updates the display. This method should be called to reflect changes in the player's typing performance on UI.
+//     *
+//     * @param wpm the current wpm
+//     * @param accuracy the current accuracy
+//     */
+//    public void updateProgressDisplay (int wpm, double accuracy) {
+//        // Directly update UI components based on received data
+//        SwingUtilities.invokeLater(() -> {
+//            wpmLabel.setText("WPM: " + wpm);
+//            accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
+//            // Optionally, update a progress bar or similar component if it exists
+//        });
+//    }
+
 
     public void updateCarPositions(String playerName, int progress) {
         int totalLength = providedText.length();
@@ -290,7 +305,7 @@ public class GameScreen extends JPanel {
             int elapsedTime = (int) ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
             int remainingTime = 60 - elapsedTime;
             timeLabel.setText("TIME: " + remainingTime);
-            if (elapsedTime >= 60) {
+            if (elapsedTime >= 60000) {
                 gameState.endCurrentRace();
                 showResults(elapsedTime);
                 timer.stop();
