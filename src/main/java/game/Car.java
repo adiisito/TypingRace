@@ -1,20 +1,20 @@
 package game;
 
 public class Car implements Player {
+    private String id;
     private String name;
     private int wpm;
     private int progress;
     private Player player;
     private double accuracy;
-    private boolean hasFinished;
 
 
     public Car(Player player) {
         this.player = player;
+        this.id = player.getId(); // Assuming Player interface has getId()
         this.name = player.getName();
         this.wpm = player.getWpm();
         this.progress = player.getProgress();
-        this.hasFinished = false;
     }
 
     @Override
@@ -49,6 +49,11 @@ public class Car implements Player {
     }
 
     @Override
+    public String getId() {
+        return this.id;
+    }
+
+    @Override
     public void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
     }
@@ -56,16 +61,6 @@ public class Car implements Player {
     @Override
     public double getAccuracy() {
         return this.accuracy;
-    }
-
-    @Override
-    public void setHasFinished(boolean hasFinished) {
-        this.hasFinished = hasFinished;
-    }
-
-    @Override
-    public boolean isCompleted() {
-        return hasFinished;
     }
 
     public Player getPlayer() {
