@@ -46,6 +46,7 @@ public class ResultScreen extends JPanel {
         this.endState = carPanel;
         this.time = elapsedTime;
         this.clientController = clientController;
+        clientController.setResultScreen(this);
         initComponents();
     }
 
@@ -76,15 +77,12 @@ public class ResultScreen extends JPanel {
         newGameButton.setFont(new Font("Serif", Font.PLAIN, 16));
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
-          try {
-              JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-              frame.setVisible(false);
-              frame = new ClientWindow(currentPlayer.getName(), clientController.getMainGui());
-              frame.revalidate();
-              frame.repaint();
-          } catch (IOException ex) {
-            throw new RuntimeException(ex);
-          }
+            clientController.startNewGame(currentPlayer.getName());
+//              JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+//              frame.setVisible(false);
+//              frame = new ClientWindow(currentPlayer.getName(), clientController.getMainGui());
+//              frame.revalidate();
+//              frame.repaint();
         });
 
         JButton exitButton = new JButton("Exit");
@@ -122,6 +120,10 @@ public class ResultScreen extends JPanel {
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 
+    /**
+     * Initializes the ranking table with predefined column names and sets up the rendering for the table.
+     * The table is placed within a scroll pane and added to a container which is then added to the east of this panel.
+     */
     private void setUpRankingTable() {
         String[] columnNames = {"Rank", "Player", "WPM"};
         rankingModel = new DefaultTableModel(columnNames, 0);
@@ -140,6 +142,12 @@ public class ResultScreen extends JPanel {
         add(tableContainer, BorderLayout.EAST);
     }
 
+    /**
+     * Updates the ranking table with a new set of ranked players.
+     * This method is invoked on the event dispatch thread to ensure thread safety.
+     *
+     * @param rankedPlayers the list of players sorted by their rank to be displayed in the table.
+     */
     public void updateRankingTable(List<TypingPlayer> rankedPlayers) {
         SwingUtilities.invokeLater(() -> {
             rankingModel.setRowCount(0);
@@ -150,6 +158,12 @@ public class ResultScreen extends JPanel {
         });
     }
 
+    /**
+     * Computes the rankings of the players based on their words per minute (WPM) in descending order.
+     *
+     * @param completedPlayers the list of players who have completed the game.
+     * @return a sorted list of players by their WPM.
+     */
     public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
         completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
         return completedPlayers;

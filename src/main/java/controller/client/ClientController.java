@@ -15,6 +15,7 @@ import view.GameScreen;
 import view.ResultScreen;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,14 +36,53 @@ public class ClientController {
     private ResultScreen resultScreen;
 
     private String providedText;
+    private JFrame mainFrame;
 
-    public ClientController(ClientWindow clientWindow, GUI mainGui) {
-        this.clientWindow = clientWindow;
-        this.mainGui = mainGui;
+    /**
+     * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
+     */
+    public ClientController() {
         this.moshi = new Moshi.Builder()
                 .add(PolymorphicJsonAdapterFactory.of(Player.class, "type")
                         .withSubtype(TypingPlayer.class, "typing"))
                 .build();
+        this.gameState = new GameState();
+    }
+
+    /**
+     * Sets the client window associated with this controller.
+     *
+     * @param clientWindow the ClientWindow to be used with this controller.
+     */
+    public void setClientWindow(ClientWindow clientWindow) {
+        this.clientWindow = clientWindow;
+    }
+
+    /**
+     * Sets the main GUI associated with this controller.
+     *
+     * @param mainGui the GUI to be associated with this controller.
+     */
+    public void setMainGui(GUI mainGui) {
+        this.mainGui = mainGui;
+    }
+
+    /**
+     * Sets the result screen associated with this controller.
+     *
+     * @param resultScreen the ResultScreen to be used with this controller.
+     */
+    public void setResultScreen(ResultScreen resultScreen) {
+        this.resultScreen = resultScreen;
+    }
+
+    /**
+     * Sets the game view associated with this controller.
+     *
+     * @param view the GameScreen to be controlled.
+     */
+    public void setView(GameScreen view) {
+        this.view = view;
     }
 
     /**
@@ -52,7 +92,9 @@ public class ClientController {
      * @throws IOException if there is an issue sending the join game request over the network
      */
     public void joinGame(String playerName) throws IOException {
-        this.clientModel = new GameClient(this, playerName);
+        if (currentPlayer == null) {
+            this.clientModel = new GameClient(this, playerName);
+        }
         JoinGameRequest joinRequest = new JoinGameRequest(playerName);
         String json = moshi.adapter(JoinGameRequest.class).toJson(joinRequest);
         clientModel.sendMessage(json);
@@ -83,9 +125,9 @@ public class ClientController {
      */
     public synchronized void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
-        this.gameState = new GameState();
         this.numPlayers = gameStartNotification.getNumPlayers();
         this.providedText = gameStartNotification.getText();
+        gameState.startNewRace();
 
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).getName().equals(this.clientModel.getPlayerName())) {
@@ -104,6 +146,59 @@ public class ClientController {
             clientWindow.repaint();
         });
         System.out.println("Game started with " + players.size() + " players.");
+    }
+
+    /**
+     * Resets and starts a new game session for the specified player. This method disposes
+     * the current game window and creates a new one using the same ClientController, ensuring
+     * the game state continuity.
+     *
+     * @param playerName the name of the player to restart the game for.
+     * @throws RuntimeException if an I/O error occurs during the game reinitialization.
+     */
+    public void startNewGame(String playerName) {
+        SwingUtilities.invokeLater(() -> {
+
+            try {
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(resultScreen);
+                frame.setVisible(false);
+                frame = new ClientWindow(currentPlayer.getName(), this);
+                frame.revalidate();
+                frame.repaint();
+
+                joinGame(playerName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+//            if (clientWindow != null) {
+//                clientWindow.dispose();
+//            }
+//
+//            if (view != null) {
+//                Window window = SwingUtilities.getWindowAncestor(view);
+//                if (window != null) {
+//                    window.dispose();
+//                }
+//                view = null;
+//            }
+//
+//            if (resultScreen != null) {
+//                Window window = SwingUtilities.getWindowAncestor(resultScreen);
+//                if (window != null) {
+//                    window.dispose();
+//                }
+//                resultScreen = null;
+//            }
+//
+//            try {
+//                clientWindow = new ClientWindow(playerName, this);
+//                clientWindow.setVisible(true);
+//                joinGame(currentPlayer.getName());
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+        });
     }
 
     /**
@@ -168,7 +263,7 @@ public class ClientController {
      */
     public void handleProgress (GameStateNotification notification) {
 
-        view.updateCarPositions(notification.getPlayerName(), notification.getProgress());
+        // view.updateCarPositions(notification.getPlayerName(), notification.getProgress(), notification.getWpm());
         SwingUtilities.invokeLater(() -> {
             if (view != null) {
                 Player player = findPlayerByName(notification.getPlayerName());
@@ -178,6 +273,7 @@ public class ClientController {
                     currentPlayer.setProgress(notification.getProgress());
                     currentPlayer.setWpm(notification.getWpm());
                     currentPlayer.setAccuracy(notification.getAccuracy());
+                    view.updateCarPositions(notification.getPlayerName(), notification.getProgress(), notification.getWpm());
 
                     if (notification.getPlayerName().equals(currentPlayer.getName())) {
                         view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
@@ -215,7 +311,7 @@ public class ClientController {
         EndGameRequest request = new EndGameRequest(playerName, time, wpm, accuracy);
         String json = moshi.adapter(EndGameRequest.class).toJson(request);
         clientModel.sendMessage(json);
-
+        gameState.endCurrentRace();
     }
 
     /**
@@ -242,23 +338,25 @@ public class ClientController {
             SwingUtilities.invokeLater(() -> {
                 //update result screen
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(view);
-                this.resultScreen = new ResultScreen(
-                        gameState,
-                        currentPlayer,
-                        notification.getWpm(),
-                        notification.getAccuracy(),
-                        notification.getTime(),
-                        view.getCarPanel(),
-                        this
-                );
-                frame.setContentPane(this.resultScreen);
-                frame.revalidate();
-                frame.repaint();
-                List<TypingPlayer> rankings = resultScreen.computeRankings(gameState.getCompletedPlayers());
-                updateRanking(rankings);
+                if (frame != null) {
+                    this.resultScreen = new ResultScreen(
+                            gameState,
+                            currentPlayer,
+                            notification.getWpm(),
+                            notification.getAccuracy(),
+                            notification.getTime(),
+                            view.getCarPanel(),
+                            this
+                    );
+                    frame.setContentPane(this.resultScreen);
+                    frame.revalidate();
+                    frame.repaint();
+                    List<TypingPlayer> rankings = resultScreen.computeRankings(gameState.getCompletedPlayers());
+                    updateRanking(rankings);
+                }
             });
 
-            System.out.println("Game ended");
+            System.out.println( currentPlayer.getName() + ", Game ended.");
         }
     }
 

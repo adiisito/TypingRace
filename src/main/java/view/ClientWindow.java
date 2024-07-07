@@ -18,10 +18,11 @@ public class ClientWindow extends JFrame {
     private GameState gameState;
     private Font dozerFont;
 
-    public ClientWindow(String playerName, GUI mainGui) throws IOException {
+    public ClientWindow(String playerName, ClientController clientController) throws IOException {
         this.playerName = playerName;
         this.gameState = new GameState();
-        this.clientController = new ClientController(this, mainGui);
+        this.clientController = clientController;
+        clientController.setClientWindow(this);
 
         // Load Dozer Font
         try {
@@ -37,8 +38,6 @@ public class ClientWindow extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        clientController.joinGame(playerName);
 
         // Removes player from game when clicking the window's close button
         addWindowListener(new WindowAdapter() {

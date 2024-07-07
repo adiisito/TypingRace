@@ -160,7 +160,7 @@ public class GameServer {
         System.out.println("Handle join game request for " + request.getPlayerName());
         addPlayer(request.getPlayerName());
 
-        PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), connectionManagers.size());
+        PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), playerNamesList.size());
         String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
         broadcastMessage(json);
     }
