@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameState {
-    private List<TypingPlayer> players;
+    private List<Player> players;
     private Race currentRace;
     private long startTime;
 
@@ -12,11 +12,11 @@ public class GameState {
         players = new ArrayList<>();
     }
 
-    public void addPlayer(TypingPlayer player) {
+    public void addPlayer(Player player) {
         players.add(player);
     }
 
-    public List<TypingPlayer> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
@@ -42,15 +42,5 @@ public class GameState {
 
     public void setPlayers(List<TypingPlayer> players) {
         this.players = new ArrayList<>(players);
-    }
-
-    public List<TypingPlayer> getCompletedPlayers() {
-        List<TypingPlayer> completedPlayers = new ArrayList<>();
-        for (TypingPlayer player : players) {
-            if (player.isCompleted()) {
-                completedPlayers.add(player);
-            }
-        }
-        return completedPlayers;
     }
 }

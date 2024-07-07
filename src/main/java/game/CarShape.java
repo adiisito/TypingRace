@@ -25,41 +25,18 @@ public class CarShape {
     }
 
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getHeight() {
-        return height;
-    }
 
     public void setX(int x) {
         this.x = x;
     }
 
-    public void draw(Graphics g, int roadLength) {
+    public void draw(Graphics g) {
         g.setColor(Color.RED);
         g.fillOval(x, y, width, height);
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         if (name != null) {
             g.drawString(name, x, y + height + 15);
         }
-
-        //the road (dotted line)
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.WHITE);
-        float[] dash = {5f, 5f};
-        BasicStroke bs = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
-        g2d.setStroke(bs);
-
-        int startX = 0; // Starting from the left side of the panel
-        int endX = roadLength; // 70% of the screen width
-
-        g2d.drawLine(startX, y + height, endX, y + height);
     }
 
     public Player getPlayer() {
