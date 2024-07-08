@@ -1,5 +1,6 @@
 package view;
 
+import controller.client.ClientController;
 import game.GameState;
 
 import javax.swing.*;
@@ -15,9 +16,11 @@ public class GUI extends JFrame {
     private DefaultListModel<String> playerListModel;
     private List<ClientWindow> clientWindows = new ArrayList<>();
     private Font dozerFont;
+    private ClientController clientController;
 
-    public GUI(GameState gameState) {
+    public GUI(GameState gameState, ClientController clientController) {
         this.gameState = gameState;
+        this.clientController = clientController;
         loadFont();
         initComponents();
     }
@@ -73,9 +76,17 @@ public class GUI extends JFrame {
             joinButton.setBackground(Color.green);
             joinButton.addActionListener(e -> {
                 String playerName = playerNameField.getText().trim();
+
                 if (!playerName.isEmpty()) {
-                    createNewClient(playerName);
-                    playerNameField.setText(""); // Clear the text field
+
+                    try {
+                        createNewClient(playerName);
+                        clientController.joinGame(playerName);
+                        playerNameField.setText(""); // Clear the text field
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -91,10 +102,11 @@ public class GUI extends JFrame {
         }
     }
 
-    private void createNewClient(String playerName) {
+    public void createNewClient(String playerName) {
         try {
-            ClientWindow clientWindow = new ClientWindow(playerName, this);
+            ClientWindow clientWindow = new ClientWindow(playerName, clientController);
             clientWindows.add(clientWindow);
+            clientController.setClientWindow(clientWindow);
             this.dispose();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Failed to create new client", "Error", JOptionPane.ERROR_MESSAGE);
@@ -118,9 +130,14 @@ public class GUI extends JFrame {
         updateAllClientWindows(playerNames); // Update the player list to reflect the player has left
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         GameState gameState = new GameState();
-        SwingUtilities.invokeLater(() -> new GUI(gameState).setVisible(true));
+        ClientController controller = new ClientController();
+        SwingUtilities.invokeLater(() -> {
+            GUI mainGui = new GUI(gameState, controller);
+            controller.setMainGui(mainGui);
+            mainGui.setVisible(true);
+        });
     }
 
 }
