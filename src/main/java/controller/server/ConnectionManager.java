@@ -33,6 +33,7 @@ public class ConnectionManager extends Thread {
     private final List<String> playerNames;
     private final Set<String> finishedPlayers = new HashSet<>();
     private final Map<String, Integer> playerResults;
+    private String hostPlayerName;
 
     /**
      * Instantiates a new Connection manager.
@@ -99,7 +100,8 @@ public class ConnectionManager extends Thread {
 
         } else if (messageType.equals("StartGameRequest")) {
             System.out.println("Received StartGameRequest");
-            server.startGame();
+            StartGameRequest request = moshi.adapter(StartGameRequest.class).fromJson(message);
+            server.startGame(request);
 
         } else if (messageType.equals("PlayerLeftRequest")) {
             PlayerLeftRequest leftRequest = moshi.adapter(PlayerLeftRequest.class).fromJson(message);

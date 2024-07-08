@@ -27,7 +27,7 @@ public class GameServer {
     private final Moshi moshi;
 
     private String providedText;
-
+    private String hostPlayerName;
 
     /**
      * Constructor for GameServer class.
@@ -50,17 +50,19 @@ public class GameServer {
      *
      * After checked that all the players are there
      */
-    public void startGame() {
-        System.out.println("Starting the game...");
-        List<TypingPlayer> players = new ArrayList<>();
-        for (String playerName : playerNamesList) {
-            players.add(new TypingPlayer(playerName));
-        }
-        this.providedText = Text.getRandomText();
-        GameStartNotification gameStartNotification = new GameStartNotification(players, providedText);
+    public void startGame(StartGameRequest request) {
+        if (request.getHostPlayerName().equals(hostPlayerName)) {
+            System.out.println("Starting the game...");
+            List<TypingPlayer> players = new ArrayList<>();
+            for (String playerName : playerNamesList) {
+                players.add(new TypingPlayer(playerName));
+            }
+            this.providedText = Text.getRandomText();
+            GameStartNotification gameStartNotification = new GameStartNotification(players, providedText);
 
-        String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
-        broadcastMessage(json);
+            String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
+            broadcastMessage(json);
+        }
     }
 
 
@@ -115,6 +117,11 @@ public class GameServer {
             playerNamesList.add(playerName);
             System.out.println("Player added: " + playerName);
 
+            if (playerNamesList.size() == 1) {
+                hostPlayerName = playerName;
+                System.out.println("Host set: " + hostPlayerName);
+            }
+
         }else {
             System.out.println("Player rejoined: " + playerName);
         }
@@ -163,6 +170,12 @@ public class GameServer {
         PlayerJoinedNotification notification = new PlayerJoinedNotification(request.getPlayerName(), playerNamesList.size());
         String json = moshi.adapter(PlayerJoinedNotification.class).toJson(notification);
         broadcastMessage(json);
+
+        if (request.getPlayerName().equals(hostPlayerName)) {
+            HostNotification hostNotification = new HostNotification(hostPlayerName);
+            String json2 = moshi.adapter(HostNotification.class).toJson(hostNotification);
+            broadcastMessage(json2);
+        }
     }
 
     /**
