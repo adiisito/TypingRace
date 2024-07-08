@@ -95,18 +95,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Server, GameScreen: Every client game screen will show the same text at the same round.
 - ClientView, ConnectionManager: Fixed that no player list shows in lobby after the click of start new game and player cannot be deleted when they exit.
 
-# General 
-
-06.Jul.2024
--
-### Added 
-
-- TeamPolicy
-- GameState Tests(Basic)
-- CI.yml update (Updated GitLab Pipeline)
-
-### Fixed 
-
-- GameScreen Font
-- Git Workflow
 
