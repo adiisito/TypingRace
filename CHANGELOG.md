@@ -19,11 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Methods in _GameServer_: BroadcastPlayerListUpdate(), BroadcastMessages(), BroadcastLobbyFull()
 - New Text samples in _Text Class_
 - Car Shape Class
+- Result Window
+- Handler for closing the window while in waiting room
 
 ### Changed
 - GUI Class(with Main Method)
 - GameStartNotification(added getters and setters)
 - PlayerJoinedNotification(getters and setters)
+- Timer starts when the round begins (instead of when the player starts typing)
 
 
 ### Removed
