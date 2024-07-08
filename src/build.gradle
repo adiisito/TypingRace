@@ -19,9 +19,12 @@ dependencies {
     implementation 'com.squareup.moshi:moshi:1.12.0'
     implementation 'com.squareup.moshi:moshi-adapters:1.12.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.12.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-    testImplementation 'com.google.truth:truth:1.4.2'
+    testImplementation 'com.google.truth:truth:1.4.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.mockito:mockito-core:5.11.0'
+
     implementation 'org.json:json:20240303'
 }
 
@@ -75,8 +78,14 @@ tasks.withType(Test) {
     systemProperty 'file.encoding', 'UTF-8'
 }
 
-application {
-    // Define the main class for the application.
-    mainClass = 'com.game.typeracer.server.GameServer'
-    mainClass = 'com.game.typeracer.client.GameClient'
+task runGameServer(type: JavaExec) {
+    mainClass = 'controller.server.GameServer'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+}
+
+task runGameClient(type: JavaExec) {
+    mainClass = 'controller.server.GameClient'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
 }
