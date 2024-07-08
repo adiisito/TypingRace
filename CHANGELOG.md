@@ -107,4 +107,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Newest Sequence Diagramm according to our current version 
 - Newest Json Protocal according to our current version
 
+## 08.Jul.2024
+### Added
+- GameScreen: synchronization of WPM after each car
+
 
