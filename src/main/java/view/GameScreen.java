@@ -28,7 +28,7 @@ public class GameScreen extends JPanel {
     private JPanel carPanel;
     private boolean timerStarted = false;
     private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
-
+    private double trackMultiplier = 0.7;
 
     private long startTime;
     private int keyPressCount;
@@ -90,19 +90,7 @@ public class GameScreen extends JPanel {
         setLayout(new BorderLayout());
 
         // Creating a Car Panel
-        carPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                int roadLength = (int) (getWidth() * 0.7); // 70% of the panel width
-                for (CarShape carShape : carShapes) {
-                    carShape.draw(g, roadLength);
-                }
-            }
-        };
-        carPanel.setOpaque(false);
-        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        carPanel.setPreferredSize(new Dimension(600, 300));
+        createCarPanel();
         add(carPanel, BorderLayout.NORTH);
 
         // Provided text label
@@ -229,7 +217,7 @@ public class GameScreen extends JPanel {
 
     public void updateCarPositions(String playerName, int progress, int wpm) {
         int totalLength = providedText.length();
-        int roadLength = (int) (carPanel.getWidth() * 0.7); // 70% of the panel width
+        int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
 
             if (carShape.getPlayer().getName().equals(playerName)) {
@@ -287,21 +275,25 @@ public class GameScreen extends JPanel {
         gameState.setStartTime(startTime);
 
         timer = new Timer(1000, e -> {
-            int elapsedTime = (int) ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
-            int remainingTime = 60 - elapsedTime;
-            timeLabel.setText("TIME: " + remainingTime);
 
+
+            long elapsedTime = ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
+            long remainingTime = 60 - elapsedTime;
+            timeLabel.setText("TIME: " + (int) remainingTime);
             String typedText = typingArea.getText();
-            int wpm = calculateWpm();
-            int progress = calculateProgress(typedText);
-            double accuracy = calculateAccuracy(typedText);
-            clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, elapsedTime);
 
             boolean isCompleted = typedText.equals(providedText);
             if (elapsedTime >= 60 || isCompleted) {
                 gameState.endCurrentRace();
-                showResults(elapsedTime);
+                showResults((int) elapsedTime);
             }
+
+            int wpm = calculateWpm();
+            int progress = calculateProgress(typedText);
+            double accuracy = calculateAccuracy(typedText);
+            clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, (int) elapsedTime);
+
+
         });
         timer.start();
     }
@@ -318,8 +310,10 @@ public class GameScreen extends JPanel {
 
         currentPlayer.setWpm(wpm);
         currentPlayer.setAccuracy(accuracy);
-
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
+
+        trackMultiplier = 0.9;
+        createCarPanel();
 
         // use clientcontroller to transition to the result screen
 //        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -328,8 +322,40 @@ public class GameScreen extends JPanel {
 //        frame.repaint();
     }
 
+    private void createCarPanel() {
+        carPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
+                for (CarShape carShape : carShapes) {
+                    carShape.draw(g, roadLength);
+                }
+            }
+        };
+        carPanel.setOpaque(false);
+        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        carPanel.setPreferredSize(new Dimension(600, 300));
+    }
+
     public JPanel getCarPanel() {
         return this.carPanel;
+    }
+
+    /**
+     * Gets the list of car entities that move according to progress.
+     * @return the car shapes
+     */
+    public ArrayList<CarShape> getCarShapes() {
+        return this.carShapes;
+    }
+
+    /**
+     * Gets the length of the initial provided text.
+     * @return the length of the provided text
+     */
+    public int getTextLength() {
+        return providedText.length();
     }
 
     private void updateTextColor(String typedText) {
