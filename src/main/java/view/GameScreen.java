@@ -32,10 +32,10 @@ public class GameScreen extends JPanel {
 
     private long startTime;
     private int keyPressCount;
-
     private ClientController clientController;
     private Image backgroundImage;
     private Font customFont;
+    private SoundPlayer soundPlayer;
 
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
         this.gameState = gameState;
@@ -72,6 +72,10 @@ public class GameScreen extends JPanel {
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
         }
+
+
+        soundPlayer = new SoundPlayer();
+        soundPlayer.playSound("sound1.wav");
 
         initComponents();
     }
@@ -304,6 +308,9 @@ public class GameScreen extends JPanel {
             timer = null;
             System.out.println("Timer stopped after game end.");
         }
+
+
+        soundPlayer.stopSound();
 
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
