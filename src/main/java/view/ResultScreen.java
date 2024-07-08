@@ -32,6 +32,7 @@ public class ResultScreen extends JPanel {
     private ArrayList<CarShape> carShapes;
     private Image backgroundImage;
     private int textLength;
+    private SoundPlayer soundPlayer;
 
     /**
      * Creates a window with game results.
@@ -58,6 +59,8 @@ public class ResultScreen extends JPanel {
         this.carShapes = carShapes;
         this.clientController = clientController;
         clientController.setResultScreen(this);
+        soundPlayer = new SoundPlayer();
+        soundPlayer.playSound("rssound.wav");
         initComponents();
     }
 
