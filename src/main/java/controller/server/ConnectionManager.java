@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,6 +66,9 @@ public class ConnectionManager extends Thread {
                 connectionManagers.add(this);
                 processMessage(messageLine);
             }
+        } catch (SocketException e) {
+            System.out.println("SocketException: Likely the client disconnected. Message: " + e.getMessage());
+            handleClientDisconnection();
         } catch (IOException exception) {
             System.out.println("Error reading client, player disconnected");
             server.removePlayer(playerName);
@@ -80,7 +84,13 @@ public class ConnectionManager extends Thread {
         }
     }
 
-
+    /**
+     * Handle Client Disconnection.
+     */
+    private void handleClientDisconnection() {
+        // Optionally log or handle disconnection (e.g., notify other players, update game state)
+        System.out.println("Client " + this.clientSocket.getInetAddress().getHostAddress() + " disconnected.");
+    }
     /**
      * Method for process messages.
      *

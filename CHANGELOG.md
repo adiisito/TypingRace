@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Readme
 - Sounds in the Game
 
+- new network package for test
+  - MockSocket
+- handleClientDisconnection method
+### Fixed
+- Errors by exiting the game fixed.
+
 
 ## 2024-07-07
 ### Fixed 
@@ -145,7 +151,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2024-06-23
 ### Added
-
 - Race Class
 - GameState Class
 - GameScreen Class in VIEW
@@ -187,4 +192,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added 
 
 - Sequence Diagram
-- Team Policy 
+- Team Policy
