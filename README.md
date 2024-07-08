@@ -66,11 +66,12 @@ The game is controlled using a simple graphical user interface (GUI). Here are t
 The player who completes the race first and reaches the finish line is declared the winner.
 
 ### Setup
-1. Start the client application (jar doc).
-2. Enter your name in the provided text field.
-3. Join a game or wait for others to join.
-4. As a host: click "Start Game" once all players are ready.
-5. As a guest: wait for the host to start the game.
+1. Host: run the 'GameServer'.
+2. Guest: run the 'GUI'.
+3. Enter your name in the provided text field.
+4. Join a game or wait for others to join.
+5. As a host: click "Start Game" once all players are ready.
+6. As a guest: wait for the host to start the game.
 
 
 ### Game Play
@@ -96,9 +97,10 @@ This project is inspired by classic typing games and modern racing simulations. 
 
 Team Members: 
       
-        - Ugur Dogan
-        - Yili Li
-        - Yuanyuan Qu
-        - Jun-Wei To
-        - Aditya Bharadwaj
+        - Ugur Yavuz Dogan: uguryavuzdogan@gmail.com
+        - Yili Li: Yil.Li@campus.lmu.de
+        - Yuanyuan Qu: yuanyuan.qu@campus.lmu.de
+        - Jun-Wei To: J.To@campus.lmu.de
+        - Aditya Bharadwaj: Bharadwaj.Aditya@campus.lmu.de
+        - Tutor: Francis Louis Constantin Arsene: francis04arsene1457@gmail.com
 
