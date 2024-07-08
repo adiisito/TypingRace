@@ -7,69 +7,116 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+# MODEL & VIEW : 
+###  Assignees : _Ugur Dogan, Jun-Wei To and Aditya Bharadwaj_
+# NETWORK:  
+### Assignees : _Yili Li and Yuanyuan Qu_
+
+
+
+
+## 2024-07-08
 ### Added
-- Race code
-- GameScreen Class in View Package
-- Typing Player (instead of Typer)
-- "integration" branch
+- GameScreen: synchronization of WPM after each car
+- Only host (first joined player) can start the game (messagetype)
+- Readme
+- Sounds in the Game
+
+
+## 2024-07-07
+### Fixed 
+
+- GameState
+- ResultScreen Visuals
+
+## 2024-07-06 
+### Added
+
+- JUnit Tests for GameState 
+- JavaDoc in CI Pipeline
+
+## 2024-07-05
+### Added
+
+- New Background Options 
+- New Font for Game Screen and Results Screen
+
+### Fixed
+
+- Repository Structure to MVC 
+- Game Timer
+- Exit Option (when player clicks cross, they exit the game)
+
+## 2024-07-04
+### Added
+- new MessageTypes: UpdateRankingRequest, RankingNotification
+- hostname -> online multiplayer mode on different computers
+- Timer starts when the round begins (instead of when the player starts typing)
+
+### Fixed
+- ranking list update and synchronization
+
+### Changed
+- Newest Sequence Diagramm according to our current version
+- Newest Json Protocal according to our current version
+
+## 2024-07-03
+### Added 
+
+- Ranking List on Results Screen 
+- Ranking Broadcast
+- 
+
+### Fixed 
+
+- Game Screen View, Background
+- Text Class
+
+## 2024-07-02
+### Added
+- ClientController, ResultScreen: Update the personal result screen according to the result in GameEndedNotification.
+- Gamescreen Dark Background
+- Typed words Color Implementation (Green, if correct; Red, if incorrect)
+
+### Fixed
+- Server, GameScreen: Every client game screen will show the same text at the same round.
+- ClientView, ConnectionManager: Fixed that no player list shows in lobby after the click of start new game and player cannot be deleted when they exit.
+- Sync Text on different players game screens
+- Restart Button (Transitions back to ClientWindow)
+- WPM on the Results Window
+
+## 2024-06-29
+### Fixed
+- Server: Player will be deleted from player list when they exit, also in playing window and ranking window.
+- GameScreen: Fixed car movement and the screen synchronization
+- Handler for closing the window while in waiting room
+- PlayerLeft Notification in ClientWindow
+
+## 2024-06-28
+### Added
+- ClientController, GameScreen: Update the player's game status on the GameScreen with the player's progress in the GameStateNotification sent by the server.
+- New Text samples in _Text Class_
+- Car Shape Class
+- 
+### Fixed 
+
+- Game Logic 
+- Typing Player Class
+
+
+## 2024-06-25
+### Added 
+- Model View and Network Integration
 - ClientWindow
 - LobbyFullNotification
 - PlayerListUpdateNotification
-- Methods in _ClientController_: HandlePlayerListUpdate(), HandleLobbyFull()
-- Methods in _GameServer_: BroadcastPlayerListUpdate(), BroadcastMessages(), BroadcastLobbyFull()
-- New Text samples in _Text Class_
-- Car Shape Class
 - Result Window
-- Handler for closing the window while in waiting room
 
-### Changed
-- GUI Class(with Main Method)
-- GameStartNotification(added getters and setters)
-- PlayerJoinedNotification(getters and setters)
-- Timer starts when the round begins (instead of when the player starts typing)
-
-
-### Removed
-- LoginWindow Class(instead moved them to view package)
-- ResultWindow Class(instead moved them to view package)
-- GameWindow Class(instead moved them to view package)
-- Typer Class(instead made TypingPlayer)
-- 
-### Fixed
-
-- Game Interface
-- Player Interface
-- GameState
-- Typed Text Colors according to if its correct or incorrect & BG Color
-- WPM & Accuracy
-
-
-
-# NETWORK @Yili Li, @Yuanyuan Qu
-## 22.Jun.2024
-### Added
-
-- new class: messages, request for server and notis for client
-
-## 24.Jun.2024
-### Added
-- ClientController
-- GameClient
-- GameServer
-- ConnectionManager
-- synchronized the processMessage class
-
-- new class: message, 
-- new class : PlayerListUpdateNotification in Messages package
-
-### Changed
-- Changed the Interface of server and client into two separated interfaces
-- Changed the Message interface to a normal class
-
-
-## 25.Jun.2024
 ### Changed
 - Changed the Message class into  MessageType class, no more need to extends from this class
+- Methods in _ClientController_: HandlePlayerListUpdate(), HandleLobbyFull()
+- Methods in _GameServer_: BroadcastPlayerListUpdate(), BroadcastMessages(), BroadcastLobbyFull()
 
 ### Removed
 - all extends are removed
@@ -78,41 +125,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GameServer
 - GameClient
 - ClientController
-
 - GameScreen
 
-## 28.Jun.2024
+## 2024-06-24
 ### Added
-- ClientController, GameScreen: Update the player's game status on the GameScreen with the player's progress in the GameStateNotification sent by the server.
-
-## 29.Jun.2024
-### Fixed
-- Server: Player will be deleted from player list when they exit, also in playing window and ranking window.
-- GameScreen: Fixed car movement and the screen synchronization
-
-## 02.Jul.2024
-### Added
-- ClientController, ResultScreen: Update the personal result screen according to the result in GameEndedNotification.
-
-### Fixed
-- Server, GameScreen: Every client game screen will show the same text at the same round.
-- ClientView, ConnectionManager: Fixed that no player list shows in lobby after the click of start new game and player cannot be deleted when they exit.
-
-## 04.Jul.2024
-### Added 
-- new MessageTypes: UpdateRankingRequest, RankingNotification
-- hostname -> online multiplayer mode on different computers
-
-### Fixed
-- ranking list update and synchronization
+- ClientController
+- GameClient
+- GameServer
+- ConnectionManager
+- synchronized the processMessage class
+- - Initial Structure of Car Class, Text Class and Player Interface
+- new class: message,
+- new class : PlayerListUpdateNotification in Messages package
 
 ### Changed
-- Newest Sequence Diagramm according to our current version 
-- Newest Json Protocal according to our current version
+- Changed the Interface of server and client into two separated interfaces
+- Changed the Message interface to a normal class
 
-## 08.Jul.2024
+
+## 2024-06-23
 ### Added
-- GameScreen: synchronization of WPM after each car
-- Only host (first joined player) can start the game (messagetype)
-- Readme
 
+- Race Class
+- GameState Class
+- GameScreen Class in VIEW
+- TypingPlayer
+
+### Removed 
+
+- Typer Class (Confusing to understand)
+- LoginWindow Class(instead moved them to view package)
+- ResultWindow Class(instead moved them to view package)
+- GameWindow Class(instead moved them to view package)
+
+
+## 2024-06-22
+
+### Added
+- new class: messages, request for server and notifications for client
+
+### Fixed 
+
+- Game Interface
+- Player Interface
+- GameState
+- Typed Text Colors according to if its correct or incorrect & BG Color
+- WPM & Accuracy
+
+
+## 2024-06-16
+### Added 
+
+- Initial packages for the development (Based on MVC Pattern)
+
+## 2024-06-15
+### Added
+- Game Mockups into the Repo
+
+## 2024-06-14 
+ 
+### Added 
+
+- Sequence Diagram
+- Team Policy 
