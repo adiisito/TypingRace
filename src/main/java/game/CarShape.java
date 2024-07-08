@@ -11,10 +11,12 @@ public class CarShape {
     private Car car;
 
     private Player player;
+    private int wpm;
+    private Font font;
 
 
 
-    public CarShape(Car car, Player player, int x, int y, int width, int height) {
+    public CarShape(Car car, Player player, int x, int y, int width, int height, Font font) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -22,8 +24,13 @@ public class CarShape {
         this.name = car.getName();
         this.car = car;
         this.player = player;
+        this.wpm = 0;
+        this.font = font;
     }
 
+    public void setFont(Font font) {
+        this.font = font;
+    }
 
     public int getX() {
         return x;
@@ -45,8 +52,12 @@ public class CarShape {
         g.setColor(Color.RED);
         g.fillOval(x, y, width, height);
         g.setColor(Color.WHITE);
+        g.setFont(font.deriveFont(Font.BOLD, 15));
         if (name != null) {
             g.drawString(name, x, y + height + 15);
+        }
+        if (player != null) {
+            g.drawString("WPM: " + wpm, x + width + 5, y + height / 2);  // Display WPM to the right of the car
         }
 
         //the road (dotted line)
@@ -60,6 +71,14 @@ public class CarShape {
         int endX = roadLength; // 70% of the screen width
 
         g2d.drawLine(startX, y + height, endX, y + height);
+    }
+
+    public int getWpm() {
+        return wpm;
+    }
+
+    public void setWpm(int wpm) {
+        this.wpm = wpm;
     }
 
     public Player getPlayer() {
