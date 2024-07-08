@@ -17,6 +17,7 @@ public class ClientWindow extends JFrame {
     private DefaultListModel<String> playerListModel;
     private GameState gameState;
     private Font dozerFont;
+    private JButton startButton;
 
     public ClientWindow(String playerName, ClientController clientController) throws IOException {
         this.playerName = playerName;
@@ -81,8 +82,14 @@ public class ClientWindow extends JFrame {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setOpaque(false);
 
-        JButton startButton = create3DButton("Start Game");
-        startButton.addActionListener(e -> clientController.startGame());
+        this.startButton = create3DButton("Start Game");
+        startButton.addActionListener(e -> {
+            if (clientController.isHost(playerName)) {
+                clientController.startGame(playerName);
+            } else {
+                JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Space between buttons
         buttonPanel.add(startButton);
 
@@ -134,7 +141,7 @@ public class ClientWindow extends JFrame {
 
     public void showLobbyFullButton() {
         JButton lobbyFullButton = create3DButton("Lobby full, Start the Game");
-        lobbyFullButton.addActionListener(e -> clientController.startGame());
+        lobbyFullButton.addActionListener(e -> clientController.startGame(playerName));
         JPanel waitingPanel = (JPanel) getContentPane();
         waitingPanel.add(lobbyFullButton, BorderLayout.SOUTH);
         revalidate();

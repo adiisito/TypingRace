@@ -76,6 +76,7 @@ public class GUI extends JFrame {
             joinButton.setBackground(Color.green);
             joinButton.addActionListener(e -> {
                 String playerName = playerNameField.getText().trim();
+
                 if (!playerName.isEmpty()) {
 
                     try {
@@ -101,7 +102,7 @@ public class GUI extends JFrame {
         }
     }
 
-    private void createNewClient(String playerName) {
+    public void createNewClient(String playerName) {
         try {
             ClientWindow clientWindow = new ClientWindow(playerName, clientController);
             clientWindows.add(clientWindow);

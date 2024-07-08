@@ -34,9 +34,9 @@ public class ClientController {
     private GUI mainGui;
     private TypingPlayer currentPlayer;
     private ResultScreen resultScreen;
-
     private String providedText;
-    private JFrame mainFrame;
+    private String hostPlayer = null;
+    List<String> playerNames;
 
     /**
      * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
@@ -109,8 +109,9 @@ public class ClientController {
      * @param updateNotification the notification containing the update list of players
      */
     public void handlePlayerListUpdate(PlayerListUpdateNotification updateNotification) {
-        List<String> playerNames = updateNotification.getPlayerNames();
+        this.playerNames = updateNotification.getPlayerNames();
         clientWindow.updatePlayerList(playerNames);
+        // clientWindow.updateStartButtonState(isHost(clientWindow.getPlayerName()));
         System.out.println("Updated player list in client: " + playerNames);
         mainGui.updateAllClientWindows(playerNames);
         if (playerNames.size() == 6) {
@@ -170,34 +171,6 @@ public class ClientController {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-//            if (clientWindow != null) {
-//                clientWindow.dispose();
-//            }
-//
-//            if (view != null) {
-//                Window window = SwingUtilities.getWindowAncestor(view);
-//                if (window != null) {
-//                    window.dispose();
-//                }
-//                view = null;
-//            }
-//
-//            if (resultScreen != null) {
-//                Window window = SwingUtilities.getWindowAncestor(resultScreen);
-//                if (window != null) {
-//                    window.dispose();
-//                }
-//                resultScreen = null;
-//            }
-//
-//            try {
-//                clientWindow = new ClientWindow(playerName, this);
-//                clientWindow.setVisible(true);
-//                joinGame(currentPlayer.getName());
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
         });
     }
 
@@ -232,14 +205,21 @@ public class ClientController {
     /**
      * Start game.
      */
-    public void startGame() {
-        StartGameRequest request = new StartGameRequest();
+    public void startGame(String playerName) {
+        StartGameRequest request = new StartGameRequest(playerName);
         String json = moshi.adapter(StartGameRequest.class).toJson(request);
 
         clientModel.sendMessage(json);
         System.out.println("Game started");
     }
 
+    public void handleHostNotification (HostNotification hostNotification) {
+        hostPlayer = hostNotification.getHost();
+    }
+
+    public boolean isHost(String playerName) {
+        return playerName.equals(hostPlayer);
+    }
 
     /**
      * Sends an update of the player's progress to the server.

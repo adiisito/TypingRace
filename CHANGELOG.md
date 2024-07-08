@@ -113,5 +113,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 08.Jul.2024
 ### Added
 - GameScreen: synchronization of WPM after each car
-
+- Only host (first joined player) can start the game
 
