@@ -13,9 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+<<<<<<< HEAD
 ##2024-07-08
 ### Added
 - New test classes: MockInputStream, MockServerSocket, ServerTest, Sleeps, TestUtils
+=======
+
+## 2024-07-09
+### Fixed
+- Only the first player of lobby can start game (host)
+>>>>>>> 2636411671bb9ab792caa92333dcce7f00a8b736
 
 
 ## 2024-07-08

@@ -1,6 +1,9 @@
 package game;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class CarShape {
     private int x;
@@ -9,6 +12,7 @@ public class CarShape {
     private int height;
     private String name;
     private Car car;
+    private Image carImage;
 
     private Player player;
     private int wpm;
@@ -26,7 +30,18 @@ public class CarShape {
         this.player = player;
         this.wpm = 0;
         this.font = font;
+
+        try {
+            carImage = ImageIO.read(new File("src/main/resources/test-ufo-removebg-preview.png"));
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+            carImage = null;
+        }
     }
+
+
+
 
     public void setFont(Font font) {
         this.font = font;
@@ -49,10 +64,13 @@ public class CarShape {
     }
 
     public void draw(Graphics g, int roadLength) {
-        g.setColor(Color.RED);
-        g.fillOval(x, y, width, height);
-        g.setColor(Color.WHITE);
-        g.setFont(font.deriveFont(Font.BOLD, 15));
+        if (carImage != null) {
+            g.drawImage(carImage, x, y, width, height, null);
+        } else {
+            g.setColor(Color.RED);
+            g.fillOval(x, y, width, height);
+        }
+
         if (name != null) {
             g.drawString(name, x, y + height + 15);
         }

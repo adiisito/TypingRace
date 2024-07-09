@@ -158,6 +158,7 @@ public class GameServer {
      * @param name id of the player.
      */
     public void removePlayer(String name) {
+        boolean wasHost = name.equals(hostPlayerName);
         playerNamesList.remove(name);
 
         int numPlayer = playerNamesList.size();
@@ -165,6 +166,19 @@ public class GameServer {
         PlayerLeftNotification leftNotification = new PlayerLeftNotification(name, numPlayer);
         String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
         broadcastMessage(json);
+
+        if (wasHost) {
+            if (!playerNamesList.isEmpty()) {
+                hostPlayerName = playerNamesList.get(0); // Set new host
+                HostNotification hostNotification = new HostNotification(hostPlayerName);
+                json = moshi.adapter(HostNotification.class).toJson(hostNotification);
+                broadcastMessage(json);
+                System.out.println("New host assigned: " + hostPlayerName);
+            } else {
+                hostPlayerName = null; // No players left to be host
+            }
+        }
+
         broadcastPlayerListUpdate();
         System.out.println("Player " + name + " has left the game.");
     }
