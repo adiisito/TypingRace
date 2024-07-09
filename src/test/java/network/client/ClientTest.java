@@ -232,30 +232,34 @@ public class ClientTest {
     }
 
     @Test
-    public void testClient6_receiveGameStartNotification() throws IOException {
+    public void testClient6_receiveGameStartNotification() throws IOException, InterruptedException {
+        // Prepare the JSON message as it might be received from the server
         String jsonNotification = "{\"messageType\":\"GameStartNotification\","
                 + "\"players\":[{\"name\":\"Alice\", \"wpm\":0, \"accuracy\":0.0}],"
                 + "\"text\":\"Sample game text\"}";
 
+        // Set the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
+        // Start the listening thread in the GameClient
         gameClient.startListening();
 
-        // Set up the mock to perform assertions when handleGameStart is called
-        doAnswer(invocation -> {
-            GameStartNotification notification = invocation.getArgument(0);
-            assertNotNull(notification);
-            assertEquals("Sample game text", notification.getText());
-            assertEquals(1, notification.getNumPlayers());
-            return null;
-        }).when(clientController).handleGameStart(any(GameStartNotification.class));
+        // Give some time for the message to be processed
+        Thread.sleep(500); // Adjust timing based on the async behavior
 
-
-
-        verify(clientController, timeout(1000)).handleGameStart(any(GameStartNotification.class));
-
+        // Verify that the handleGameStart method was called on the ClientController
+        // with the correct notification details
+        verify(clientController, timeout(1000)).handleGameStart(argThat(notification ->
+                "GameStartNotification".equals(notification.getMessageType()) &&
+                        notification.getPlayers().size() == 1 &&
+                        "Alice".equals(notification.getPlayers().get(0).getName()) &&
+                        notification.getPlayers().get(0).getWpm() == 0 &&
+                        notification.getPlayers().get(0).getAccuracy() == 0.0 &&
+                        "Sample game text".equals(notification.getText())
+        ));
     }
+
 
     @Test
     public void testClient7_sendUpdateProgressRequest() throws IOException, InterruptedException {
