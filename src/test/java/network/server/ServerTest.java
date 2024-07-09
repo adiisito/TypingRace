@@ -33,6 +33,6 @@ public class ServerTest {
         //server.handleJoinGameRequest();
 
         String response = new String(mockOutput.toByteArray());
-        assertTrue(response.contains("Welcome Alice")); // 假设服务器发送欢迎消息
+        assertTrue(response.contains("Welcome Alice"));
     }
 }

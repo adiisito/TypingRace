@@ -2,6 +2,7 @@
 package controller.client;
 
 import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonEncodingException;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.GameEndNotification;
@@ -9,6 +10,7 @@ import communication.messages.GameStartNotification;
 import communication.messages.GameStateNotification;
 import communication.messages.HostNotification;
 import communication.messages.MessageType;
+import communication.messages.PlayerJoinedNotification;
 import communication.messages.PlayerListUpdateNotification;
 import communication.messages.PlayerLeftNotification;
 import communication.messages.LobbyFullNotification;
@@ -65,10 +67,19 @@ public class GameClient {
         }
     }
 
+    public GameClient(ClientController clientController, String playerName, Socket socket) throws IOException {
+        this.clientController = clientController;
+        this.playerName = playerName;
+        this.socket = socket;
+        this.moshi = new Moshi.Builder().build();
+        this.out = new PrintWriter(socket.getOutputStream(), true);
+        startListening();
+    }
+
     /**
      * Starts a new thread to listen for messages from the server.
      */
-    private void startListening() {
+    public void startListening() {
         new Thread(() -> {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
                 String message;
@@ -78,7 +89,8 @@ public class GameClient {
                     }
                 }
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Error while listening to server messages: " + e.getMessage(), "Network Error", JOptionPane.ERROR_MESSAGE);
+                // JOptionPane.showMessageDialog(null, "Error while listening to server messages: " + e.getMessage(), "Network Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             } finally {
                 try {
                     socket.close();
@@ -96,34 +108,42 @@ public class GameClient {
      * @throws IOException if an error occurs while processing the message
      */
     public void processMessage(String message) throws IOException {
-        MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
-        String messageType = messageObject.getMessageType();
+        try {
+            MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
+            String messageType = messageObject.getMessageType();
 
-        System.out.println("received messageType: " + messageType);
+            System.out.println("received messageType: " + messageType);
 
-        if (messageType.equals("PlayerListUpdateNotification")) {
-            PlayerListUpdateNotification updateNotification = moshi.adapter(PlayerListUpdateNotification.class).fromJson(message);
-            clientController.handlePlayerListUpdate(updateNotification);
-        } else if (messageType.equals("GameStartNotification")) {
-            GameStartNotification gameStartNotification = moshi.adapter(GameStartNotification.class).fromJson(message);
-            clientController.handleGameStart(gameStartNotification);
-        } else if (messageType.equals("LobbyFullNotification")) {
-            clientController.handleLobbyFull();
-        } else if (messageType.equals("PlayerLeftNotification")) {
-            PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
-            clientController.handlePlayerLeft(leftNotification);
-        } else if (messageType.equals("GameStateNotification")) {
-            GameStateNotification stateNotification = moshi.adapter(GameStateNotification.class).fromJson(message);
-            clientController.handleProgress(stateNotification);
-        } else if (messageType.equals("GameEndNotification")) {
-            GameEndNotification gameEndNotification = moshi.adapter(GameEndNotification.class).fromJson(message);
-            clientController.handleGameEnd(gameEndNotification);
-        } else if (messageType.equals("RankingNotification")) {
-            RankingNotification rankingNotification = moshi.adapter(RankingNotification.class).fromJson(message);
-            clientController.handleRankingNotification(rankingNotification);
-        } else if (messageType.equals("HostNotification")) {
-            HostNotification hostNotification = moshi.adapter(HostNotification.class).fromJson(message);
-            clientController.handleHostNotification(hostNotification);
+            if (messageType.equals("PlayerListUpdateNotification")) {
+                PlayerListUpdateNotification updateNotification = moshi.adapter(PlayerListUpdateNotification.class).fromJson(message);
+                clientController.handlePlayerListUpdate(updateNotification);
+            } else if (messageType.equals("GameStartNotification")) {
+                GameStartNotification gameStartNotification = moshi.adapter(GameStartNotification.class).fromJson(message);
+                clientController.handleGameStart(gameStartNotification);
+            } else if (messageType.equals("LobbyFullNotification")) {
+                clientController.handleLobbyFull();
+            } else if (messageType.equals("PlayerLeftNotification")) {
+                PlayerLeftNotification leftNotification = moshi.adapter(PlayerLeftNotification.class).fromJson(message);
+                clientController.handlePlayerLeft(leftNotification);
+            } else if (messageType.equals("GameStateNotification")) {
+                GameStateNotification stateNotification = moshi.adapter(GameStateNotification.class).fromJson(message);
+                clientController.handleProgress(stateNotification);
+            } else if (messageType.equals("GameEndNotification")) {
+                GameEndNotification gameEndNotification = moshi.adapter(GameEndNotification.class).fromJson(message);
+                clientController.handleGameEnd(gameEndNotification);
+            } else if (messageType.equals("RankingNotification")) {
+                RankingNotification rankingNotification = moshi.adapter(RankingNotification.class).fromJson(message);
+                clientController.handleRankingNotification(rankingNotification);
+            } else if (messageType.equals("HostNotification")) {
+                HostNotification hostNotification = moshi.adapter(HostNotification.class).fromJson(message);
+                clientController.handleHostNotification(hostNotification);
+            } else if (messageType.equals("PlayerJoinedNotification")) {
+                PlayerJoinedNotification playerJoinedNotification = moshi.adapter(PlayerJoinedNotification.class).fromJson(message);
+                clientController.handlePlayerJoined(playerJoinedNotification);
+            }
+        } catch (JsonEncodingException e) {
+            System.err.println("JSON parsing error: " + e.getMessage());
+            System.err.println("Faulty JSON: " + message);
         }
 
     }

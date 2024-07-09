@@ -47,6 +47,7 @@ public class ClientController {
                         .withSubtype(TypingPlayer.class, "typing"))
                 .build();
         this.gameState = new GameState();
+        this.numPlayers = 0;
     }
 
     /**
@@ -119,12 +120,16 @@ public class ClientController {
         }
     }
 
+    public void handlePlayerJoined (PlayerJoinedNotification notification) {
+        this.numPlayers = notification.getNumPlayers();
+    }
+
     /**
      * Handle game start notification, initializing game state and updating the UI to reflect the game start.
      *
      * @param gameStartNotification the game start notification
      */
-    public synchronized void handleGameStart(GameStartNotification gameStartNotification) {
+    public void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
         this.numPlayers = gameStartNotification.getNumPlayers();
         this.providedText = gameStartNotification.getText();
@@ -370,7 +375,7 @@ public class ClientController {
     /**
      * Displays the lobby full button on the client window.
      */
-    void handleLobbyFull() {
+    public void handleLobbyFull() {
         SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
     }
 

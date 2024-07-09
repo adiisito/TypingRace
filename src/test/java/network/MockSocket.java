@@ -6,8 +6,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-public class MockSocket extends Socket{
-    private final InputStream input;
+public class MockSocket extends Socket {
+    private InputStream input;
     private final OutputStream output;
     private boolean isClosed = false;
 
@@ -36,5 +36,9 @@ public class MockSocket extends Socket{
     public boolean isClosed() {
         return isClosed;
     }
-}
 
+    // Method to change the InputStream at runtime
+    public void setInputStream(InputStream newInput) {
+        this.input = newInput;
+    }
+}
