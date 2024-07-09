@@ -141,7 +141,13 @@ public class ClientWindow extends JFrame {
 
     public void showLobbyFullButton() {
         JButton lobbyFullButton = create3DButton("Lobby full, Start the Game");
-        lobbyFullButton.addActionListener(e -> clientController.startGame(playerName));
+        lobbyFullButton.addActionListener(e -> {
+            if (clientController.isHost(playerName)) {
+                clientController.startGame(playerName);
+            } else {
+                JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
+            }
+        });
         JPanel waitingPanel = (JPanel) getContentPane();
         waitingPanel.add(lobbyFullButton, BorderLayout.SOUTH);
         revalidate();

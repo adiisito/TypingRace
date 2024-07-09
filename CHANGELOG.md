@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
 
+## 2024-07-09
+### Fixed
+- Only the first player of lobby can start game (host)
 
 
 ## 2024-07-08
