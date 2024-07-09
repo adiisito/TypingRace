@@ -68,7 +68,7 @@ public class ClientTest {
     @Test
     public void testClient1_start_sendJoinRequest() throws IOException {
         ClientController controller = new ClientController();
-        GameClient client = new GameClient(controller, USERNAME);
+        //GameClient client = new GameClient(controller, USERNAME);
 
         InputStream networkIn = getNetworkIn("");
         OutputStream networkOut = getNetworkOut();

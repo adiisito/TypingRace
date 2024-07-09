@@ -6,6 +6,13 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+
+import com.squareup.moshi.Moshi;
+import communication.messages.JoinGameRequest;
+import communication.messages.PlayerJoinedNotification;
+import communication.messages.PlayerListUpdateNotification;
+import controller.server.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import controller.server.GameServer;
@@ -13,26 +20,47 @@ import network.MockSocket;
 
 public class ServerTest {
     private GameServer server;
-    private MockSocket mockSocket;
-    private ByteArrayInputStream mockInput;
-    private ByteArrayOutputStream mockOutput;
+    private Moshi moshi;
 
     @BeforeEach
-    public void setup() throws IOException {
-        mockInput = new ByteArrayInputStream("Messages from Client".getBytes());
-        mockOutput = new ByteArrayOutputStream();
-        mockSocket = new MockSocket(mockInput, mockOutput);
-        server = new GameServer(); // 假设这是处理连接的服务器
+    public void setUp() throws IOException {
+        server = new GameServer();
+        moshi = new Moshi.Builder().build();
     }
 
     @Test
-    public void testHandlesJoinRequest() throws IOException {
-        String joinRequest = "{\"type\":\"JoinGame\",\"playerName\":\"Alice\"}";
-        //mockInput.reset(handleJoinGameRequest.getBytes());
+    public void testHandleJoinGameRequest() throws IOException, InterruptedException {
+        String joinRequestJson = moshi.adapter(JoinGameRequest.class).toJson(new JoinGameRequest("Alice"));
+        MockInputStream mockInput = TestUtils.getNetworkIn(joinRequestJson);
+        ByteArrayOutputStream mockOutput = TestUtils.getNetworkOut();
+        MockSocket mockSocket = new MockSocket(mockInput, mockOutput);
+        MockServerSocket mockServerSocket = new MockServerSocket(List.of(mockSocket));
 
-        //server.handleJoinGameRequest();
+        server = TestUtils.startServer(mockServerSocket);
 
-        String response = new String(mockOutput.toByteArray());
-        assertTrue(response.contains("Welcome Alice")); // 假设服务器发送欢迎消息
+        ConnectionManager connectionManager = new ConnectionManager(mockSocket, server);
+        Thread connectionThread = new Thread(connectionManager::run);
+        connectionThread.start();
+
+        // 读取并处理请求
+        do {
+            Thread.sleep(10);
+        } while (!mockInput.isDone());
+        Thread.sleep(Sleeps.SLEEP_BEFORE_TESTING);
+
+        String sentMessages = mockOutput.toString();
+        System.out.println("Sent messages: " + sentMessages);  // 添加调试输出
+
+        // 验证PlayerListUpdateNotification
+        if (!sentMessages.contains("\"messageType\":\"PlayerListUpdateNotification\"")) {
+            fail("Expected PlayerListUpdateNotification not found in server output.");
+        }
+        assertTrue(sentMessages.contains("\"playerNames\":[\"Alice\"]"));
+        PlayerListUpdateNotification notification = moshi.adapter(PlayerListUpdateNotification.class).fromJson(sentMessages);
+        assertNotNull(notification);
+        assertTrue(notification.getPlayerNames().contains("Alice"));
+
+        // 停止连接线程
+        connectionThread.interrupt();
     }
 }

@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
-
+##2024-07-08
+### Added
+- New test classes: MockInputStream, MockServerSocket, ServerTest, Sleeps, TestUtils
 
 
 ## 2024-07-08

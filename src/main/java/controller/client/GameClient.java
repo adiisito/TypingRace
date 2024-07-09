@@ -30,8 +30,8 @@ import java.net.Socket;
  */
 public class GameClient {
 
-    private static final String HOSTNAME = "127.0.0.100";
-    private static final int SERVER_PORT = 12345;
+    private static final String HOSTNAME = "localhost";
+    private static final int SERVER_PORT = 0;
 
     private final Socket socket;
     private final PrintWriter out;
@@ -48,7 +48,7 @@ public class GameClient {
      * @param playerName the name of the player
      * @throws IOException if an I/O error occurs when creating the socket
      */
-    public GameClient(ClientController clientController, String playerName) throws IOException {
+    public GameClient(ClientController clientController, String playerName, String serverIP) throws IOException {
         this.moshi = new Moshi.Builder().build();
 
         this.clientController = clientController;
@@ -56,11 +56,11 @@ public class GameClient {
         this.playerName = playerName;
 
         try {
-            this.socket = new Socket(HOSTNAME, SERVER_PORT);
+            this.socket = new Socket(serverIP, SERVER_PORT);
             this.out = new PrintWriter(socket.getOutputStream(), true);
             startListening();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error connecting to the server: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error connecting to the server at " + serverIP + ": " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
             throw e;
         }
     }
