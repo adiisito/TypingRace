@@ -37,8 +37,8 @@ public class GUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Type Racer Game");
-        setSize(800, 600);
+        setTitle("KeySprint");
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -47,7 +47,7 @@ public class GUI extends JFrame {
 
     private void showLoginWindow() {
         try {
-            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/LoginScreen.jpeg"));
+            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/1screen4.gif"));
             BackgroundPanel loginPanel = new BackgroundPanel(backgroundImage);
             loginPanel.setLayout(new GridBagLayout());
 
