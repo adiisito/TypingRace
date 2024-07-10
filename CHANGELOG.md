@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2024-07-09
 ### Fixed
 - Only the first player of lobby can start game (host)
-
+- New animated login and client windows
 
 ## 2024-07-08
 ### Added
