@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class GUI extends JFrame {
     private JTextField playerNameField;
     private JButton joinButton;
+    private JButton createGameButton;
     private GameState gameState;
     private DefaultListModel<String> playerListModel;
     private List<ClientWindow> clientWindows = new ArrayList<>();
@@ -71,18 +72,45 @@ public class GUI extends JFrame {
             playerNameField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             loginPanel.add(playerNameField, gbc);
 
+            JLabel serverLabel = new JLabel("Enter Server IP:");
+            serverLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            serverLabel.setForeground(Color.WHITE);
+            loginPanel.add(serverLabel, gbc);
+
+            JTextField serverIPField = new JTextField(20);
+            serverIPField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            loginPanel.add(serverIPField, gbc);
+
+            createGameButton = new JButton("Create Game");
+            createGameButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            createGameButton.addActionListener(e -> {
+                String playerName = playerNameField.getText().trim();
+                try {
+                    String serverIP = "127.0.0.1";
+                    createNewClient(playerName);
+                    clientController.joinGame(playerName, serverIP);
+                    playerNameField.setText(""); // Clear the text field
+                    serverIPField.setText("");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            loginPanel.add(createGameButton, gbc);
+
             joinButton = new JButton("Join new Game");
             joinButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             joinButton.setBackground(Color.green);
             joinButton.addActionListener(e -> {
                 String playerName = playerNameField.getText().trim();
+                String serverIP = serverIPField.getText().trim();
 
-                if (!playerName.isEmpty()) {
+                if (!playerName.isEmpty() && !serverIP.isEmpty()) {
 
                     try {
                         createNewClient(playerName);
-                        clientController.joinGame(playerName);
+                        clientController.joinGame(playerName, serverIP);
                         playerNameField.setText(""); // Clear the text field
+                        serverIPField.setText("");
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }

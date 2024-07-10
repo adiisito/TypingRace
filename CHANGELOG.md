@@ -13,8 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-10
+### Fixed
+- join game by entering ip-adress
 
 ## 2024-07-09
+### Added
+- New test classes: MockInputStream, MockServerSocket, ServerTest, Sleeps, TestUtils
+
 ### Fixed
 - Only the first player of lobby can start game (host)
 - all the backgrounds were changed (login, client and gamescreen)

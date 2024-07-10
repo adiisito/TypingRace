@@ -7,7 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -19,7 +21,7 @@ import game.TypingPlayer;
 
 public class GameServer {
 
-    private static final int SERVER_PORT = 12345;
+    private static final int SERVER_PORT = 8080;
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
@@ -43,6 +45,16 @@ public class GameServer {
 
 
         System.out.println("Server started, listening...");
+    }
+
+    /**
+     * Create server socket server socket.
+     *
+     * @return the server socket
+     * @throws IOException the io exception
+     */
+    protected ServerSocket createServerSocket() throws IOException {
+        return new ServerSocket(SERVER_PORT, 50, InetAddress.getByName("0.0.0.0"));
     }
 
     /**
