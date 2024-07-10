@@ -72,10 +72,14 @@ public class CarShape {
         }
 
         if (name != null) {
+            g.setFont(font.deriveFont(Font.BOLD, 15));
+            g.setColor(Color.LIGHT_GRAY);
             g.drawString(name, x, y + height + 15);
         }
         if (player != null) {
-            g.drawString("WPM: " + wpm, x + width + 5, y + height / 2);  // Display WPM to the right of the car
+            g.setFont(font.deriveFont(Font.BOLD, 15));
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawString("WPM: " + wpm, x + width + 10, y + height / 2);  // Display WPM to the right of the car
         }
 
         //the road (dotted line)

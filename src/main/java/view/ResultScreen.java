@@ -102,11 +102,6 @@ public class ResultScreen extends JPanel {
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
-//              JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-//              frame.setVisible(false);
-//              frame = new ClientWindow(currentPlayer.getName(), clientController.getMainGui());
-//              frame.revalidate();
-//              frame.repaint();
         });
 
         JButton exitButton = new JButton("Exit");
