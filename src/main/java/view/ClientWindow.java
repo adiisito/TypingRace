@@ -154,13 +154,6 @@ public class ClientWindow extends JFrame {
         repaint();
     }
 
-/*    public void startGame() {
-        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName), clientController);
-        setContentPane(gamePanel);
-        revalidate();
-        repaint();
-    }*/
-
     public String getPlayerName() {
         return playerName;
     }
