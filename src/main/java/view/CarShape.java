@@ -1,4 +1,7 @@
-package game;
+package view;
+
+import game.Car;
+import game.Player;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

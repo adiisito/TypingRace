@@ -1,7 +1,6 @@
 package view;
 
 import controller.client.ClientController;
-import game.CarShape;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
