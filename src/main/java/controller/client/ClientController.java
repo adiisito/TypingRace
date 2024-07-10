@@ -35,8 +35,9 @@ public class ClientController {
     private TypingPlayer currentPlayer;
     private ResultScreen resultScreen;
     private String providedText;
-    private String hostPlayer = null;
+    public String hostPlayer = null;
     List<String> playerNames;
+    private String serverIP;
 
     /**
      * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
@@ -47,6 +48,15 @@ public class ClientController {
                         .withSubtype(TypingPlayer.class, "typing"))
                 .build();
         this.gameState = new GameState();
+    }
+
+    /**
+     * Sets server ip.
+     *
+     * @param serverIP the server ip
+     */
+    public void setServerIP(String serverIP) {
+        this.serverIP = serverIP;
     }
 
     /**
@@ -91,14 +101,15 @@ public class ClientController {
      * @param playerName the name of player
      * @throws IOException if there is an issue sending the join game request over the network
      */
-    public void joinGame(String playerName) throws IOException {
+    public void joinGame(String playerName, String serverIP) throws IOException {
+        this.serverIP = serverIP;
         if (currentPlayer == null) {
-            this.clientModel = new GameClient(this, playerName);
+            this.clientModel = new GameClient(this, playerName, this.serverIP);
         }
         JoinGameRequest joinRequest = new JoinGameRequest(playerName);
         String json = moshi.adapter(JoinGameRequest.class).toJson(joinRequest);
         clientModel.sendMessage(json);
-        System.out.println("Welcome " + playerName + ". You joined the game");
+        System.out.println("Welcome " + playerName + ". You joined the game at " + serverIP);
 
         this.currentPlayer = new TypingPlayer(playerName);
     }
@@ -167,7 +178,7 @@ public class ClientController {
                 frame.revalidate();
                 frame.repaint();
 
-                joinGame(playerName);
+                joinGame(playerName, serverIP);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
