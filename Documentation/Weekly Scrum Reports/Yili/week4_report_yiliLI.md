@@ -9,11 +9,13 @@
 - Modifying Sequence Diagram
 - New test classes
 - Input of ServerIP
+- 1st version of README
 
 ## 02 What's planned until next week
 - Test
 - Test classes
 - Update of Sequence Diagram (hostNoti)
+- Improvement of README
 
 ## 03 What went well
 - Advanced parts went well
