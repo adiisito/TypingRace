@@ -7,6 +7,7 @@
 \## 01 What was accomplished last week
 
 \-added UFO's to the game
+- initial selection screen
 
 - a new screen to select your own UFO
 
