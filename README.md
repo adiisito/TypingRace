@@ -101,6 +101,6 @@ Team Members:
         - Yili Li: Yil.Li@campus.lmu.de
         - Yuanyuan Qu: yuanyuan.qu@campus.lmu.de
         - Jun-Wei To: J.To@campus.lmu.de
-        - Aditya Bharadwaj: Bharadwaj.Aditya@campus.lmu.de
-        - Tutor: Francis Louis Constantin Arsene: francis04arsene1457@gmail.com
+        - Aditya Bharadwaj: bharadwaj.aditya@campus.lmu.de
+        Tutor: Francis Louis Constantin Arsene: francis04arsene1457@gmail.com
 

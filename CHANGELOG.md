@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2024-07-09
 ### Fixed
 - Only the first player of lobby can start game (host)
-- New animated login and client windows
+- all the backgrounds were changed (login, client and gamescreen)
+
 
 ## 2024-07-08
 ### Added
@@ -31,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - handleClientDisconnection method
 ### Fixed
 - Errors by exiting the game fixed.
-
+-  Reformatted the CHANGELOG from the start 
 
 ## 2024-07-07
 ### Fixed 
