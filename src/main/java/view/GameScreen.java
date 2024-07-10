@@ -33,7 +33,7 @@ public class GameScreen extends JPanel {
     private long startTime;
     private int keyPressCount;
     private ClientController clientController;
-    private Image backgroundImage;
+    private ImageIcon backgroundImage;
     private Font customFont;
     private SoundPlayer soundPlayer;
 
@@ -48,16 +48,7 @@ public class GameScreen extends JPanel {
         clientController.setView(this);
 
         // to use the background image
-        try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("GameScreenBG.jpeg");
-            if (imageStream != null) {
-                backgroundImage = ImageIO.read(imageStream);
-            } else {
-                System.err.println("Image not found");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("2screen.gif"));
 
         // to use custom font
         try {
@@ -85,7 +76,8 @@ public class GameScreen extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            Image image = backgroundImage.getImage();
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         }
     }
 
