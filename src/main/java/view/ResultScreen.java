@@ -1,7 +1,6 @@
 package view;
 
 import controller.client.ClientController;
-import game.CarShape;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
@@ -32,6 +31,7 @@ public class ResultScreen extends JPanel {
     private ArrayList<CarShape> carShapes;
     private Image backgroundImage;
     private int textLength;
+    private SoundPlayer soundPlayer;
 
     /**
      * Creates a window with game results.
@@ -58,6 +58,8 @@ public class ResultScreen extends JPanel {
         this.carShapes = carShapes;
         this.clientController = clientController;
         clientController.setResultScreen(this);
+        soundPlayer = new SoundPlayer();
+        soundPlayer.playSound("rssound.wav");
         initComponents();
     }
 
@@ -99,11 +101,6 @@ public class ResultScreen extends JPanel {
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
-//              JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-//              frame.setVisible(false);
-//              frame = new ClientWindow(currentPlayer.getName(), clientController.getMainGui());
-//              frame.revalidate();
-//              frame.repaint();
         });
 
         JButton exitButton = new JButton("Exit");

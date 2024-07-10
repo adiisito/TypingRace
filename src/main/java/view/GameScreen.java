@@ -3,9 +3,11 @@ package view;
 import controller.client.ClientController;
 import game.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -32,10 +34,10 @@ public class GameScreen extends JPanel {
 
     private long startTime;
     private int keyPressCount;
-
     private ClientController clientController;
-    private Image backgroundImage;
+    private ImageIcon backgroundImage;
     private Font customFont;
+    private SoundPlayer soundPlayer;
 
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
         this.gameState = gameState;
@@ -48,16 +50,7 @@ public class GameScreen extends JPanel {
         clientController.setView(this);
 
         // to use the background image
-        try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("GameScreenBG.jpeg");
-            if (imageStream != null) {
-                backgroundImage = ImageIO.read(imageStream);
-            } else {
-                System.err.println("Image not found");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("2screen.gif"));
 
         // to use custom font
         try {
@@ -73,6 +66,10 @@ public class GameScreen extends JPanel {
             e.printStackTrace();
         }
 
+
+        soundPlayer = new SoundPlayer();
+        soundPlayer.playSound("sound1.wav");
+
         initComponents();
     }
 
@@ -81,7 +78,8 @@ public class GameScreen extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            Image image = backgroundImage.getImage();
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         }
     }
 
@@ -194,7 +192,7 @@ public class GameScreen extends JPanel {
         for (Player player : racers) {
             Car newCar = new Car(player);
             //gameState.addPlayer(player);
-            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 50, 30, customFont);
+            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 60, 50, customFont);
             carShapes.add(newCarShape);
             repaint();
         }
@@ -304,6 +302,9 @@ public class GameScreen extends JPanel {
             timer = null;
             System.out.println("Timer stopped after game end.");
         }
+
+
+        soundPlayer.stopSound();
 
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());

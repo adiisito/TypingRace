@@ -7,7 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -19,7 +21,7 @@ import game.TypingPlayer;
 
 public class GameServer {
 
-    private static final int SERVER_PORT = 12345;
+    private static final int SERVER_PORT = 8080;
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
@@ -43,6 +45,16 @@ public class GameServer {
 
 
         System.out.println("Server started, listening...");
+    }
+
+    /**
+     * Create server socket server socket.
+     *
+     * @return the server socket
+     * @throws IOException the io exception
+     */
+    protected ServerSocket createServerSocket() throws IOException {
+        return new ServerSocket(SERVER_PORT, 50, InetAddress.getByName("0.0.0.0"));
     }
 
     /**
@@ -146,6 +158,7 @@ public class GameServer {
      * @param name id of the player.
      */
     public void removePlayer(String name) {
+        boolean wasHost = name.equals(hostPlayerName);
         playerNamesList.remove(name);
 
         int numPlayer = playerNamesList.size();
@@ -153,6 +166,19 @@ public class GameServer {
         PlayerLeftNotification leftNotification = new PlayerLeftNotification(name, numPlayer);
         String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
         broadcastMessage(json);
+
+        if (wasHost) {
+            if (!playerNamesList.isEmpty()) {
+                hostPlayerName = playerNamesList.get(0); // Set new host
+                HostNotification hostNotification = new HostNotification(hostPlayerName);
+                json = moshi.adapter(HostNotification.class).toJson(hostNotification);
+                broadcastMessage(json);
+                System.out.println("New host assigned: " + hostPlayerName);
+            } else {
+                hostPlayerName = null; // No players left to be host
+            }
+        }
+
         broadcastPlayerListUpdate();
         System.out.println("Player " + name + " has left the game.");
     }
