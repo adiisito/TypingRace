@@ -3,13 +3,18 @@ package controller.client;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.GameEndNotification;
 import communication.messages.GameStartNotification;
 import communication.messages.GameStateNotification;
+import communication.messages.HostNotification;
 import communication.messages.MessageType;
 import communication.messages.PlayerListUpdateNotification;
 import communication.messages.PlayerLeftNotification;
 import communication.messages.LobbyFullNotification;
+import communication.messages.RankingNotification;
+import game.Player;
+import game.TypingPlayer;
 
 import javax.swing.*;
 import java.io.BufferedReader;
@@ -18,6 +23,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * The GameClient class handles the client's connection to the game server.
+ * It is responsible for sending and receiving messages, processing server responses,
+ * and interacting with the ClientController.
+ */
 public class GameClient {
 
     private static final String HOSTNAME = "localhost";
@@ -31,7 +41,14 @@ public class GameClient {
 
     private String playerName;
 
-    public GameClient(ClientController clientController, String playerName) throws IOException {
+    /**
+     * Constructs a GameClient and establishes a connection to the game server.
+     *
+     * @param clientController the controller that manages client-side logic
+     * @param playerName the name of the player
+     * @throws IOException if an I/O error occurs when creating the socket
+     */
+    public GameClient(ClientController clientController, String playerName, String serverIP) throws IOException {
         this.moshi = new Moshi.Builder().build();
 
         this.clientController = clientController;
@@ -39,15 +56,18 @@ public class GameClient {
         this.playerName = playerName;
 
         try {
-            this.socket = new Socket(HOSTNAME, SERVER_PORT);
+            this.socket = new Socket(serverIP, SERVER_PORT);
             this.out = new PrintWriter(socket.getOutputStream(), true);
             startListening();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error connecting to the server: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error connecting to the server at " + serverIP + ": " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
             throw e;
         }
     }
 
+    /**
+     * Starts a new thread to listen for messages from the server.
+     */
     private void startListening() {
         new Thread(() -> {
             try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -69,6 +89,12 @@ public class GameClient {
         }).start();
     }
 
+    /**
+     * Processes messages received from the server.
+     *
+     * @param message the JSON string received from the server
+     * @throws IOException if an error occurs while processing the message
+     */
     public void processMessage(String message) throws IOException {
         MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
         String messageType = messageObject.getMessageType();
@@ -92,16 +118,32 @@ public class GameClient {
         } else if (messageType.equals("GameEndNotification")) {
             GameEndNotification gameEndNotification = moshi.adapter(GameEndNotification.class).fromJson(message);
             clientController.handleGameEnd(gameEndNotification);
+        } else if (messageType.equals("RankingNotification")) {
+            RankingNotification rankingNotification = moshi.adapter(RankingNotification.class).fromJson(message);
+            clientController.handleRankingNotification(rankingNotification);
+        } else if (messageType.equals("HostNotification")) {
+            HostNotification hostNotification = moshi.adapter(HostNotification.class).fromJson(message);
+            clientController.handleHostNotification(hostNotification);
         }
 
     }
 
+    /**
+     * Sends a message to the server.
+     *
+     * @param message the JSON string to be sent
+     */
     public void sendMessage(String message) {
         System.out.println("Sending JSON: " + message);
         out.println(message);
         out.flush();
     }
 
+    /**
+     * Gets the player's name.
+     *
+     * @return the current player's name
+     */
     public String getPlayerName() {
 
         return clientController.getCurrentPlayerName();

@@ -11,6 +11,10 @@ repositories {
 dependencies {
   // Use JUnit Jupiter for testing.
   testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
+  testImplementation("com.google.truth:truth:1.4.3")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+  testImplementation("org.mockito:mockito-core:5.11.0")
 
   // Add Moshi dependencies
   implementation("com.squareup.moshi:moshi:1.12.0")
@@ -23,8 +27,10 @@ dependencies {
 
 application {
   // Define the main class for the application.
-  mainClass.set("TODO")
+
+  mainClass.set("view.GUI")
 }
+
 
 tasks.named<JavaExec>("run") {
   standardInput = System.`in`
