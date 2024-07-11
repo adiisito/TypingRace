@@ -59,7 +59,7 @@ public class ResultScreen extends JPanel {
         this.clientController = clientController;
         clientController.setResultScreen(this);
         soundPlayer = new SoundPlayer();
-        soundPlayer.playSound("rssound.wav");
+        soundPlayer.playSound("result.wav");
         initComponents();
     }
 
