@@ -335,7 +335,7 @@ public class ClientController {
                             currentPlayer,
                             notification.getWpm(),
                             notification.getAccuracy(),
-                            notification.getTime(),
+                            Math.toIntExact(notification.getTime()),
                             view.getCarPanel(),
                             view.getTextLength(),
                             view.getCarShapes(),
