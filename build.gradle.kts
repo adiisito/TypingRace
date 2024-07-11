@@ -25,6 +25,7 @@ dependencies {
 }
 
 application {
+
   mainClass.set("controller.server.GameServer")
 }
 
@@ -49,7 +50,9 @@ tasks.jar {
     )
   }
   from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
 }
+
 
 tasks.named<JavaExec>("run") {
   standardInput = System.`in`
