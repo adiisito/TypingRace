@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-11
+## Added
+- runGui and runServer commands for terminal
+- gradle dependencies
+- new way of compiling instruction added in README
+
 ## 2024-07-10
 ### Fixed
 - join game by entering ip-adress
