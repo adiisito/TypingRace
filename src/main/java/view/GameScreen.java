@@ -387,12 +387,10 @@ public class GameScreen extends JPanel {
     /**
      * Updates the display with the current WPM and accuracy.
      *
-     * @param wpm the current words per minute
-     * @param accuracy the current accuracy percentage
      */
-    public void updateProgressDisplay(int wpm, double accuracy) {
-        wpmLabel.setText("WPM: " + wpm);
-        accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
+    public void updateProgressDisplay() {
+        wpmLabel.setText("WPM: " + currentPlayer.getWpm());
+        accuracyLabel.setText("Accuracy: " + String.format("%.1f", currentPlayer.getAccuracy()) + "%");
     }
 
     public Timer getTimer() {

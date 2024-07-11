@@ -4,10 +4,8 @@ package controller.client;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
-import game.Game;
 import game.GameState;
 import game.Player;
-import game.TypingPlayer;
 import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
@@ -15,7 +13,6 @@ import view.GameScreen;
 import view.ResultScreen;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -125,9 +122,9 @@ public class ClientController {
         // clientWindow.updateStartButtonState(isHost(clientWindow.getPlayerName()));
         System.out.println("Updated player list in client: " + playerNames);
         mainGui.updateAllClientWindows(playerNames);
-        if (playerNames.size() == 6) {
-            clientWindow.showLobbyFullButton();
-        }
+//        if (playerNames.size() == 6) {
+//            clientWindow.showLobbyFullButton();
+//        }
     }
 
     /**
@@ -267,7 +264,7 @@ public class ClientController {
                     view.updateCarPositions(notification.getPlayerName(), notification.getProgress(), notification.getWpm());
 
                     if (notification.getPlayerName().equals(currentPlayer.getName())) {
-                        view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+                        view.updateProgressDisplay();
                     }
                 }
             }
@@ -382,7 +379,7 @@ public class ClientController {
      * Displays the lobby full button on the client window.
      */
     void handleLobbyFull() {
-        SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
+        SwingUtilities.invokeLater(() -> clientWindow.updateLobbyStatus());
     }
 
     /**
