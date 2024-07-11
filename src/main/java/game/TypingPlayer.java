@@ -7,15 +7,16 @@ public class TypingPlayer implements Player {
     private int wpm;
     private int progress;
     private double accuracy;
+    private boolean hasFinished = false;
 
-    private String id;
+    // private String id;
 
     public TypingPlayer(String name) {
         this.name = name;
         this.wpm = 0;
         this.progress = 0;
         this.accuracy = 1;
-        this.id = UUID.randomUUID().toString();
+        // this.id = UUID.randomUUID().toString();
     }
 
     public double getAccuracy() {
@@ -23,12 +24,18 @@ public class TypingPlayer implements Player {
     }
 
     @Override
-    public void setAccuracy(double accuracy) {
-        this.accuracy = accuracy;
+    public void setHasFinished(boolean hasFinished) {
+        this.hasFinished = hasFinished;
     }
 
-    public String getId() {
-        return id;
+    @Override
+    public boolean isCompleted() {
+        return hasFinished;
+    }
+
+    @Override
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
     }
 
     @Override
