@@ -38,7 +38,7 @@ public class GUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("KeySprint");
+        setTitle("SpaceRally");
         setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -58,7 +58,7 @@ public class GUI extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            JLabel welcomeLabel = new JLabel("Welcome To KeySprint");
+            JLabel welcomeLabel = new JLabel("Welcome To SpaceRally");
             welcomeLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 30));
             welcomeLabel.setForeground(Color.WHITE);
             loginPanel.add(welcomeLabel, gbc);
@@ -116,7 +116,7 @@ public class GUI extends JFrame {
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name or an IP-Address", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
             loginPanel.add(joinButton, gbc);
