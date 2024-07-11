@@ -69,6 +69,10 @@ public class ClientWindow extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Sets up and displays the lobby UI with a list of players and control buttons.
+     * The UI includes a background, a scrollable player list, and buttons to start or exit the game.
+     */
     private void showWaitingRoom() {
         try {
             Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/3screen.gif"));
@@ -140,6 +144,13 @@ public class ClientWindow extends JFrame {
         }
     }
 
+    /**
+     * Creates a styled 3D button with specified text. This method configures the button's
+     * appearance including font, colors, and border to give it a 3D look.
+     *
+     * @param text The text to display on the button.
+     * @return JButton The configured button with the specified text and 3D styling.
+     */
     private JButton create3DButton(String text) {
         JButton button = new JButton(text);
         button.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
@@ -207,16 +218,16 @@ public class ClientWindow extends JFrame {
     }
 
 
+    /**
+     * Determines if the lobby has reached its maximum capacity.
+     * Assumes a maximum capacity of 6 players.
+     *
+     * @return True if the player list size is 6, false otherwise.
+     */
     private boolean isLobbyFull() {
         return playerListModel.size() == 6;
     }
 
-/*    public void startGame() {
-        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName), clientController);
-        setContentPane(gamePanel);
-        revalidate();
-        repaint();
-    }*/
 
     /**
      * Gets player name.
