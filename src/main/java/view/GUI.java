@@ -1,5 +1,6 @@
 package view;
 
+import controller.client.ClientController;
 import game.GameState;
 
 import javax.swing.*;
@@ -11,13 +12,16 @@ import java.util.ArrayList;
 public class GUI extends JFrame {
     private JTextField playerNameField;
     private JButton joinButton;
+    private JButton createGameButton;
     private GameState gameState;
     private DefaultListModel<String> playerListModel;
     private List<ClientWindow> clientWindows = new ArrayList<>();
     private Font dozerFont;
+    private ClientController clientController;
 
-    public GUI(GameState gameState) {
+    public GUI(GameState gameState, ClientController clientController) {
         this.gameState = gameState;
+        this.clientController = clientController;
         loadFont();
         initComponents();
     }
@@ -34,8 +38,8 @@ public class GUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Type Racer Game");
-        setSize(800, 600);
+        setTitle("SpaceRally");
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -44,7 +48,7 @@ public class GUI extends JFrame {
 
     private void showLoginWindow() {
         try {
-            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/LoginScreen.jpeg"));
+            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/1screen4.gif"));
             BackgroundPanel loginPanel = new BackgroundPanel(backgroundImage);
             loginPanel.setLayout(new GridBagLayout());
 
@@ -54,7 +58,7 @@ public class GUI extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            JLabel welcomeLabel = new JLabel("Welcome To KeySprint");
+            JLabel welcomeLabel = new JLabel("Welcome To SpaceRally");
             welcomeLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 30));
             welcomeLabel.setForeground(Color.WHITE);
             loginPanel.add(welcomeLabel, gbc);
@@ -68,14 +72,49 @@ public class GUI extends JFrame {
             playerNameField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             loginPanel.add(playerNameField, gbc);
 
+            JLabel serverLabel = new JLabel("Enter Server IP:");
+            serverLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            serverLabel.setForeground(Color.WHITE);
+            loginPanel.add(serverLabel, gbc);
+
+            JTextField serverIPField = new JTextField(20);
+            serverIPField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            loginPanel.add(serverIPField, gbc);
+
+            createGameButton = new JButton("Create Game");
+            createGameButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            createGameButton.addActionListener(e -> {
+                String playerName = playerNameField.getText().trim();
+                try {
+                    String serverIP = "127.0.0.1";
+                    createNewClient(playerName);
+                    clientController.joinGame(playerName, serverIP);
+                    playerNameField.setText(""); // Clear the text field
+                    serverIPField.setText("");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            loginPanel.add(createGameButton, gbc);
+
             joinButton = new JButton("Join new Game");
             joinButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             joinButton.setBackground(Color.green);
             joinButton.addActionListener(e -> {
                 String playerName = playerNameField.getText().trim();
-                if (!playerName.isEmpty()) {
-                    createNewClient(playerName);
-                    playerNameField.setText(""); // Clear the text field
+                String serverIP = serverIPField.getText().trim();
+
+                if (!playerName.isEmpty() && !serverIP.isEmpty()) {
+
+                    try {
+                        createNewClient(playerName);
+                        clientController.joinGame(playerName, serverIP);
+                        playerNameField.setText(""); // Clear the text field
+                        serverIPField.setText("");
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
                 } else {
                     JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -91,10 +130,11 @@ public class GUI extends JFrame {
         }
     }
 
-    private void createNewClient(String playerName) {
+    public void createNewClient(String playerName) {
         try {
-            ClientWindow clientWindow = new ClientWindow(playerName, this);
+            ClientWindow clientWindow = new ClientWindow(playerName, clientController);
             clientWindows.add(clientWindow);
+            clientController.setClientWindow(clientWindow);
             this.dispose();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "Failed to create new client", "Error", JOptionPane.ERROR_MESSAGE);
@@ -118,8 +158,13 @@ public class GUI extends JFrame {
         updateAllClientWindows(playerNames); // Update the player list to reflect the player has left
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         GameState gameState = new GameState();
-        SwingUtilities.invokeLater(() -> new GUI(gameState).setVisible(true));
+        ClientController controller = new ClientController();
+        SwingUtilities.invokeLater(() -> {
+            GUI mainGui = new GUI(gameState, controller);
+            controller.setMainGui(mainGui);
+            mainGui.setVisible(true);
+        });
     }
 }
