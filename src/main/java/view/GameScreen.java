@@ -4,10 +4,15 @@ import controller.client.ClientController;
 import game.*;
 
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
@@ -21,15 +26,18 @@ public class GameScreen extends JPanel {
     private String providedText;
     private Timer timer;
     private JLabel timeLabel;
-    private java.util.List<Player> racers;
+    private java.util.List<TypingPlayer> racers;
     private JPanel carPanel;
     private boolean timerStarted = false;
-
+    private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
+    private double trackMultiplier = 0.7;
 
     private long startTime;
     private int keyPressCount;
-
     private ClientController clientController;
+    private ImageIcon backgroundImage;
+    private Font customFont;
+    private SoundPlayer soundPlayer;
 
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
         this.gameState = gameState;
@@ -39,55 +47,61 @@ public class GameScreen extends JPanel {
         this.carShapes = new ArrayList<>();
         this.clientController = clientController;
         this.racers = gameState.getPlayers();
+        clientController.setView(this);
+
+        // to use the background image
+        backgroundImage = new ImageIcon(getClass().getClassLoader().getResource("2screen.gif"));
+
+        // to use custom font
+        try {
+            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("nougat.ttf");
+            if (fontStream != null) {
+                customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(18f); // Set default size
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                ge.registerFont(customFont);
+            } else {
+                System.err.println("Font not found");
+            }
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+
+
+        soundPlayer = new SoundPlayer();
+        soundPlayer.playSound("sound1.wav");
 
         initComponents();
     }
 
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null) {
+            Image image = backgroundImage.getImage();
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+
+
     private void initComponents() {
         setLayout(new BorderLayout());
-        setBackground(Color.BLACK);
 
         // Creating a Car Panel
-        carPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                for (CarShape carShape : carShapes) {
-                    carShape.draw(g);
-                }
-            }
-        };
-        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        carPanel.setPreferredSize(new Dimension(600, 100));
-        carPanel.setBackground(Color.BLACK);
+        createCarPanel();
         add(carPanel, BorderLayout.NORTH);
-
-
-
-        //addCar(currentPlayer);
-        /*
-        timeLabel = new JLabel("TIME");
-        timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
-        timeLabel.setOpaque(true);
-        timeLabel.setBackground(Color.GREEN);
-        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        JPanel timePanel = new JPanel(new BorderLayout());
-        timePanel.add(timeLabel, BorderLayout.NORTH);
-        add(timePanel, BorderLayout.EAST);
-         */
 
         // Provided text label
         providedTextLabel = new JLabel("<html><p style=\"width: 350px; color: white;\">" + providedText + "</p></html>");
-        providedTextLabel.setFont(new Font("Serif", Font.PLAIN, 18));
+        providedTextLabel.setFont(customFont.deriveFont(Font.BOLD, 18f));
         providedTextLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         providedTextLabel.setHorizontalAlignment(SwingConstants.LEFT);
-        providedTextLabel.setPreferredSize(new Dimension(500, 150));
+        providedTextLabel.setPreferredSize(new Dimension(500, 100));
         providedTextLabel.setForeground(Color.WHITE);
 
         // Typing area
         typingArea = new JTextPane();
-        typingArea.setFont(new Font("Serif", Font.PLAIN, 18));
+        typingArea.setFont(customFont.deriveFont(Font.BOLD, 18f));
         typingArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         typingArea.setPreferredSize(providedTextLabel.getPreferredSize());
         typingArea.setEditable(true);
@@ -101,97 +115,91 @@ public class GameScreen extends JPanel {
                 if (e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
                     return;
                 }
+                /* Doesn't really make sense in our multiplayer game
                 if (!timerStarted) {
                     startTimer();
                     timerStarted = true;
                 }
+                 */
                 if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                     keyPressCount++; // Increment key press count on each key release
                 }
                 String typedText = typingArea.getText();
-                updateProgress(typedText);
+                // updateProgress(typedText); This function should be done by the client
                 updateTextColor(typedText);
 
                 // Calculate the time elapsed since the start of typing
                 int timeElapsed = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
 
-                // If the ending conditions are not met, it sends the current wpm, accuracy and progress to the server.
-                if (typedText.equals(providedText) || timeElapsed >= 60) {
-                    timer.stop();
-                    showResults(timeElapsed);
-                } else {
-                    int wpm = calculateWpm();
-                    double accuracy = calculateAccuracy(typedText);
-                    int progress = calculateProgress(typedText);
-                    clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
-                }
-
+                int wpm = calculateWpm();
+                double accuracy = calculateAccuracy(typedText);
+                int progress = calculateProgress(typedText);
+                clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
             }
         });
 
         JScrollPane scrollPane = new JScrollPane(typingArea);
+        scrollPane.setPreferredSize(new Dimension(500, 100));
 
         // WPM label
         wpmLabel = new JLabel("WPM: 0");
-        wpmLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        wpmLabel.setFont(customFont.deriveFont(Font.BOLD, 18f));
         wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
         wpmLabel.setForeground(Color.WHITE);
 
         // Accuracy label
         accuracyLabel = new JLabel("Accuracy: 100%");
-        accuracyLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        accuracyLabel.setFont(customFont.deriveFont(Font.BOLD, 18f));
         accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         accuracyLabel.setForeground(Color.WHITE);
 
         // Time label
         timeLabel = new JLabel("TIME");
-        timeLabel.setFont(new Font("Serif", Font.BOLD, 18));
+        timeLabel.setFont(customFont.deriveFont(Font.BOLD, 18f));
         timeLabel.setOpaque(true);
         timeLabel.setBackground(Color.GREEN);
         timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         // Layout for provided text and typing area
         JPanel textTypingPanel = new JPanel(new BorderLayout());
+        textTypingPanel.setOpaque(false);
         textTypingPanel.add(providedTextLabel, BorderLayout.NORTH);
         textTypingPanel.add(scrollPane, BorderLayout.CENTER);
-        textTypingPanel.setBackground(Color.BLACK);
 
         // Panel for accuracy and timer
         JPanel accuracyTimePanel = new JPanel(new GridLayout(2, 1));
+        accuracyTimePanel.setOpaque(false);
         accuracyTimePanel.add(accuracyLabel);
         accuracyTimePanel.add(timeLabel);
-        accuracyTimePanel.setBackground(Color.BLACK);
 
         // Main bottom panel
         JPanel mainBottomPanel = new JPanel(new BorderLayout());
+        mainBottomPanel.setOpaque(false);
         mainBottomPanel.add(textTypingPanel, BorderLayout.CENTER);
         mainBottomPanel.add(accuracyTimePanel, BorderLayout.EAST);
-        mainBottomPanel.setBackground(Color.BLACK);
 
         // Final layout
         add(wpmLabel, BorderLayout.EAST);
         add(carPanel, BorderLayout.NORTH);
         add(mainBottomPanel, BorderLayout.CENTER);
 
+        startTimer();
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
 
-        // Timer now starts when the first key is pressed
-        // startTimer();
-        // addCars();
     }
 
     public void addCars() {
-        for (Player player : racers){
+        for (Player player : racers) {
             Car newCar = new Car(player);
             //gameState.addPlayer(player);
-            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 50, 30);
+            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 60, 50, customFont);
             carShapes.add(newCarShape);
             repaint();
         }
     }
 
 
-    private void updateProgress(String typedText) {
+    public void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
         if (gameState.getCurrentRace() != null) {
             gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
@@ -202,35 +210,19 @@ public class GameScreen extends JPanel {
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
 
-        updateCarPositions(currentPlayer.getName(), progress);
+        updateCarPositions(currentPlayer.getName(), progress, wpm);
     }
 
-    //The updated method is at the end to find!
-
-//    /**
-//     * Updates the display. This method should be called to reflect changes in the player's typing performance on UI.
-//     *
-//     * @param wpm the current wpm
-//     * @param accuracy the current accuracy
-//     */
-//    public void updateProgressDisplay (int wpm, double accuracy) {
-//        // Directly update UI components based on received data
-//        SwingUtilities.invokeLater(() -> {
-//            wpmLabel.setText("WPM: " + wpm);
-//            accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
-//            // Optionally, update a progress bar or similar component if it exists
-//        });
-//    }
-
-
-    public void updateCarPositions(String playerName, int progress) {
-
+    public void updateCarPositions(String playerName, int progress, int wpm) {
+        int totalLength = providedText.length();
+        int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
 
             if (carShape.getPlayer().getName().equals(playerName)) {
-                int newXposition = progress * 5;
-                carShape.setX(newXposition);
-                System.out.println("Updating car position for player " + playerName + " to " + newXposition);
+                int newProgress = (progress * roadLength) / totalLength;
+                carShape.setX(newProgress);
+                carShape.setWpm(wpm);
+                System.out.println("Updating car position for player " + playerName + " to " + newProgress);
                 break;
             }
         }
@@ -270,30 +262,59 @@ public class GameScreen extends JPanel {
     }
 
     private void startTimer() {
+
+        if (timer != null) {
+            System.out.println("Stopping existing timer.");
+            timer.stop();
+        }
+        System.out.println("Starting new game timer.");
+
         startTime = System.currentTimeMillis();
         gameState.setStartTime(startTime);
 
         timer = new Timer(1000, e -> {
-            long elapsedTime = System.currentTimeMillis() - gameState.getStartTime();
-            int remainingTime = (int) (60 - (elapsedTime / 1000));
-            timeLabel.setText("TIME: " + remainingTime); // /1000 to convert it into seconds
-            if (elapsedTime >= 60000) {
+
+
+            long elapsedTime = ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
+            long remainingTime = 60 - elapsedTime;
+            timeLabel.setText("TIME: " + (int) remainingTime);
+            String typedText = typingArea.getText();
+
+            boolean isCompleted = typedText.equals(providedText);
+            if (elapsedTime >= 60 || isCompleted) {
                 gameState.endCurrentRace();
-                showResults(elapsedTime);
-                timer.stop();
+                showResults((int) elapsedTime);
             }
+
+            int wpm = calculateWpm();
+            int progress = calculateProgress(typedText);
+            double accuracy = calculateAccuracy(typedText);
+            clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, (int) elapsedTime);
+
+
         });
         timer.start();
     }
 
-    private void showResults(long elapsedTime) {
+    private void showResults(int elapsedTime) {
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+            System.out.println("Timer stopped after game end.");
+        }
+
+
+        soundPlayer.stopSound();
+
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
 
         currentPlayer.setWpm(wpm);
         currentPlayer.setAccuracy(accuracy);
-
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
+
+        trackMultiplier = 0.9;
+        createCarPanel();
 
         // use clientcontroller to transition to the result screen
 //        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -302,10 +323,41 @@ public class GameScreen extends JPanel {
 //        frame.repaint();
     }
 
+    private void createCarPanel() {
+        carPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
+                for (CarShape carShape : carShapes) {
+                    carShape.draw(g, roadLength);
+                }
+            }
+        };
+        carPanel.setOpaque(false);
+        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        carPanel.setPreferredSize(new Dimension(600, 300));
+    }
+
     public JPanel getCarPanel() {
         return this.carPanel;
     }
 
+    /**
+     * Gets the list of car entities that move according to progress.
+     * @return the car shapes
+     */
+    public ArrayList<CarShape> getCarShapes() {
+        return this.carShapes;
+    }
+
+    /**
+     * Gets the length of the initial provided text.
+     * @return the length of the provided text
+     */
+    public int getTextLength() {
+        return providedText.length();
+    }
 
     private void updateTextColor(String typedText) {
         StyledDocument doc = typingArea.getStyledDocument();
@@ -341,5 +393,9 @@ public class GameScreen extends JPanel {
     public void updateProgressDisplay(int wpm, double accuracy) {
         wpmLabel.setText("WPM: " + wpm);
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
+    }
+
+    public Timer getTimer() {
+        return this.timer;
     }
 }

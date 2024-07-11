@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.squareup.moshi.JsonAdapter;
@@ -30,6 +33,8 @@ public class ConnectionManager extends Thread {
     private final List<ConnectionManager> connectionManagers;
     private final List<String> playerNames;
     private final Set<String> finishedPlayers = new HashSet<>();
+    private final Map<String, Integer> playerResults;
+    private String hostPlayerName;
 
     /**
      * Instantiates a new Connection manager.
@@ -46,6 +51,7 @@ public class ConnectionManager extends Thread {
         this.messageAdapter = moshi.adapter(MessageType.class);
         this.connectionManagers = new ArrayList<>();
         this.playerNames = new ArrayList<>();
+        this.playerResults = new HashMap<>();
     }
 
     /**
@@ -60,6 +66,9 @@ public class ConnectionManager extends Thread {
                 connectionManagers.add(this);
                 processMessage(messageLine);
             }
+        } catch (SocketException e) {
+            System.out.println("SocketException: Likely the client disconnected. Message: " + e.getMessage());
+            handleClientDisconnection();
         } catch (IOException exception) {
             System.out.println("Error reading client, player disconnected");
             server.removePlayer(playerName);
@@ -75,7 +84,13 @@ public class ConnectionManager extends Thread {
         }
     }
 
-
+    /**
+     * Handle Client Disconnection.
+     */
+    private void handleClientDisconnection() {
+        // Optionally log or handle disconnection (e.g., notify other players, update game state)
+        System.out.println("Client " + this.clientSocket.getInetAddress().getHostAddress() + " disconnected.");
+    }
     /**
      * Method for process messages.
      *
@@ -95,7 +110,8 @@ public class ConnectionManager extends Thread {
 
         } else if (messageType.equals("StartGameRequest")) {
             System.out.println("Received StartGameRequest");
-            server.startGame();
+            StartGameRequest request = moshi.adapter(StartGameRequest.class).fromJson(message);
+            server.startGame(request);
 
         } else if (messageType.equals("PlayerLeftRequest")) {
             PlayerLeftRequest leftRequest = moshi.adapter(PlayerLeftRequest.class).fromJson(message);
@@ -109,8 +125,12 @@ public class ConnectionManager extends Thread {
         } else if (messageType.equals("EndGameRequest")){
             EndGameRequest endGameRequest = moshi.adapter(EndGameRequest.class).fromJson(message);
             handleEndGameRequest(endGameRequest);
+
+        } else if(messageType.equals("UpdateRankingRequest")){
+            UpdateRankingRequest rankingRequest = moshi.adapter(UpdateRankingRequest.class).fromJson(message);
+            handleUpdateRankingRequest(rankingRequest);
+
         }
-        // @yili and @yuanyuan, please add other notifs according to the need!
     }
 
     /**
@@ -154,6 +174,13 @@ public class ConnectionManager extends Thread {
         }
     }
 
+    public void handleUpdateRankingRequest(UpdateRankingRequest request) {
+
+        RankingNotification notification = new RankingNotification(request.getPlayers());
+        String json = moshi.adapter(RankingNotification.class).toJson(notification);
+        server.broadcastMessage(json);
+
+    }
     /**
      * Broadcast to send on the finish window.
      * TODO waiting for the implementation of client to send the result
