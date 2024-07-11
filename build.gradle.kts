@@ -43,6 +43,7 @@ tasks.register<JavaExec>("runServer") {
 }
 
 tasks.jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
   manifest {
     attributes(
             "Main-Class" to "controller.server.GameServer"
