@@ -7,8 +7,11 @@ public interface Player {
     int getProgress();
     void setProgress(int progress);
     void receiveProgressUpdate(String playerName, int progress, int wpm);
-    String getId();
+    // String getId();
     void setAccuracy(double accuracy);
     double getAccuracy();
+    void setHasFinished(boolean hasFinished);
+
+    boolean isCompleted();
 }
 
