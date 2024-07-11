@@ -116,7 +116,7 @@ public class GUI extends JFrame {
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name or an IP-Address", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
             loginPanel.add(joinButton, gbc);
