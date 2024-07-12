@@ -253,7 +253,11 @@ public class GameScreen extends JPanel {
                 correctChars++;
             }
         }
-        return keyPressCount == 0 ? 100 : (correctChars * 100.0) / keyPressCount;
+        // Stopper for accuracy, this only really comes up when typing too fast
+        double accuracy = (correctChars * 100.0) / keyPressCount;
+        if (accuracy > 100) return 100;
+
+        return keyPressCount == 0 ? 100 : accuracy;
     }
 
     private int calculateWpm() {

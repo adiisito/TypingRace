@@ -64,9 +64,7 @@ public class ResultScreen extends JPanel {
         setLayout(new BorderLayout());
         setUpRankingTable();
         gameState.setPlayers(computeRankings(gameState.getPlayers()));
-        if (gameState.getCompletedPlayers().size() == 1) {
-            firstPlace = true;
-        }
+        if (gameState.getCompletedPlayers().size() == 1) firstPlace = true;
         // updateRankingTable(gameState.getPlayers());
 
         try {

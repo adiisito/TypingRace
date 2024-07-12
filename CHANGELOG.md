@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New result screen background and visuals
 
 ## Fixed
-- Player character being misaligned on the end results
+- Player characters being misaligned on the end results
+- Accuracy going above 100 (only happens with too many inputs at once)
 
 ## 2024-07-11
 
