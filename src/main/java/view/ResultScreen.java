@@ -30,7 +30,6 @@ public class ResultScreen extends JPanel {
 
     private ArrayList<CarShape> carShapes;
     private Image backgroundImage;
-    private int textLength;
     private SoundPlayer soundPlayer;
 
     /**
@@ -41,12 +40,11 @@ public class ResultScreen extends JPanel {
      * @param accuracy the amount of correctly typed characters
      * @param elapsedTime the time spent in the game
      * @param carPanel for the final race track display
-     * @param textLength the length of the original text
      * @param carShapes the car entities that are to move
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
-                        double accuracy, int elapsedTime, JPanel carPanel, int textLength,
+                        double accuracy, int elapsedTime, JPanel carPanel,
                         ArrayList<CarShape> carShapes, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
@@ -54,7 +52,6 @@ public class ResultScreen extends JPanel {
         this.accuracy = accuracy;
         this.time = elapsedTime;
         this.endState = carPanel;
-        this.textLength = textLength;
         this.carShapes = carShapes;
         this.clientController = clientController;
         clientController.setResultScreen(this);
@@ -70,7 +67,7 @@ public class ResultScreen extends JPanel {
         setLayout(new BorderLayout());
 
         try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("GameScreenBG.jpeg");
+            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon.jpeg");
             if (imageStream != null) {
                 backgroundImage = ImageIO.read(imageStream);
             } else {
