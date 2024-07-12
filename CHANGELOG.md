@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 - New result screen background and visuals
+- Counter for the number of wrong inputs
 
 ## Fixed
 - Player characters being misaligned on the end results

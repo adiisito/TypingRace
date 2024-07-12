@@ -24,6 +24,7 @@ public class ResultScreen extends JPanel {
     private final Player currentPlayer;
     private final JPanel endState;
     private final int time;
+    private final int wrongChars;
     private ClientController clientController;
     private DefaultTableModel rankingModel;
 
@@ -43,13 +44,14 @@ public class ResultScreen extends JPanel {
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
                         double accuracy, int elapsedTime, JPanel carPanel,
-                        ClientController clientController) {
+                        int wrongChars, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
         this.time = elapsedTime;
         this.endState = carPanel;
+        this.wrongChars = wrongChars;
         this.clientController = clientController;
         clientController.setResultScreen(this);
         soundPlayer = new SoundPlayer();
@@ -85,16 +87,6 @@ public class ResultScreen extends JPanel {
         resultLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         resultLabel.setForeground(Color.WHITE);
 
-        JLabel wpmLabel = new JLabel("WPM: " + wpm);
-        wpmLabel.setFont(new Font("Nougat", Font.PLAIN, 18));
-        wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        wpmLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel accuracyLabel = new JLabel("Accuracy: " + accuracy + "%");
-        accuracyLabel.setFont(new Font("Nougat", Font.PLAIN, 18));
-        accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        accuracyLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
         newGameButton.setBackground(Color.BLACK);
@@ -117,8 +109,8 @@ public class ResultScreen extends JPanel {
         buttonPanel.add(newGameButton);
         buttonPanel.add(exitButton);
 
-        String stat_text = "<html>WPM: " + wpm + " <br> Accuracy: " +
-                (double) Math.round(accuracy * 100) / 100 + "% <br> Time: " + time + " seconds </html>";
+        String stat_text = "<html>Time: " + time + " seconds <br> WPM: " + wpm + "<br> Accuracy: " +
+                (double) Math.round(accuracy * 100) / 100 + "% <br> Wrong inputs: " + wrongChars + "</html>";
         JLabel stats = new JLabel(stat_text);
         stats.setFont(new Font("Nougat", Font.PLAIN, 24));
         stats.setForeground(Color.WHITE);
@@ -133,13 +125,11 @@ public class ResultScreen extends JPanel {
 
         resultLabel.setOpaque(false);
         westPanel.setOpaque(false);
-        accuracyLabel.setOpaque(false);
         buttonPanel.setOpaque(false);
 
         add(resultLabel, BorderLayout.NORTH);
         // add(tablePanel, BorderLayout.EAST);
         add(westPanel, BorderLayout.WEST);
-        add(accuracyLabel, BorderLayout.SOUTH);
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 

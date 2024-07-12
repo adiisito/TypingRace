@@ -28,10 +28,8 @@ public class GameScreen extends JPanel {
     private JLabel timeLabel;
     private java.util.List<TypingPlayer> racers;
     private JPanel carPanel;
-    private boolean timerStarted = false;
     private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
     private boolean isFinished = false;
-    private double trackMultiplier = 0.7;
 
     private long startTime;
     private int keyPressCount;
@@ -39,6 +37,7 @@ public class GameScreen extends JPanel {
     private ImageIcon backgroundImage;
     private Font customFont;
     private SoundPlayer soundPlayer;
+    private int wrongChars = 0;
 
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
         this.gameState = gameState;
@@ -135,6 +134,10 @@ public class GameScreen extends JPanel {
                 int wpm = calculateWpm();
                 double accuracy = calculateAccuracy(typedText);
                 int progress = calculateProgress(typedText);
+                if (typedText.charAt(typedText.length() - 1) != providedText.charAt(typedText.length() - 1)
+                    && e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
+                    wrongChars++;
+                }
                 clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
             }
         });
@@ -400,7 +403,7 @@ public class GameScreen extends JPanel {
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", currentPlayer.getAccuracy()) + "%");
     }
 
-    public Timer getTimer() {
-        return this.timer;
+    public int getWrongChars() {
+        return wrongChars;
     }
 }
