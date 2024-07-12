@@ -49,8 +49,8 @@ public class HighlightRenderer extends DefaultTableCellRenderer {
         } else {
             setForeground(Color.WHITE);
         }
-            setBackground(Color.BLACK);
-            setFont(new Font("Consolas", Font.BOLD, 14));
+        setBackground(Color.BLACK);
+        setFont(new Font("Consolas", Font.BOLD, 14));
         return this;
     }
 

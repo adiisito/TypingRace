@@ -167,5 +167,4 @@ public class GUI extends JFrame {
             mainGui.setVisible(true);
         });
     }
-
 }
