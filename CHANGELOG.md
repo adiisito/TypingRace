@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-12
+
+## Added
+- New result screen background and visuals
+
+## Fixed
+- Player character being misaligned on the end results
+
 ## 2024-07-11
 
 ## Added

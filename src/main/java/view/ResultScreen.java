@@ -11,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,9 +27,9 @@ public class ResultScreen extends JPanel {
     private ClientController clientController;
     private DefaultTableModel rankingModel;
 
-    private ArrayList<CarShape> carShapes;
     private Image backgroundImage;
     private SoundPlayer soundPlayer;
+    private boolean firstPlace = false;
 
     /**
      * Creates a window with game results.
@@ -40,19 +39,17 @@ public class ResultScreen extends JPanel {
      * @param accuracy the amount of correctly typed characters
      * @param elapsedTime the time spent in the game
      * @param carPanel for the final race track display
-     * @param carShapes the car entities that are to move
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
                         double accuracy, int elapsedTime, JPanel carPanel,
-                        ArrayList<CarShape> carShapes, ClientController clientController) {
+                        ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
         this.time = elapsedTime;
         this.endState = carPanel;
-        this.carShapes = carShapes;
         this.clientController = clientController;
         clientController.setResultScreen(this);
         soundPlayer = new SoundPlayer();
@@ -65,6 +62,12 @@ public class ResultScreen extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout());
+        setUpRankingTable();
+        gameState.setPlayers(computeRankings(gameState.getPlayers()));
+        if (gameState.getCompletedPlayers().size() == 1) {
+            firstPlace = true;
+        }
+        // updateRankingTable(gameState.getPlayers());
 
         try {
             InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon.jpeg");
@@ -77,7 +80,8 @@ public class ResultScreen extends JPanel {
             e.printStackTrace();
         }
 
-        JLabel resultLabel = new JLabel("Game Over");
+        String header = (firstPlace) ? "Congratulations!" : "Game Over!";
+        JLabel resultLabel = new JLabel(header);
         resultLabel.setFont(new Font("Nougat", Font.BOLD, 24));
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
         resultLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -95,6 +99,8 @@ public class ResultScreen extends JPanel {
 
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
+        newGameButton.setBackground(Color.BLACK);
+        newGameButton.setBackground(Color.WHITE);
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
@@ -102,10 +108,11 @@ public class ResultScreen extends JPanel {
 
         JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Nougat", Font.PLAIN, 16));
+        exitButton.setBackground(Color.RED);
+        exitButton.setForeground(Color.WHITE);
         exitButton.addActionListener(e -> {
             clientController.playerLeft(currentPlayer.getName());
             System.exit(0);
-
         });
 
         JPanel buttonPanel = new JPanel();
@@ -120,10 +127,6 @@ public class ResultScreen extends JPanel {
         stats.setOpaque(false);
         stats.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         //stats.setBackground(new Color(184, 112, 247));
-
-        setUpRankingTable();
-        gameState.setPlayers(computeRankings(gameState.getPlayers()));
-        // updateRankingTable(gameState.getPlayers());
 
         endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
         JPanel westPanel = new JPanel(new BorderLayout());

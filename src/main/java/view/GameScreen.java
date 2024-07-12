@@ -30,6 +30,7 @@ public class GameScreen extends JPanel {
     private JPanel carPanel;
     private boolean timerStarted = false;
     private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
+    private boolean isFinished = false;
     private double trackMultiplier = 0.7;
 
     private long startTime;
@@ -215,6 +216,7 @@ public class GameScreen extends JPanel {
 
     public void updateCarPositions(String playerName, int progress, int wpm) {
         int totalLength = providedText.length();
+        double trackMultiplier = (isFinished) ? 0.915 : 0.7;
         int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
 
@@ -313,7 +315,7 @@ public class GameScreen extends JPanel {
         currentPlayer.setAccuracy(accuracy);
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
 
-        trackMultiplier = 0.9;
+        isFinished = true;
         createCarPanel();
 
         // use clientcontroller to transition to the result screen
@@ -328,6 +330,7 @@ public class GameScreen extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                double trackMultiplier = (isFinished) ? 0.9 : 0.7;
                 int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
                 for (CarShape carShape : carShapes) {
                     carShape.draw(g, roadLength);

@@ -334,7 +334,6 @@ public class ClientController {
                             notification.getAccuracy(),
                             notification.getTime(),
                             view.getCarPanel(),
-                            view.getCarShapes(),
                             this
                     );
                     frame.setContentPane(this.resultScreen);
