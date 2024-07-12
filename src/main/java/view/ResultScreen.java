@@ -40,6 +40,7 @@ public class ResultScreen extends JPanel {
      * @param accuracy the amount of correctly typed characters
      * @param elapsedTime the time spent in the game
      * @param carPanel for the final race track display
+     * @param wrongChars the amount of wrong inputs
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,

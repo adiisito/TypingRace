@@ -361,14 +361,6 @@ public class GameScreen extends JPanel {
         return this.carShapes;
     }
 
-    /**
-     * Gets the length of the initial provided text.
-     * @return the length of the provided text
-     */
-    public int getTextLength() {
-        return providedText.length();
-    }
-
     private void updateTextColor(String typedText) {
         StyledDocument doc = typingArea.getStyledDocument();
         StyleContext context = new StyleContext();
@@ -403,6 +395,10 @@ public class GameScreen extends JPanel {
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", currentPlayer.getAccuracy()) + "%");
     }
 
+    /**
+     * Gives the amount of wrong inputs for the player.
+     * @return the amount of counted wrong characters
+     */
     public int getWrongChars() {
         return wrongChars;
     }
