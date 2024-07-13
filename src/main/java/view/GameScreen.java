@@ -193,25 +193,10 @@ public class GameScreen extends JPanel {
     public void addCars() {
         for (Player player : racers) {
             Car newCar = new Car(player);
-            //gameState.addPlayer(player);
             CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 60, 50, customFont);
             carShapes.add(newCarShape);
             repaint();
         }
-    }
-
-    public void updateProgress(String typedText) {
-        int progress = calculateProgress(typedText);
-        if (gameState.getCurrentRace() != null) {
-            gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
-        }
-
-        int wpm = calculateWpm();
-        double accuracy = calculateAccuracy(typedText);
-        wpmLabel.setText("WPM: " + wpm);
-        accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
-
-        updateCarPositions(currentPlayer.getName(), progress, wpm);
     }
 
     public void updateCarPositions(String playerName, int progress, int wpm) {
@@ -344,6 +329,11 @@ public class GameScreen extends JPanel {
         carPanel.setPreferredSize(new Dimension(600, 300));
     }
 
+    /**
+     * Gets car panel.
+     *
+     * @return the car panel
+     */
     public JPanel getCarPanel() {
         return this.carPanel;
     }
