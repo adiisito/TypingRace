@@ -338,8 +338,7 @@ public class ClientController {
                             notification.getAccuracy(),
                             Math.toIntExact(notification.getTime()),
                             view.getCarPanel(),
-                            view.getTextLength(),
-                            view.getCarShapes(),
+                            view.getWrongChars(),
                             this
                     );
                     frame.setContentPane(this.resultScreen);

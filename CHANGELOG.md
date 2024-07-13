@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-12
+
+## Added
+- New result screen background and visuals
+- Counter for the number of wrong inputs
+
+## Fixed
+- Player characters being misaligned on the end results
+- Accuracy going above 100 (only happens with too many inputs at once)
+
 ## 2024-07-10
 ### Fixed
 - join game by entering ip-adress

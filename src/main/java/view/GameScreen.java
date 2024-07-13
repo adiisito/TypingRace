@@ -31,9 +31,9 @@ public class GameScreen extends JPanel {
     private JLabel timeLabel;
     private java.util.List<TypingPlayer> racers;
     private JPanel carPanel;
-    private boolean timerStarted = false;
     private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
-    private double trackMultiplier = 0.7;
+    private boolean isFinished = false;
+    private int wrongChars = 0;
 
     private long startTime;
     private int keyPressCount;
@@ -133,6 +133,11 @@ public class GameScreen extends JPanel {
                 int wpm = calculateWpm();
                 double accuracy = calculateAccuracy(typedText);
                 int progress = calculateProgress(typedText);
+
+                if (typedText.charAt(typedText.length() - 1) != providedText.charAt(typedText.length() - 1)
+                        && e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
+                    wrongChars++;
+                }
                 clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
             }
         });
@@ -212,6 +217,7 @@ public class GameScreen extends JPanel {
 
     public void updateCarPositions(String playerName, int progress, int wpm) {
         int totalLength = providedText.length();
+        double trackMultiplier = (isFinished) ? 0.915 : 0.7; // To match the screen lengths
         int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
             if (carShape.getPlayer().getName().equals(playerName)) {
@@ -247,7 +253,11 @@ public class GameScreen extends JPanel {
                 correctChars++;
             }
         }
-        return keyPressCount == 0 ? 100 : (correctChars * 100.0) / keyPressCount;
+        // Stopper for accuracy, this only really comes up when typing way too fast
+        double accuracy = (correctChars * 100.0) / keyPressCount;
+        if (accuracy > 100) return 100;
+
+        return keyPressCount == 0 ? 100 : accuracy;
     }
 
     private int calculateWpm() {
@@ -314,7 +324,7 @@ public class GameScreen extends JPanel {
         currentPlayer.setAccuracy(accuracy);
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
 
-        trackMultiplier = 0.9;
+        isFinished = true;
         createCarPanel();
     }
 
@@ -323,6 +333,7 @@ public class GameScreen extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                double trackMultiplier = (isFinished) ? 0.9 : 0.7; // To match the screen lengths
                 int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
                 for (CarShape carShape : carShapes) {
                     carShape.draw(g, roadLength);
@@ -344,14 +355,6 @@ public class GameScreen extends JPanel {
      */
     public ArrayList<CarShape> getCarShapes() {
         return this.carShapes;
-    }
-
-    /**
-     * Gets the length of the initial provided text.
-     * @return the length of the provided text
-     */
-    public int getTextLength() {
-        return providedText.length();
     }
 
     private void updateTextColor(String typedText) {
@@ -393,8 +396,12 @@ public class GameScreen extends JPanel {
         accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
     }
 
-    public Timer getTimer() {
-        return this.timer;
+    /**
+     * Gives the amount of wrong inputs for the player.
+     * @return the amount of counted wrong characters
+     */
+    public int getWrongChars() {
+        return wrongChars;
     }
 }
 

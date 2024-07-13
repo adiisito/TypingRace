@@ -25,13 +25,13 @@ public class ResultScreen extends JPanel {
     private final Player currentPlayer;
     private final JPanel endState;
     private final int time;
+    private final int wrongChars;
     private ClientController clientController;
     private DefaultTableModel rankingModel;
 
-    private ArrayList<CarShape> carShapes;
     private Image backgroundImage;
-    private int textLength;
     private SoundPlayer soundPlayer;
+    private boolean firstPlace = false;
 
     /**
      * Creates a window with game results.
@@ -41,21 +41,19 @@ public class ResultScreen extends JPanel {
      * @param accuracy the amount of correctly typed characters
      * @param elapsedTime the time spent in the game
      * @param carPanel for the final race track display
-     * @param textLength the length of the original text
-     * @param carShapes the car entities that are to move
+     * @param wrongChars the amount of wrong inputs during the round
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
-                        double accuracy, int elapsedTime, JPanel carPanel, int textLength,
-                        ArrayList<CarShape> carShapes, ClientController clientController) {
+                        double accuracy, int elapsedTime, JPanel carPanel,
+                        int wrongChars, ClientController clientController) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.wpm = wpm;
         this.accuracy = accuracy;
         this.time = elapsedTime;
         this.endState = carPanel;
-        this.textLength = textLength;
-        this.carShapes = carShapes;
+        this.wrongChars = wrongChars;
         this.clientController = clientController;
         clientController.setResultScreen(this);
         soundPlayer = new SoundPlayer();
@@ -69,8 +67,12 @@ public class ResultScreen extends JPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
 
+        setUpRankingTable();
+        gameState.setPlayers(computeRankings(gameState.getPlayers()));
+        // updateRankingTable(gameState.getPlayers());
+
         try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("GameScreenBG.jpeg");
+            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon.jpeg");
             if (imageStream != null) {
                 backgroundImage = ImageIO.read(imageStream);
             } else {
@@ -80,24 +82,17 @@ public class ResultScreen extends JPanel {
             e.printStackTrace();
         }
 
-        JLabel resultLabel = new JLabel("Game Over");
+        String header = (firstPlace) ? "Congratulations!" : "Game Over!";
+        JLabel resultLabel = new JLabel(header);
         resultLabel.setFont(new Font("Nougat", Font.BOLD, 24));
         resultLabel.setHorizontalAlignment(SwingConstants.CENTER);
         resultLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         resultLabel.setForeground(Color.WHITE);
 
-        JLabel wpmLabel = new JLabel("WPM: " + wpm);
-        wpmLabel.setFont(new Font("Nougat", Font.PLAIN, 18));
-        wpmLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        wpmLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JLabel accuracyLabel = new JLabel("Accuracy: " + accuracy + "%");
-        accuracyLabel.setFont(new Font("Nougat", Font.PLAIN, 18));
-        accuracyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        accuracyLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
+        newGameButton.setBackground(Color.BLACK);
+        newGameButton.setBackground(Color.WHITE);
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
@@ -105,28 +100,25 @@ public class ResultScreen extends JPanel {
 
         JButton exitButton = new JButton("Exit");
         exitButton.setFont(new Font("Nougat", Font.PLAIN, 16));
+        exitButton.setBackground(Color.RED);
+        exitButton.setForeground(Color.WHITE);
         exitButton.addActionListener(e -> {
             clientController.playerLeft(currentPlayer.getName());
             System.exit(0);
-
         });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(newGameButton);
         buttonPanel.add(exitButton);
 
-        String stat_text = "<html>WPM: " + wpm + " <br> Accuracy: " +
-                (double) Math.round(accuracy * 100) / 100 + "% <br> Time: " + time + " seconds </html>";
+        String stat_text = "<html>Time: " + time + " seconds <br> WPM: " + wpm + "<br> Accuracy: " +
+                (double) Math.round(accuracy * 100) / 100 + "% <br> Wrong inputs: " + wrongChars + "</html>";
         JLabel stats = new JLabel(stat_text);
         stats.setFont(new Font("Nougat", Font.PLAIN, 24));
         stats.setForeground(Color.WHITE);
         stats.setOpaque(false);
         stats.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         //stats.setBackground(new Color(184, 112, 247));
-
-        setUpRankingTable();
-        gameState.setPlayers(computeRankings(gameState.getPlayers()));
-        // updateRankingTable(gameState.getPlayers());
 
         endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
         JPanel westPanel = new JPanel(new BorderLayout());
@@ -135,13 +127,11 @@ public class ResultScreen extends JPanel {
 
         resultLabel.setOpaque(false);
         westPanel.setOpaque(false);
-        accuracyLabel.setOpaque(false);
         buttonPanel.setOpaque(false);
 
         add(resultLabel, BorderLayout.NORTH);
         // add(tablePanel, BorderLayout.EAST);
         add(westPanel, BorderLayout.WEST);
-        add(accuracyLabel, BorderLayout.SOUTH);
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 
