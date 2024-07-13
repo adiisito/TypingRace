@@ -18,6 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * The window from which the players participate in the SpaceRally.
+ *
+ */
 public class GameScreen extends JPanel {
     private final ArrayList<CarShape> carShapes;
     private GameState gameState;
@@ -31,8 +35,8 @@ public class GameScreen extends JPanel {
     private JLabel timeLabel;
     private java.util.List<TypingPlayer> racers;
     private JPanel carPanel;
-    private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
     private boolean isFinished = false;
+    private int wrongChars = 0;
 
     private long startTime;
     private int keyPressCount;
@@ -42,7 +46,6 @@ public class GameScreen extends JPanel {
     private SoundPlayer soundPlayer;
     private boolean soundOn;
     private SoundPlayer errorSoundPlayer;
-    private int wrongChars = 0;
 
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText, boolean soundOn) {
         this.gameState = gameState;
@@ -133,8 +136,9 @@ public class GameScreen extends JPanel {
                 int wpm = calculateWpm();
                 double accuracy = calculateAccuracy(typedText);
                 int progress = calculateProgress(typedText);
+
                 if (typedText.charAt(typedText.length() - 1) != providedText.charAt(typedText.length() - 1)
-                    && e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
+                        && e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
                     wrongChars++;
                 }
                 clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, timeElapsed);
@@ -190,6 +194,9 @@ public class GameScreen extends JPanel {
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
     }
 
+    /**
+     * Adds cars / UFOs and their racetracks to the game window.
+     */
     public void addCars() {
         for (Player player : racers) {
             Car newCar = new Car(player);
@@ -199,9 +206,29 @@ public class GameScreen extends JPanel {
         }
     }
 
+    public void updateProgress(String typedText) {
+        int progress = calculateProgress(typedText);
+        if (gameState.getCurrentRace() != null) {
+            gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
+        }
+
+        int wpm = calculateWpm();
+        double accuracy = calculateAccuracy(typedText);
+        wpmLabel.setText("WPM: " + wpm);
+        accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
+
+        updateCarPositions(currentPlayer.getName(), progress, wpm);
+    }
+
+    /**
+     * Updates the position of a specified player's car in the window.
+     * @param playerName the player to move
+     * @param progress the player's progress
+     * @param wpm the player's wpm count
+     */
     public void updateCarPositions(String playerName, int progress, int wpm) {
         int totalLength = providedText.length();
-        double trackMultiplier = (isFinished) ? 0.915 : 0.7;
+        double trackMultiplier = (isFinished) ? 0.915 : 0.7; // To match the screen lengths
         int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
             if (carShape.getPlayer().getName().equals(playerName)) {
@@ -237,7 +264,7 @@ public class GameScreen extends JPanel {
                 correctChars++;
             }
         }
-        // Stopper for accuracy, this only really comes up when typing too fast
+        // Stopper for accuracy, this only really comes up when typing way too fast
         double accuracy = (correctChars * 100.0) / keyPressCount;
         if (accuracy > 100) return 100;
 
@@ -317,7 +344,7 @@ public class GameScreen extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                double trackMultiplier = (isFinished) ? 0.9 : 0.7;
+                double trackMultiplier = (isFinished) ? 0.9 : 0.7; // To match the screen lengths
                 int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
                 for (CarShape carShape : carShapes) {
                     carShape.draw(g, roadLength);

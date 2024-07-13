@@ -120,8 +120,6 @@ public class ClientWindow extends JFrame {
             startButton.addActionListener(e -> {
                 if (clientController.isHost(playerName)) {
                     clientController.startGame(playerName);
-                } else {
-                    JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
                 }
             });
             buttonPanel.add(Box.createRigidArea(new Dimension(20, 0))); // Space between buttons
@@ -131,7 +129,7 @@ public class ClientWindow extends JFrame {
             exitButton.addActionListener(e -> {
                 try {
                     clientController.playerLeft(playerName);
-                    dispose();
+                    clientController.toMainMenu();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -209,6 +207,15 @@ public class ClientWindow extends JFrame {
                 playerListModel.addElement(player);
                 TypingPlayer newPlayer = new TypingPlayer(player);
                 gameState.addPlayer(newPlayer);
+
+            }
+            //System.out.println(clientController.hostPlayer);
+            if (!clientController.isHost(playerName) && players.size() > 1) {
+                startButton.setForeground(Color.DARK_GRAY);
+                startButton.setBackground(new Color(34, 34, 34));
+            } else {
+                startButton.setForeground(Color.WHITE);
+                startButton.setBackground(Color.DARK_GRAY);
             }
             updateLobbyStatus();
         });
