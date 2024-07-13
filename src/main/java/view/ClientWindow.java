@@ -22,6 +22,7 @@ public class ClientWindow extends JFrame {
     private Font dozerFont;
     private JButton startButton;
     private Timer dotAnimationTimer;
+    private JLabel statusLabel;
 
     /**
      * Instantiates a new Client window.
@@ -72,6 +73,10 @@ public class ClientWindow extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Sets up and displays the lobby UI with a list of players and control buttons.
+     * The UI includes a background, a scrollable player list, and buttons to start or exit the game.
+     */
     private void showWaitingRoom() {
         try {
             Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/3screen.gif"));
@@ -146,6 +151,7 @@ public class ClientWindow extends JFrame {
             waitingPanel.add(buttonPanel, gbc);
 
             setContentPane(waitingPanel);
+            addStatusLabel();
             revalidate();
             repaint();
         } catch (Exception e) {
@@ -154,6 +160,13 @@ public class ClientWindow extends JFrame {
         }
     }
 
+    /**
+     * Creates a styled 3D button with specified text. This method configures the button's
+     * appearance including font, colors, and border to give it a 3D look.
+     *
+     * @param text The text to display on the button.
+     * @return JButton The configured button with the specified text and 3D styling.
+     */
     private JButton create3DButton(String text) {
         JButton button = new JButton(text);
         button.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
@@ -189,8 +202,8 @@ public class ClientWindow extends JFrame {
                 playerListModel.addElement(player);
                 TypingPlayer newPlayer = new TypingPlayer(player);
                 gameState.addPlayer(newPlayer);
-
             }
+            updateLobbyStatus();
         });
     }
 
@@ -203,23 +216,46 @@ public class ClientWindow extends JFrame {
         JOptionPane.showMessageDialog(this, playerName + " has left the game.", "Player Left", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    public void addStatusLabel () {
+        statusLabel = new JLabel();
+        statusLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+        statusLabel.setHorizontalAlignment(JLabel.CENTER);
+        statusLabel.setForeground(Color.WHITE);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JPanel waitingPanel = (JPanel) getContentPane();
+        waitingPanel.add(statusLabel, gbc);
+    }
+
     /**
      * Show lobby full button.
      */
-    public void showLobbyFullButton() {
-        JButton lobbyFullButton = create3DButton("Lobby full, Start the Game");
-        lobbyFullButton.addActionListener(e -> {
-            if (clientController.isHost(playerName)) {
-                clientController.startGame(playerName);
-            } else {
-                JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        JPanel waitingPanel = (JPanel) getContentPane();
-        waitingPanel.add(lobbyFullButton, BorderLayout.SOUTH);
+    public void updateLobbyStatus() {
+        if (isLobbyFull()) {
+            statusLabel.setText("Lobby full, please start the game");
+        } else {
+            statusLabel.setText("");
+        }
         revalidate();
         repaint();
     }
+
+
+    /**
+     * Determines if the lobby has reached its maximum capacity.
+     * Assumes a maximum capacity of 6 players.
+     *
+     * @return True if the player list size is 6, false otherwise.
+     */
+    private boolean isLobbyFull() {
+        return playerListModel.size() == 6;
+    }
+
 
     /**
      * Gets player name.

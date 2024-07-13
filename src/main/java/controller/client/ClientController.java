@@ -7,13 +7,13 @@ import game.GameState;
 import game.Player;
 import game.Text;
 import game.TypingPlayer;
+import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
 import view.ResultScreen;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -126,9 +126,9 @@ public class ClientController {
         // clientWindow.updateStartButtonState(isHost(clientWindow.getPlayerName()));
         System.out.println("Updated player list in client: " + playerNames);
         mainGui.updateAllClientWindows(playerNames);
-        if (playerNames.size() == 6) {
-            clientWindow.showLobbyFullButton();
-        }
+//        if (playerNames.size() == 6) {
+//            clientWindow.showLobbyFullButton();
+//        }
     }
 
     public void handlePlayerJoined (PlayerJoinedNotification notification) {
@@ -273,7 +273,7 @@ public class ClientController {
                     view.updateCarPositions(notification.getPlayerName(), notification.getProgress(), notification.getWpm());
 
                     if (notification.getPlayerName().equals(currentPlayer.getName())) {
-                        view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+                        view.updateProgressDisplay();
                     }
                 }
             }
@@ -343,8 +343,7 @@ public class ClientController {
                             notification.getAccuracy(),
                             Math.toIntExact(notification.getTime()),
                             view.getCarPanel(),
-                            view.getTextLength(),
-                            view.getCarShapes(),
+                            view.getWrongChars(),
                             this
                     );
                     frame.setContentPane(this.resultScreen);
@@ -388,9 +387,8 @@ public class ClientController {
      * Displays the lobby full button on the client window.
      */
     public void handleLobbyFull() {
-        SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
+        SwingUtilities.invokeLater(() -> clientWindow.updateLobbyStatus());
     }
-
     /**
      * Retrieves the name of the current player.
      *
