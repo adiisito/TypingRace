@@ -23,9 +23,14 @@ public class SettingsWindow extends JFrame {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.insets = new Insets(10, 10, 10, 10);
 
+        // Set background image
+        setContentPane(new JLabel(new ImageIcon(getClass().getResource("/1screen4.gif"))));
+        setLayout(new GridBagLayout());
+
         // Sound setting
         JLabel soundLabel = new JLabel("Sound:");
         soundLabel.setFont(mainGui.dozerFont);
+        soundLabel.setForeground(Color.GREEN);
         JToggleButton soundToggle = new JToggleButton("On");
         soundToggle.setSelected(mainGui.getClientController().isSoundEnabled());
         soundToggle.setFont(mainGui.dozerFont);
@@ -39,6 +44,7 @@ public class SettingsWindow extends JFrame {
         // Text type setting
         JLabel textTypeLabel = new JLabel("Choose Text Type:");
         textTypeLabel.setFont(mainGui.dozerFont);
+        textTypeLabel.setForeground(Color.GREEN);
         add(textTypeLabel, gbc);
 
         String[] textTypes = {"Random", "English", "German", "Dad Jokes", "Facts"};
