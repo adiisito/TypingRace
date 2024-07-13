@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
-import game.Text;
 import game.TypingPlayer;
 
+/**
+ * The type Game server.
+ */
 public class GameServer {
 
     private static final int SERVER_PORT = 8080;
@@ -31,16 +33,6 @@ public class GameServer {
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
         System.out.println("Server started, listening...");
-    }
-
-    /**
-     * Create server socket server socket.
-     *
-     * @return the server socket
-     * @throws IOException the io exception
-     */
-    protected ServerSocket createServerSocket() throws IOException {
-        return new ServerSocket(SERVER_PORT, 50, InetAddress.getByName("0.0.0.0"));
     }
 
     /**
@@ -184,15 +176,6 @@ public class GameServer {
             String json2 = moshi.adapter(HostNotification.class).toJson(hostNotification);
             broadcastMessage(json2);
         }
-    }
-
-    /**
-     * Gets connection managers.
-     *
-     * @return the connection managers
-     */
-    public List<ConnectionManager> getConnectionManagers() {
-        return connectionManagers;
     }
 
     /**

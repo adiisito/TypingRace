@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import controller.server.GameServer;
 import network.MockSocket;
 
+/**
+ * The type Server test.
+ */
 public class ServerTest {
 
 }
