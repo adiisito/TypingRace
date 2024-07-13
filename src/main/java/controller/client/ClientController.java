@@ -436,4 +436,12 @@ public class ClientController {
     public void setTextType(String textType) {
         this.textType = textType;
     }
+
+    public List<String> getPlayerNames () {
+        return playerNames;
+    }
+
+    public List<TypingPlayer> getPlayers () {
+        return players;
+    }
 }

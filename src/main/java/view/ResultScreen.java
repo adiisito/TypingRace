@@ -93,6 +93,13 @@ public class ResultScreen extends JPanel {
         newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
         newGameButton.setBackground(Color.GREEN);
         newGameButton.addActionListener(e -> {
+            for(TypingPlayer player : clientController.getPlayers()) {
+                if (!player.isCompleted()) {
+                    JOptionPane.showMessageDialog(this,
+                            "The current round has not finished yet!", "Round isn't over", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
         });

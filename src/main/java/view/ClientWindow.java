@@ -191,6 +191,14 @@ public class ClientWindow extends JFrame {
                 gameState.addPlayer(newPlayer);
 
             }
+            //System.out.println(clientController.hostPlayer);
+            if (!clientController.isHost(playerName) && players.size() > 1) {
+                startButton.setForeground(Color.DARK_GRAY);
+                startButton.setBackground(new Color(34, 34, 34));
+            } else {
+                startButton.setForeground(Color.WHITE);
+                startButton.setBackground(Color.DARK_GRAY);
+            }
         });
     }
 

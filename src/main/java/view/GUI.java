@@ -120,7 +120,7 @@ public class GUI extends JFrame {
                 if (playerName.isEmpty() || serverIP.isEmpty()) {
                     JOptionPane.showMessageDialog(GUI.this, "Please enter a name and server IP", "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (playerName.length() > 7) {
-                    JOptionPane.showMessageDialog(GUI.this, "Please use a shorter name!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(GUI.this, "Please use a shorter name!", "Name too long", JOptionPane.ERROR_MESSAGE);
                 } else {
                     try {
                         createNewClient(playerName);
