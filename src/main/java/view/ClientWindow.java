@@ -21,6 +21,7 @@ public class ClientWindow extends JFrame {
     private GameState gameState;
     private Font dozerFont;
     private JButton startButton;
+    private Timer dotAnimationTimer;
 
     /**
      * Instantiates a new Client window.
@@ -61,6 +62,9 @@ public class ClientWindow extends JFrame {
                     ex.printStackTrace();
                 }
                 e.getWindow().dispose();
+                if (dotAnimationTimer != null) {
+                    dotAnimationTimer.stop();
+                }
             }
         });
 
@@ -80,10 +84,13 @@ public class ClientWindow extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            JLabel waitingLabel = new JLabel("WAITING FOR PLAYERS TO JOIN...");
+            JLabel waitingLabel = new JLabel("WAITING FOR PLAYERS TO JOIN");
             waitingLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 14));
             waitingLabel.setForeground(Color.GREEN);
             waitingPanel.add(waitingLabel, gbc);
+
+            // Start the dot animation
+            startDotAnimation(waitingLabel);
 
             playerListModel = new DefaultListModel<>();
             JList<String> playerList = new JList<>(playerListModel);
@@ -127,6 +134,15 @@ public class ClientWindow extends JFrame {
             buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Space between buttons
             buttonPanel.add(exitButton);
 
+            // Settings button
+            JButton settingsButton = create3DButton("SETTINGS");
+            settingsButton.addActionListener(e -> {
+                SettingsWindow settingsWindow = new SettingsWindow(clientController.getMainGui());
+                settingsWindow.setVisible(true);
+            });
+            buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Space between buttons
+            buttonPanel.add(settingsButton);
+
             waitingPanel.add(buttonPanel, gbc);
 
             setContentPane(waitingPanel);
@@ -147,6 +163,18 @@ public class ClientWindow extends JFrame {
         button.setFocusPainted(false);
         button.setPreferredSize(new Dimension(200, 40));
         return button;
+    }
+
+    private void startDotAnimation(JLabel label) {
+        dotAnimationTimer = new Timer(500, e -> {
+            String currentText = label.getText();
+            if (currentText.endsWith("...")) {
+                label.setText("WAITING FOR PLAYERS TO JOIN");
+            } else {
+                label.setText(currentText + ".");
+            }
+        });
+        dotAnimationTimer.start();
     }
 
     /**
@@ -192,13 +220,6 @@ public class ClientWindow extends JFrame {
         revalidate();
         repaint();
     }
-
-/*    public void startGame() {
-        JPanel gamePanel = new GameScreen(gameState, new TypingPlayer(playerName), clientController);
-        setContentPane(gamePanel);
-        revalidate();
-        repaint();
-    }*/
 
     /**
      * Gets player name.

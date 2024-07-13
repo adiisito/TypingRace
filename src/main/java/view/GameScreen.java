@@ -1,7 +1,10 @@
 package view;
 
 import controller.client.ClientController;
-import game.*;
+import game.Car;
+import game.GameState;
+import game.Player;
+import game.TypingPlayer;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
@@ -38,8 +41,10 @@ public class GameScreen extends JPanel {
     private ImageIcon backgroundImage;
     private Font customFont;
     private SoundPlayer soundPlayer;
+    private boolean soundOn;
+    private SoundPlayer errorSoundPlayer;
 
-    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText) {
+    public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText, boolean soundOn) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
         this.providedText = providedText;
@@ -47,6 +52,7 @@ public class GameScreen extends JPanel {
         this.carShapes = new ArrayList<>();
         this.clientController = clientController;
         this.racers = gameState.getPlayers();
+        this.soundOn = soundOn;
         clientController.setView(this);
 
         // to use the background image
@@ -66,13 +72,14 @@ public class GameScreen extends JPanel {
             e.printStackTrace();
         }
 
-
         soundPlayer = new SoundPlayer();
-        soundPlayer.playSound("sound1.wav");
+        errorSoundPlayer = new SoundPlayer();
+        if (soundOn) {
+            soundPlayer.playSound("sound1.wav");
+        }
 
         initComponents();
     }
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -82,7 +89,6 @@ public class GameScreen extends JPanel {
             g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         }
     }
-
 
     private void initComponents() {
         setLayout(new BorderLayout());
@@ -115,14 +121,8 @@ public class GameScreen extends JPanel {
                 if (e.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
                     return;
                 }
-                /* Doesn't really make sense in our multiplayer game
-                if (!timerStarted) {
-                    startTimer();
-                    timerStarted = true;
-                }
-                 */
-                if(e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
-                    keyPressCount++; // Increment key press count on each key release
+                if (e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
+                    keyPressCount++;
                 }
                 String typedText = typingArea.getText();
                 // updateProgress(typedText); This function should be done by the client
@@ -130,7 +130,6 @@ public class GameScreen extends JPanel {
 
                 // Calculate the time elapsed since the start of typing
                 int timeElapsed = (int) ((System.currentTimeMillis() - startTime) / 1000); // Time in seconds
-
                 int wpm = calculateWpm();
                 double accuracy = calculateAccuracy(typedText);
                 int progress = calculateProgress(typedText);
@@ -167,8 +166,9 @@ public class GameScreen extends JPanel {
         textTypingPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Panel for accuracy and timer
-        JPanel accuracyTimePanel = new JPanel(new GridLayout(2, 1));
+        JPanel accuracyTimePanel = new JPanel(new GridLayout(3, 1));
         accuracyTimePanel.setOpaque(false);
+        accuracyTimePanel.add(wpmLabel);
         accuracyTimePanel.add(accuracyLabel);
         accuracyTimePanel.add(timeLabel);
 
@@ -179,13 +179,11 @@ public class GameScreen extends JPanel {
         mainBottomPanel.add(accuracyTimePanel, BorderLayout.EAST);
 
         // Final layout
-        add(wpmLabel, BorderLayout.EAST);
         add(carPanel, BorderLayout.NORTH);
         add(mainBottomPanel, BorderLayout.CENTER);
 
         startTimer();
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
-
     }
 
     public void addCars() {
@@ -197,7 +195,6 @@ public class GameScreen extends JPanel {
             repaint();
         }
     }
-
 
     public void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
@@ -217,7 +214,6 @@ public class GameScreen extends JPanel {
         int totalLength = providedText.length();
         int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
         for (CarShape carShape : carShapes) {
-
             if (carShape.getPlayer().getName().equals(playerName)) {
                 int newProgress = (progress * roadLength) / totalLength;
                 carShape.setX(newProgress);
@@ -278,8 +274,14 @@ public class GameScreen extends JPanel {
             long elapsedTime = ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
             long remainingTime = 60 - elapsedTime;
             timeLabel.setText("TIME: " + (int) remainingTime);
-            String typedText = typingArea.getText();
 
+            if (remainingTime <= 10) {
+                timeLabel.setBackground(Color.RED);
+            } else {
+                timeLabel.setBackground(Color.GREEN);
+            }
+
+            String typedText = typingArea.getText();
             boolean isCompleted = typedText.equals(providedText);
             if (elapsedTime >= 60 || isCompleted) {
                 gameState.endCurrentRace();
@@ -290,8 +292,6 @@ public class GameScreen extends JPanel {
             int progress = calculateProgress(typedText);
             double accuracy = calculateAccuracy(typedText);
             clientController.updateProgress(currentPlayer.getName(), wpm, progress, accuracy, (int) elapsedTime);
-
-
         });
         timer.start();
     }
@@ -303,8 +303,9 @@ public class GameScreen extends JPanel {
             System.out.println("Timer stopped after game end.");
         }
 
-
-        soundPlayer.stopSound();
+        if (soundPlayer != null) {
+            soundPlayer.stopSound();
+        }
 
         int wpm = calculateWpm();
         double accuracy = calculateAccuracy(typingArea.getText());
@@ -315,12 +316,6 @@ public class GameScreen extends JPanel {
 
         trackMultiplier = 0.9;
         createCarPanel();
-
-        // use clientcontroller to transition to the result screen
-//        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-//        frame.setContentPane(new ResultScreen(gameState, currentPlayer, wpm, accuracy, elapsedTime, carPanel, clientController));
-//        frame.revalidate();
-//        frame.repaint();
     }
 
     private void createCarPanel() {
@@ -375,6 +370,9 @@ public class GameScreen extends JPanel {
             } else {
                 doc.setCharacterAttributes(i, 1, incorrectStyle, true);
                 mistakeFound = true;
+                if (soundOn) {
+                    errorSoundPlayer.playSound("error.wav");
+                }
             }
 
             // Check if a space character is encountered to reset the mistake flag
@@ -399,3 +397,4 @@ public class GameScreen extends JPanel {
         return this.timer;
     }
 }
+
