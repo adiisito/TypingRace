@@ -140,8 +140,8 @@ public class GameServer {
      * @param name id of the player.
      */
     public void removePlayer(String name) {
-        boolean wasHost = name.equals(hostPlayerName);
         playerNamesList.remove(name);
+        boolean wasHost = name.equals(hostPlayerName);
 
         int numPlayer = playerNamesList.size();
 
