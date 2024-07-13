@@ -11,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -69,6 +68,7 @@ public class ResultScreen extends JPanel {
 
         setUpRankingTable();
         gameState.setPlayers(computeRankings(gameState.getPlayers()));
+        if (gameState.getCompletedPlayers().size() == 1) firstPlace = true;
         // updateRankingTable(gameState.getPlayers());
 
         try {

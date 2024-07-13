@@ -34,7 +34,6 @@ public class ConnectionManager extends Thread {
     private final List<String> playerNames;
     private final Set<String> finishedPlayers = new HashSet<>();
     private final Map<String, Integer> playerResults;
-    private String hostPlayerName;
 
     /**
      * Instantiates a new Connection manager.
@@ -55,7 +54,7 @@ public class ConnectionManager extends Thread {
     }
 
     /**
-     * Run.
+     * Run the whole Connection Manager.
      */
     @Override
     public void run() {
@@ -174,6 +173,11 @@ public class ConnectionManager extends Thread {
         }
     }
 
+    /**
+     * Handle update ranking request.
+     *
+     * @param request the request
+     */
     public void handleUpdateRankingRequest(UpdateRankingRequest request) {
 
         RankingNotification notification = new RankingNotification(request.getPlayers());
@@ -183,27 +187,8 @@ public class ConnectionManager extends Thread {
     }
     /**
      * Broadcast to send on the finish window.
-     * TODO waiting for the implementation of client to send the result
      */
     private void broadcastAllPlayersEnded() {
-        /*
-        List<TypingPlayer> results = ;
-        AllEndedNotification notification = new AllEndedNotification(results);
-        String json = moshi.adapter(AllEndedNotification.class).toJson(notification);
-        for (ConnectionManager manager : connectionManagers) {
-            manager.sendMessage(json);
-        }
-
-         */
-    }
-
-    /**
-     * Gets connection managers.
-     *
-     * @return the connection managers
-     */
-    public List<ConnectionManager> getConnectionManagers() {
-        return connectionManagers;
     }
 
 

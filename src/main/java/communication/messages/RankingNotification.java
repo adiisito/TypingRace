@@ -1,6 +1,5 @@
 package communication.messages;
 
-import game.Player;
 import game.TypingPlayer;
 
 import java.util.List;

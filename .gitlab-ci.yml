@@ -12,13 +12,13 @@ before_script:
 
 stages:
   - build
-  - javadoc
   - test
+  - code_quality
 
 build:
   stage: build
   script:
-    - gradle build
+    - gradle assemble
 
 test:
   stage: test
@@ -31,11 +31,14 @@ test:
     paths:
       - build/reports/tests/test
 
-javadoc:
-  stage: javadoc
+code_quality:
+  stage: code_quality
   script:
-    - gradle javadoc
+    - gradle codeQuality
+  allow_failure: true
   artifacts:
     paths:
       - build/docs/javadoc
+      - build/reports/checkstyle
+      - build/reports/spotless
     expire_in: 2 weeks
