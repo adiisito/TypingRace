@@ -112,6 +112,9 @@ public class ClientWindow extends JFrame {
             buttonPanel.setOpaque(false);
 
             this.startButton = create3DButton("START GAME");
+            if (!clientController.isHost(playerName)) {
+                this.startButton.setBackground(Color.GRAY);
+            }
             startButton.addActionListener(e -> {
                 if (clientController.isHost(playerName)) {
                     clientController.startGame(playerName);
@@ -210,12 +213,14 @@ public class ClientWindow extends JFrame {
         JButton lobbyFullButton = create3DButton("Lobby full, Start the Game");
         lobbyFullButton.addActionListener(e -> {
             if (clientController.isHost(playerName)) {
+                System.out.println("Start game");
                 clientController.startGame(playerName);
             } else {
                 JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
             }
         });
         JPanel waitingPanel = (JPanel) getContentPane();
+        waitingPanel.setLayout(new BorderLayout());
         waitingPanel.add(lobbyFullButton, BorderLayout.SOUTH);
         revalidate();
         repaint();

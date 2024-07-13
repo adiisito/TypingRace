@@ -91,14 +91,21 @@ public class GUI extends JFrame {
             createGameButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             createGameButton.addActionListener(e -> {
                 String playerName = playerNameField.getText().trim();
-                try {
-                    String serverIP = "127.0.0.1";
-                    createNewClient(playerName);
-                    clientController.joinGame(playerName, serverIP);
-                    playerNameField.setText(""); // Clear the text field
-                    serverIPField.setText("");
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+
+                if (playerName.isEmpty()) {
+                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
+                } else if (playerName.length() > 7) {
+                    JOptionPane.showMessageDialog(GUI.this, "Please use a shorter name!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        String serverIP = "127.0.0.1";
+                        createNewClient(playerName);
+                        clientController.joinGame(playerName, serverIP);
+                        playerNameField.setText(""); // Clear the text field
+                        serverIPField.setText("");
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
             loginPanel.add(createGameButton, gbc);
@@ -110,8 +117,11 @@ public class GUI extends JFrame {
                 String playerName = playerNameField.getText().trim();
                 String serverIP = serverIPField.getText().trim();
 
-                if (!playerName.isEmpty() && !serverIP.isEmpty()) {
-
+                if (playerName.isEmpty() || serverIP.isEmpty()) {
+                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name and server IP", "Error", JOptionPane.ERROR_MESSAGE);
+                } else if (playerName.length() > 7) {
+                    JOptionPane.showMessageDialog(GUI.this, "Please use a shorter name!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
                     try {
                         createNewClient(playerName);
                         clientController.joinGame(playerName, serverIP);
@@ -121,8 +131,6 @@ public class GUI extends JFrame {
                         throw new RuntimeException(ex);
                     }
 
-                } else {
-                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name and server IP", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
             loginPanel.add(joinButton, gbc);

@@ -13,6 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-13
+
+## Added
+- Handler for too long names
+
+## Fixed
+- Host can't have an empty name
+- Game lock when 6 players are in the lobby
+
 ## 2024-07-12
 
 ## Added
