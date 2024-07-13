@@ -1,10 +1,18 @@
 package view;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JToggleButton;
 
 public class SettingsWindow extends JFrame {
-  private GUI mainGui;
+  private final GUI mainGui;
 
   public SettingsWindow(GUI mainGui) {
     this.mainGui = mainGui;

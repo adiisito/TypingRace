@@ -1,7 +1,9 @@
 package view;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -11,7 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class HighlightRenderer extends DefaultTableCellRenderer {
 
-  private String playerName;
+  private final String playerName;
 
   /**
    * Constructs a HighlightRenderer with the specified player name.

@@ -1,7 +1,7 @@
 package communication.messages;
 
 public class LobbyFullNotification {
-  private String messageType = "LobbyFullNotification";
+  private final String messageType = "LobbyFullNotification";
 
   public String getMessageType() {
     return messageType;

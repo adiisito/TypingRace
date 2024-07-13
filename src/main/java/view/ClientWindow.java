@@ -3,19 +3,43 @@ package view;
 import controller.client.ClientController;
 import game.GameState;
 import game.TypingPlayer;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
-/** The Client window aka Lobby of players where players wait before entering the game!. */
+/**
+ * The Client window aka Lobby of players where players wait before entering the game!.
+ */
 public class ClientWindow extends JFrame {
-  private String playerName;
-  private ClientController clientController;
+  private final String playerName;
+  private final ClientController clientController;
   private DefaultListModel<String> playerListModel;
-  private GameState gameState;
+  private final GameState gameState;
   private Font dozerFont;
   private JButton startButton;
   private Timer dotAnimationTimer;
@@ -23,7 +47,7 @@ public class ClientWindow extends JFrame {
   /**
    * Instantiates a new Client window.
    *
-   * @param playerName the player name
+   * @param playerName       the player name
    * @param clientController the client controller
    * @throws IOException the io exception
    */
@@ -72,6 +96,11 @@ public class ClientWindow extends JFrame {
     setVisible(true);
   }
 
+  /**
+   * Displays the waiting room screen where players wait before entering the game.
+   * Sets up the background, player list, and buttons.
+   * Starts the dot animation on the waiting label.
+   */
   private void showWaitingRoom() {
     try {
       Image backgroundImage =
@@ -163,6 +192,13 @@ public class ClientWindow extends JFrame {
     }
   }
 
+
+  /**
+   * Creates a 3D-styled button with the specified text.
+   *
+   * @param text the text to be displayed on the button
+   * @return the created JButton with 3D styling
+   */
   private JButton create3DButton(String text) {
     JButton button = new JButton(text);
     button.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
@@ -174,6 +210,13 @@ public class ClientWindow extends JFrame {
     return button;
   }
 
+
+  /**
+   * Starts the dot animation on the specified JLabel.
+   * The animation appends dots to the label's text at regular intervals.
+   *
+   * @param label the JLabel on which the dot animation will be applied
+   */
   private void startDotAnimation(JLabel label) {
     dotAnimationTimer =
         new Timer(
@@ -216,7 +259,9 @@ public class ClientWindow extends JFrame {
         this, playerName + " has left the game.", "Player Left", JOptionPane.INFORMATION_MESSAGE);
   }
 
-  /** Show lobby full button. */
+  /**
+   * Show lobby full button.
+   */
   public void showLobbyFullButton() {
     JButton lobbyFullButton = create3DButton("Lobby full, Start the Game");
     lobbyFullButton.addActionListener(

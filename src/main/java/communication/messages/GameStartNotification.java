@@ -5,8 +5,8 @@ import java.util.List;
 
 public class GameStartNotification {
 
-  private String messageType = "GameStartNotification";
-  private List<TypingPlayer> players;
+  private final String messageType = "GameStartNotification";
+  private final List<TypingPlayer> players;
   // private int indexOfCurrentPlayer;
   // private int numPlayers;
   private String text;

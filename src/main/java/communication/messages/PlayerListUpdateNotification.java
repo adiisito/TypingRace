@@ -1,11 +1,12 @@
 // PlayerListUpdateNotification Class
+
 package communication.messages;
 
 import java.util.List;
 
 public class PlayerListUpdateNotification {
-  private String messageType = "PlayerListUpdateNotification";
-  private List<String> playerNames;
+  private final String messageType = "PlayerListUpdateNotification";
+  private final List<String> playerNames;
 
   public PlayerListUpdateNotification(List<String> playerNames) {
     this.playerNames = playerNames;

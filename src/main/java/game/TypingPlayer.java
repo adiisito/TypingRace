@@ -1,24 +1,34 @@
 package game;
 
+/**
+ * The type Typing player.
+ */
 public class TypingPlayer implements Player {
-  private String name;
+  private final String name;
   private int wpm;
   private int progress;
   private double accuracy;
   private boolean hasFinished = false;
 
-  // private String id;
-
+  /**
+   * Instantiates a new Typing player.
+   *
+   * @param name the name
+   */
   public TypingPlayer(String name) {
     this.name = name;
     this.wpm = 0;
     this.progress = 0;
     this.accuracy = 1;
-    // this.id = UUID.randomUUID().toString();
   }
 
   public double getAccuracy() {
     return accuracy;
+  }
+
+  @Override
+  public void setAccuracy(double accuracy) {
+    this.accuracy = accuracy;
   }
 
   @Override
@@ -29,11 +39,6 @@ public class TypingPlayer implements Player {
   @Override
   public boolean isCompleted() {
     return hasFinished;
-  }
-
-  @Override
-  public void setAccuracy(double accuracy) {
-    this.accuracy = accuracy;
   }
 
   @Override
@@ -61,8 +66,4 @@ public class TypingPlayer implements Player {
     this.progress = progress;
   }
 
-  @Override
-  public void receiveProgressUpdate(String playerName, int progress, int wpm) {
-    System.out.println(playerName + " progress: " + progress + ", WPM: " + wpm);
-  }
 }

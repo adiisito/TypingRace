@@ -29,28 +29,28 @@ public class GameStateNotification {
     return playerName;
   }
 
-  public int getWpm() {
-    return wpm;
-  }
-
-  public int getTime() {
-    return time;
-  }
-
-  public int getProgress() {
-    return progress;
-  }
-
   public void setPlayerName(String playerName) {
     this.playerName = playerName;
+  }
+
+  public int getWpm() {
+    return wpm;
   }
 
   public void setWpm(int wpm) {
     this.wpm = wpm;
   }
 
+  public int getTime() {
+    return time;
+  }
+
   public void setTime(int time) {
     this.time = time;
+  }
+
+  public int getProgress() {
+    return progress;
   }
 
   public void setProgress(int progress) {

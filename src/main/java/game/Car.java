@@ -1,7 +1,7 @@
 package game;
 
 public class Car implements Player {
-  private String name;
+  private final String name;
   private int wpm;
   private int progress;
   private Player player;
@@ -42,19 +42,15 @@ public class Car implements Player {
     player.setProgress(progress);
   }
 
+
   @Override
-  public void receiveProgressUpdate(String playerName, int progress, int wpm) {
-    System.out.println(playerName + " progress: " + progress + ", WPM: " + wpm);
+  public double getAccuracy() {
+    return this.accuracy;
   }
 
   @Override
   public void setAccuracy(double accuracy) {
     this.accuracy = accuracy;
-  }
-
-  @Override
-  public double getAccuracy() {
-    return this.accuracy;
   }
 
   @Override

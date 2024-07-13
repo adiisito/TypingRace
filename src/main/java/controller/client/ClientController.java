@@ -2,15 +2,27 @@ package controller.client;
 
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
-import communication.messages.*;
+import communication.messages.EndGameRequest;
+import communication.messages.GameEndNotification;
+import communication.messages.GameStartNotification;
+import communication.messages.GameStateNotification;
+import communication.messages.HostNotification;
+import communication.messages.JoinGameRequest;
+import communication.messages.PlayerLeftNotification;
+import communication.messages.PlayerLeftRequest;
+import communication.messages.PlayerListUpdateNotification;
+import communication.messages.RankingNotification;
+import communication.messages.StartGameRequest;
+import communication.messages.UpdateProgressRequest;
+import communication.messages.UpdateRankingRequest;
 import game.GameState;
 import game.Player;
 import game.Text;
 import game.TypingPlayer;
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -19,19 +31,19 @@ import view.ResultScreen;
 /** The type Client controller. */
 public class ClientController {
 
+  private final Moshi moshi;
   public GameClient clientModel;
-  private GameState gameState;
+  private final GameState gameState;
+  public String hostPlayer = null;
+  List<String> playerNames;
   private List<TypingPlayer> players;
   private GameScreen view;
   private int numPlayers;
-  private final Moshi moshi;
   private ClientWindow clientWindow;
   private GUI mainGui;
   private TypingPlayer currentPlayer;
   private ResultScreen resultScreen;
   private String providedText;
-  public String hostPlayer = null;
-  List<String> playerNames;
   private String serverIP;
   private boolean soundEnabled = true;
   private String textType = "Random"; // Default category, which we have in settings
@@ -66,15 +78,6 @@ public class ClientController {
    */
   public void setClientWindow(ClientWindow clientWindow) {
     this.clientWindow = clientWindow;
-  }
-
-  /**
-   * Sets the main GUI associated with this controller.
-   *
-   * @param mainGui the GUI to be associated with this controller.
-   */
-  public void setMainGui(GUI mainGui) {
-    this.mainGui = mainGui;
   }
 
   /**
@@ -409,6 +412,15 @@ public class ClientController {
    */
   public GUI getMainGui() {
     return mainGui;
+  }
+
+  /**
+   * Sets the main GUI associated with this controller.
+   *
+   * @param mainGui the GUI to be associated with this controller.
+   */
+  public void setMainGui(GUI mainGui) {
+    this.mainGui = mainGui;
   }
 
   public boolean isSoundEnabled() {

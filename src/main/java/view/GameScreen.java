@@ -5,43 +5,62 @@ import game.Car;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+/**
+ * The type Game screen.
+ */
 public class GameScreen extends JPanel {
   private final ArrayList<CarShape> carShapes;
-  private GameState gameState;
-  private Player currentPlayer;
+  private final GameState gameState;
+  private final Player currentPlayer;
   private JTextPane typingArea;
   private JLabel wpmLabel;
   private JLabel accuracyLabel;
   private JLabel providedTextLabel;
-  private String providedText;
+  private final String providedText;
   private Timer timer;
   private JLabel timeLabel;
-  private java.util.List<TypingPlayer> racers;
+  private final java.util.List<TypingPlayer> racers;
   private JPanel carPanel;
-  private boolean timerStarted = false;
-  private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
+  private final boolean timerStarted = false;
+  private final java.util.List<ResultScreen> resultScreens = new ArrayList<>();
   private double trackMultiplier = 0.7;
 
   private long startTime;
   private int keyPressCount;
-  private ClientController clientController;
-  private ImageIcon backgroundImage;
+  private final ClientController clientController;
+  private final ImageIcon backgroundImage;
   private Font customFont;
-  private SoundPlayer soundPlayer;
-  private boolean soundOn;
-  private SoundPlayer errorSoundPlayer;
+  private final SoundPlayer soundPlayer;
+  private final boolean soundOn;
+  private final SoundPlayer errorSoundPlayer;
 
   public GameScreen(
       GameState gameState,
@@ -205,20 +224,6 @@ public class GameScreen extends JPanel {
       carShapes.add(newCarShape);
       repaint();
     }
-  }
-
-  public void updateProgress(String typedText) {
-    int progress = calculateProgress(typedText);
-    if (gameState.getCurrentRace() != null) {
-      gameState.getCurrentRace().updatePlayerProgress(currentPlayer, progress);
-    }
-
-    int wpm = calculateWpm();
-    double accuracy = calculateAccuracy(typedText);
-    wpmLabel.setText("WPM: " + wpm);
-    accuracyLabel.setText("Accuracy: " + String.format("%.1f", accuracy) + "%");
-
-    updateCarPositions(currentPlayer.getName(), progress, wpm);
   }
 
   public void updateCarPositions(String playerName, int progress, int wpm) {

@@ -18,12 +18,12 @@ public class PlayerLeftNotification {
     return playerName;
   }
 
-  public int getNumPlayers() {
-    return numPlayers;
-  }
-
   public void setPlayerName(String playerName) {
     this.playerName = playerName;
+  }
+
+  public int getNumPlayers() {
+    return numPlayers;
   }
 
   public void setNumPlayers(int numPlayers) {

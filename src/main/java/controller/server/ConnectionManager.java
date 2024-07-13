@@ -2,7 +2,16 @@ package controller.server;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import communication.messages.*;
+import communication.messages.EndGameRequest;
+import communication.messages.GameEndNotification;
+import communication.messages.GameStateNotification;
+import communication.messages.JoinGameRequest;
+import communication.messages.MessageType;
+import communication.messages.PlayerLeftRequest;
+import communication.messages.RankingNotification;
+import communication.messages.StartGameRequest;
+import communication.messages.UpdateProgressRequest;
+import communication.messages.UpdateRankingRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,15 +30,15 @@ public class ConnectionManager extends Thread {
 
   private final Socket clientSocket;
   private final GameServer server;
-  private BufferedReader in;
-  private PrintWriter out;
   private final JsonAdapter<MessageType> messageAdapter;
   private final Moshi moshi = new Moshi.Builder().build();
-  private String playerName;
   private final List<ConnectionManager> connectionManagers;
   private final List<String> playerNames;
   private final Set<String> finishedPlayers = new HashSet<>();
   private final Map<String, Integer> playerResults;
+  private final BufferedReader in;
+  private final PrintWriter out;
+  private String playerName;
   private String hostPlayerName;
 
   /**

@@ -2,18 +2,23 @@ package view;
 
 import game.Car;
 import game.Player;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class CarShape {
   private int x;
-  private int y;
-  private int width;
-  private int height;
-  private String name;
-  private Car car;
+  private final int y;
+  private final int width;
+  private final int height;
+  private final String name;
+  private final Car car;
   private Image carImage;
 
   private Player player;
@@ -39,26 +44,23 @@ public class CarShape {
     }
   }
 
-  public void setFont(Font font) {
-    this.font = font;
-  }
 
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
-  }
-
-  public int getHeight() {
-    return height;
-  }
-
+  /**
+   * Sets x.
+   *
+   * @param x the x-axis coordinate.
+   */
   public void setX(int x) {
     this.x = x;
   }
 
+
+  /**
+   * Draw.
+   *
+   * @param g the graphics
+   * @param roadLength the road length
+   */
   public void draw(Graphics g, int roadLength) {
     if (carImage != null) {
       g.drawImage(carImage, x, y, width, height, null);

@@ -1,10 +1,12 @@
 package view;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import javax.swing.JPanel;
 
 public class BackgroundPanel extends JPanel {
-  private Image backgroundImage;
+  private final Image backgroundImage;
 
   public BackgroundPanel(Image image) {
     this.backgroundImage = image;

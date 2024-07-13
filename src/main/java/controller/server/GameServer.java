@@ -1,7 +1,14 @@
 package controller.server;
 
 import com.squareup.moshi.Moshi;
-import communication.messages.*;
+import communication.messages.GameStartNotification;
+import communication.messages.HostNotification;
+import communication.messages.JoinGameRequest;
+import communication.messages.LobbyFullNotification;
+import communication.messages.PlayerJoinedNotification;
+import communication.messages.PlayerLeftNotification;
+import communication.messages.PlayerListUpdateNotification;
+import communication.messages.StartGameRequest;
 import game.TypingPlayer;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,8 +22,8 @@ public class GameServer {
   private static final int SERVER_PORT = 8080;
   private final ServerSocket serverSocket;
   private final List<ConnectionManager> connectionManagers;
-  private List<String> playerNamesList;
   private final Moshi moshi;
+  private final List<String> playerNamesList;
   private String hostPlayerName;
 
   /**
@@ -30,6 +37,21 @@ public class GameServer {
     this.playerNamesList = new ArrayList<>();
     this.moshi = new Moshi.Builder().build();
     System.out.println("Server started, listening...");
+  }
+
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
+  public static void main(String[] args) {
+    try {
+      GameServer server = new GameServer();
+      server.start();
+    } catch (IOException e) {
+      System.out.println("Failed to start the server");
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -189,20 +211,5 @@ public class GameServer {
    */
   public List<ConnectionManager> getConnectionManagers() {
     return connectionManagers;
-  }
-
-  /**
-   * The entry point of application.
-   *
-   * @param args the input arguments
-   */
-  public static void main(String[] args) {
-    try {
-      GameServer server = new GameServer();
-      server.start();
-    } catch (IOException e) {
-      System.out.println("Failed to start the server");
-      e.printStackTrace();
-    }
   }
 }

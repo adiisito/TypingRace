@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
 /**
  * The GameClient class handles the client's connection to the game server. It is responsible for
@@ -32,7 +32,7 @@ public class GameClient {
 
   private final Moshi moshi;
 
-  private String playerName;
+  private final String playerName;
 
   /**
    * Constructs a GameClient and establishes a connection to the game server.

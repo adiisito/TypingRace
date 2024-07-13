@@ -26,20 +26,20 @@ public class GameEndNotification {
     return playerName;
   }
 
-  public int getWpm() {
-    return wpm;
-  }
-
-  public long getTime() {
-    return time;
-  }
-
   public void setPlayerName(String playerName) {
     this.playerName = playerName;
   }
 
+  public int getWpm() {
+    return wpm;
+  }
+
   public void setWpm(int wpm) {
     this.wpm = wpm;
+  }
+
+  public long getTime() {
+    return time;
   }
 
   public void setTime(long time) {

@@ -4,13 +4,25 @@ import controller.client.ClientController;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /** Creates a result screen when the game ends. */
@@ -21,13 +33,13 @@ public class ResultScreen extends JPanel {
   private final Player currentPlayer;
   private final JPanel endState;
   private final int time;
-  private ClientController clientController;
+  private final ClientController clientController;
   private DefaultTableModel rankingModel;
 
-  private ArrayList<CarShape> carShapes;
+  private final ArrayList<CarShape> carShapes;
   private Image backgroundImage;
-  private int textLength;
-  private SoundPlayer soundPlayer;
+  private final int textLength;
+  private final SoundPlayer soundPlayer;
 
   /**
    * Creates a window with game results.
@@ -180,7 +192,6 @@ public class ResultScreen extends JPanel {
     JPanel tableContainer = new JPanel(new BorderLayout());
     tableContainer.add(scrollPane, BorderLayout.CENTER);
     tableContainer.setPreferredSize(new Dimension(185, 150));
-    ;
 
     rankingTable.setOpaque(false);
     scrollPane.setOpaque(false);

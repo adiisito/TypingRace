@@ -1,5 +1,3 @@
-
-
 plugins {
   id("java")
   id("application")
@@ -58,4 +56,17 @@ spotless {
     googleJavaFormat()
     lineEndings = com.diffplug.spotless.LineEnding.UNIX
   }
+}
+
+// Define a custom task for code quality checks
+tasks.register("codeQuality") {
+  group = "verification"
+  description = "Run all code quality checks."
+  dependsOn("checkstyleMain", "checkstyleTest", "spotlessCheck", "javadoc")
+}
+
+// Ensure the build task only compiles the project without running code quality checks
+tasks.named("build") {
+  group = "build"
+  dependsOn("classes")
 }

@@ -1,10 +1,11 @@
 // PlayerJoinedNotification Class
+
 package communication.messages;
 
 public class PlayerJoinedNotification {
-  private String messageType = "PlayerJoinedNotification";
-  private String playerName;
-  private int numPlayers;
+  private final String messageType = "PlayerJoinedNotification";
+  private final String playerName;
+  private final int numPlayers;
 
   public PlayerJoinedNotification(String playerName, int numPlayers) {
     this.playerName = playerName;

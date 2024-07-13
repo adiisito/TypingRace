@@ -2,27 +2,53 @@ package view;
 
 import controller.client.ClientController;
 import game.GameState;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 public class GUI extends JFrame {
+  private final GameState gameState;
   private JTextField playerNameField;
   private JButton joinButton;
   private JButton createGameButton;
-  private GameState gameState;
+  private final List<ClientWindow> clientWindows = new ArrayList<>();
   private DefaultListModel<String> playerListModel;
-  private List<ClientWindow> clientWindows = new ArrayList<>();
+  private final ClientController clientController;
   public Font dozerFont;
-  private ClientController clientController;
 
   public GUI(GameState gameState, ClientController clientController) {
     this.gameState = gameState;
     this.clientController = clientController;
     loadFont();
     initComponents();
+  }
+
+  public static void main(String[] args) throws IOException {
+    GameState gameState = new GameState();
+    ClientController controller = new ClientController();
+    SwingUtilities.invokeLater(
+        () -> {
+          GUI mainGui = new GUI(gameState, controller);
+          controller.setMainGui(mainGui);
+          mainGui.setVisible(true);
+        });
   }
 
   private void loadFont() {
@@ -198,17 +224,6 @@ public class GUI extends JFrame {
       playerNames.add(clientWindow.getPlayerName());
     }
     updateAllClientWindows(playerNames); // Update the player list to reflect the player has left
-  }
-
-  public static void main(String[] args) throws IOException {
-    GameState gameState = new GameState();
-    ClientController controller = new ClientController();
-    SwingUtilities.invokeLater(
-        () -> {
-          GUI mainGui = new GUI(gameState, controller);
-          controller.setMainGui(mainGui);
-          mainGui.setVisible(true);
-        });
   }
 
   public ClientController getClientController() {
