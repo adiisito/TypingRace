@@ -36,6 +36,7 @@ public class ClientController {
     private String serverIP;
     private boolean soundEnabled = true;
     private String textType = "Random"; // Default category, which we have in settings
+    private int numPlayers;
 
     /**
      * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
