@@ -7,13 +7,13 @@ import game.GameState;
 import game.Player;
 import game.Text;
 import game.TypingPlayer;
+import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
 import view.ResultScreen;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,6 +48,7 @@ public class ClientController {
                         .withSubtype(TypingPlayer.class, "typing"))
                 .build();
         this.gameState = new GameState();
+        this.numPlayers = 0;
     }
 
     /**
@@ -125,9 +126,13 @@ public class ClientController {
         // clientWindow.updateStartButtonState(isHost(clientWindow.getPlayerName()));
         System.out.println("Updated player list in client: " + playerNames);
         mainGui.updateAllClientWindows(playerNames);
-        if (playerNames.size() == 6) {
-            clientWindow.showLobbyFullButton();
-        }
+//        if (playerNames.size() == 6) {
+//            clientWindow.showLobbyFullButton();
+//        }
+    }
+
+    public void handlePlayerJoined (PlayerJoinedNotification notification) {
+        this.numPlayers = notification.getNumPlayers();
     }
 
     /**
@@ -135,7 +140,7 @@ public class ClientController {
      *
      * @param gameStartNotification the game start notification
      */
-    public synchronized void handleGameStart(GameStartNotification gameStartNotification) {
+    public void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
         this.numPlayers = gameStartNotification.getNumPlayers();
         this.providedText = gameStartNotification.getText();
@@ -268,7 +273,7 @@ public class ClientController {
                     view.updateCarPositions(notification.getPlayerName(), notification.getProgress(), notification.getWpm());
 
                     if (notification.getPlayerName().equals(currentPlayer.getName())) {
-                        view.updateProgressDisplay(notification.getWpm(), notification.getAccuracy());
+                        view.updateProgressDisplay();
                     }
                 }
             }
@@ -338,8 +343,7 @@ public class ClientController {
                             notification.getAccuracy(),
                             Math.toIntExact(notification.getTime()),
                             view.getCarPanel(),
-                            view.getTextLength(),
-                            view.getCarShapes(),
+                            view.getWrongChars(),
                             this
                     );
                     frame.setContentPane(this.resultScreen);
@@ -382,10 +386,9 @@ public class ClientController {
     /**
      * Displays the lobby full button on the client window.
      */
-    void handleLobbyFull() {
-        SwingUtilities.invokeLater(() -> clientWindow.showLobbyFullButton());
+    public void handleLobbyFull() {
+        SwingUtilities.invokeLater(() -> clientWindow.updateLobbyStatus());
     }
-
     /**
      * Retrieves the name of the current player.
      *
