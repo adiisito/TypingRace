@@ -1,23 +1,15 @@
-
 package controller.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
-import game.GameState;
 import game.Text;
 import game.TypingPlayer;
-
 
 public class GameServer {
 
@@ -25,10 +17,7 @@ public class GameServer {
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
-            //= new ArrayList<>();
     private final Moshi moshi;
-
-    private String providedText;
     private String hostPlayerName;
 
     /**
@@ -41,9 +30,6 @@ public class GameServer {
         this.connectionManagers = new ArrayList<>();
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
-
-
-
         System.out.println("Server started, listening...");
     }
 
@@ -69,7 +55,7 @@ public class GameServer {
             for (String playerName : playerNamesList) {
                 players.add(new TypingPlayer(playerName));
             }
-            this.providedText = Text.getRandomText();
+            String providedText = request.getProvidedText();
             GameStartNotification gameStartNotification = new GameStartNotification(players, providedText);
 
             String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
@@ -77,12 +63,10 @@ public class GameServer {
         }
     }
 
-
     /**
      * Start Method for server socket.
      */
     public void start() {
-
         System.out.println("Waiting for clients...");
         while (true) {
             try {
@@ -93,11 +77,11 @@ public class GameServer {
                 connectionManager.start();
             } catch (IOException e) {
                 System.out.println("Error connecting to client!");
-
                 e.printStackTrace();
             }
         }
     }
+
     /**
      * Method broadcast each message.
      *
@@ -118,12 +102,11 @@ public class GameServer {
         broadcastMessage(json);
     }
 
-
     /**
      * Method for adding new players in the server.
      *
      * @param playerName id of the player.
-*/
+     */
     public synchronized void addPlayer(String playerName) {
         if (!playerNamesList.contains(playerName)) {
             playerNamesList.add(playerName);
@@ -133,8 +116,7 @@ public class GameServer {
                 hostPlayerName = playerName;
                 System.out.println("Host set: " + hostPlayerName);
             }
-
-        }else {
+        } else {
             System.out.println("Player rejoined: " + playerName);
         }
         broadcastPlayerListUpdate();
@@ -213,7 +195,6 @@ public class GameServer {
         return connectionManagers;
     }
 
-
     /**
      * The entry point of application.
      *
@@ -228,5 +209,4 @@ public class GameServer {
             e.printStackTrace();
         }
     }
-
 }

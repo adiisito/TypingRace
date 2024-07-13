@@ -1,13 +1,11 @@
-
 package controller.client;
 
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
-import game.Game;
 import game.GameState;
 import game.Player;
-import game.TypingPlayer;
+import game.Text;
 import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
@@ -38,6 +36,8 @@ public class ClientController {
     public String hostPlayer = null;
     List<String> playerNames;
     private String serverIP;
+    private boolean soundEnabled = true;
+    private String textType = "Random"; // Default category, which we have in settings
 
     /**
      * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
@@ -149,7 +149,7 @@ public class ClientController {
         }
 
         this.gameState.setPlayers(players);
-        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText);
+        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText, soundEnabled);
         this.gameState.startNewRace();
         this.view.addCars();
         SwingUtilities.invokeLater(() -> {
@@ -217,7 +217,8 @@ public class ClientController {
      * Start game.
      */
     public void startGame(String playerName) {
-        StartGameRequest request = new StartGameRequest(playerName);
+        String providedText = Text.getRandomTextByCategory(textType);
+        StartGameRequest request = new StartGameRequest(playerName, providedText);
         String json = moshi.adapter(StartGameRequest.class).toJson(request);
 
         clientModel.sendMessage(json);
@@ -401,5 +402,22 @@ public class ClientController {
      */
     public GUI getMainGui() {
         return mainGui;
+    }
+
+    public boolean isSoundEnabled() {
+        return soundEnabled;
+    }
+
+    public void setSoundEnabled(boolean soundEnabled) {
+        this.soundEnabled = soundEnabled;
+    }
+
+
+    public String getTextType() {
+        return textType;
+    }
+
+    public void setTextType(String textType) {
+        this.textType = textType;
     }
 }
