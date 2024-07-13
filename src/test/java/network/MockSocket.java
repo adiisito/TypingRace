@@ -6,11 +6,20 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+/**
+ * The type Mock socket.
+ */
 public class MockSocket extends Socket {
     private InputStream input;
     private final OutputStream output;
     private boolean isClosed = false;
 
+    /**
+     * Instantiates a new Mock socket.
+     *
+     * @param input  the input
+     * @param output the output
+     */
     public MockSocket(InputStream input, OutputStream output) {
         this.input = input;
         this.output = output;
@@ -37,7 +46,12 @@ public class MockSocket extends Socket {
         return isClosed;
     }
 
-    // Method to change the InputStream at runtime
+    /**
+     * Sets input stream.
+     * Method to change the InputStream at runtime.
+     *
+     * @param newInput the new input
+     */
     public void setInputStream(InputStream newInput) {
         this.input = newInput;
     }

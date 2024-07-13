@@ -30,6 +30,8 @@ This command starts the game server which manages the game state and player conn
 ```bash
 ./gradlew runServer
 ```
+Wait for the command line to display the prompt ‘Server started, listening...
+Waiting for clients... ’, then proceed to the next step.
 2. **Run the GUI**:
 
 This command starts the GUI allowing players to join and play the game.
