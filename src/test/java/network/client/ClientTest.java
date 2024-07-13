@@ -208,7 +208,8 @@ public class ClientTest {
     public void testClient5_sendStartGameRequest() throws IOException, InterruptedException {
         // Create a StartGameRequest with a dummy host player name
         String hostPlayerName = "HostPlayer";
-        StartGameRequest request = new StartGameRequest(hostPlayerName);
+        String providedText = "text";
+        StartGameRequest request = new StartGameRequest(hostPlayerName, providedText);
         String messageToSend = "{\"messageType\":\"StartGameRequest\",\"hostPlayerName\":\"" + hostPlayerName + "\"}";
 
         // Send the message

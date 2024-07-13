@@ -1,7 +1,6 @@
 package view;
 
 import controller.client.ClientController;
-import game.CarShape;
 import game.GameState;
 import game.Player;
 import game.TypingPlayer;
@@ -60,7 +59,7 @@ public class ResultScreen extends JPanel {
         this.clientController = clientController;
         clientController.setResultScreen(this);
         soundPlayer = new SoundPlayer();
-        soundPlayer.playSound("rssound.wav");
+        soundPlayer.playSound("result.wav");
         initComponents();
     }
 
@@ -102,11 +101,6 @@ public class ResultScreen extends JPanel {
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
-//              JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-//              frame.setVisible(false);
-//              frame = new ClientWindow(currentPlayer.getName(), clientController.getMainGui());
-//              frame.revalidate();
-//              frame.repaint();
         });
 
         JButton exitButton = new JButton("Exit");

@@ -12,10 +12,11 @@ import java.util.ArrayList;
 public class GUI extends JFrame {
     private JTextField playerNameField;
     private JButton joinButton;
+    private JButton createGameButton;
     private GameState gameState;
     private DefaultListModel<String> playerListModel;
     private List<ClientWindow> clientWindows = new ArrayList<>();
-    private Font dozerFont;
+    public Font dozerFont;
     private ClientController clientController;
 
     public GUI(GameState gameState, ClientController clientController) {
@@ -37,8 +38,8 @@ public class GUI extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Type Racer Game");
-        setSize(800, 600);
+        setTitle("SpaceRally");
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -47,7 +48,7 @@ public class GUI extends JFrame {
 
     private void showLoginWindow() {
         try {
-            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/LoginScreen.jpeg"));
+            Image backgroundImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/1screen4.gif"));
             BackgroundPanel loginPanel = new BackgroundPanel(backgroundImage);
             loginPanel.setLayout(new GridBagLayout());
 
@@ -57,41 +58,82 @@ public class GUI extends JFrame {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            JLabel welcomeLabel = new JLabel("Welcome To KeySprint");
+            JLabel welcomeLabel = new JLabel("");
             welcomeLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 30));
             welcomeLabel.setForeground(Color.WHITE);
             loginPanel.add(welcomeLabel, gbc);
 
-            JLabel nameLabel = new JLabel("Please Enter Your Name");
+            animateText(welcomeLabel, "Welcome To SpaceRally");
+
+            JLabel nameLabel = new JLabel("");
             nameLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             nameLabel.setForeground(Color.WHITE);
             loginPanel.add(nameLabel, gbc);
 
+            animateText(nameLabel, "Please Enter Your Name");
+
             playerNameField = new JTextField(20);
             playerNameField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             loginPanel.add(playerNameField, gbc);
+
+            JLabel serverLabel = new JLabel("");
+            serverLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            serverLabel.setForeground(Color.WHITE);
+            loginPanel.add(serverLabel, gbc);
+
+            animateText(serverLabel, "Enter Server IP:");
+
+            JTextField serverIPField = new JTextField(20);
+            serverIPField.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            loginPanel.add(serverIPField, gbc);
+
+            createGameButton = new JButton("Create Game");
+            createGameButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            createGameButton.addActionListener(e -> {
+                String playerName = playerNameField.getText().trim();
+                try {
+                    String serverIP = "127.0.0.1";
+                    createNewClient(playerName);
+                    clientController.joinGame(playerName, serverIP);
+                    playerNameField.setText(""); // Clear the text field
+                    serverIPField.setText("");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            loginPanel.add(createGameButton, gbc);
 
             joinButton = new JButton("Join new Game");
             joinButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
             joinButton.setBackground(Color.green);
             joinButton.addActionListener(e -> {
                 String playerName = playerNameField.getText().trim();
+                String serverIP = serverIPField.getText().trim();
 
-                if (!playerName.isEmpty()) {
+                if (!playerName.isEmpty() && !serverIP.isEmpty()) {
 
                     try {
                         createNewClient(playerName);
-                        clientController.joinGame(playerName);
+                        clientController.joinGame(playerName, serverIP);
                         playerNameField.setText(""); // Clear the text field
+                        serverIPField.setText("");
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(GUI.this, "Please enter a name and server IP", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
             loginPanel.add(joinButton, gbc);
+
+            JButton settingsButton = new JButton("Settings");
+            settingsButton.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
+            settingsButton.addActionListener(e -> {
+                SettingsWindow settingsWindow = new SettingsWindow(this);
+                settingsWindow.setVisible(true);
+            });
+            loginPanel.add(settingsButton, gbc);
 
             setContentPane(loginPanel);
             revalidate();
@@ -100,6 +142,22 @@ public class GUI extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Background image not found", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void animateText(JLabel label, String text) {
+        Timer timer = new Timer(30, null);
+        final int[] index = {0};
+
+        timer.addActionListener(e -> {
+            if (index[0] < text.length()) {
+                label.setText(label.getText() + text.charAt(index[0]));
+                index[0]++;
+            } else {
+                timer.stop();
+            }
+        });
+
+        timer.start();
     }
 
     public void createNewClient(String playerName) {
@@ -140,4 +198,7 @@ public class GUI extends JFrame {
         });
     }
 
+    public ClientController getClientController() {
+        return clientController;
+    }
 }

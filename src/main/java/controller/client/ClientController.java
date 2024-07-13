@@ -1,13 +1,11 @@
-
 package controller.client;
 
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
-import game.Game;
 import game.GameState;
 import game.Player;
-import game.TypingPlayer;
+import game.Text;
 import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
@@ -35,8 +33,11 @@ public class ClientController {
     private TypingPlayer currentPlayer;
     private ResultScreen resultScreen;
     private String providedText;
-    private String hostPlayer = null;
+    public String hostPlayer = null;
     List<String> playerNames;
+    private String serverIP;
+    private boolean soundEnabled = true;
+    private String textType = "Random"; // Default category, which we have in settings
 
     /**
      * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
@@ -48,6 +49,15 @@ public class ClientController {
                 .build();
         this.gameState = new GameState();
         this.numPlayers = 0;
+    }
+
+    /**
+     * Sets server ip.
+     *
+     * @param serverIP the server ip
+     */
+    public void setServerIP(String serverIP) {
+        this.serverIP = serverIP;
     }
 
     /**
@@ -92,14 +102,15 @@ public class ClientController {
      * @param playerName the name of player
      * @throws IOException if there is an issue sending the join game request over the network
      */
-    public void joinGame(String playerName) throws IOException {
+    public void joinGame(String playerName, String serverIP) throws IOException {
+        this.serverIP = serverIP;
         if (currentPlayer == null) {
-            this.clientModel = new GameClient(this, playerName);
+            this.clientModel = new GameClient(this, playerName, this.serverIP);
         }
         JoinGameRequest joinRequest = new JoinGameRequest(playerName);
         String json = moshi.adapter(JoinGameRequest.class).toJson(joinRequest);
         clientModel.sendMessage(json);
-        System.out.println("Welcome " + playerName + ". You joined the game");
+        System.out.println("Welcome " + playerName + ". You joined the game at " + serverIP);
 
         this.currentPlayer = new TypingPlayer(playerName);
     }
@@ -143,7 +154,7 @@ public class ClientController {
         }
 
         this.gameState.setPlayers(players);
-        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText);
+        this.view = new GameScreen(this.gameState, currentPlayer, this, providedText, soundEnabled);
         this.gameState.startNewRace();
         this.view.addCars();
         SwingUtilities.invokeLater(() -> {
@@ -172,7 +183,7 @@ public class ClientController {
                 frame.revalidate();
                 frame.repaint();
 
-                joinGame(playerName);
+                joinGame(playerName, serverIP);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -211,7 +222,8 @@ public class ClientController {
      * Start game.
      */
     public void startGame(String playerName) {
-        StartGameRequest request = new StartGameRequest(playerName);
+        String providedText = Text.getRandomTextByCategory(textType);
+        StartGameRequest request = new StartGameRequest(playerName, providedText);
         String json = moshi.adapter(StartGameRequest.class).toJson(request);
 
         clientModel.sendMessage(json);
@@ -329,7 +341,7 @@ public class ClientController {
                             currentPlayer,
                             notification.getWpm(),
                             notification.getAccuracy(),
-                            notification.getTime(),
+                            Math.toIntExact(notification.getTime()),
                             view.getCarPanel(),
                             view.getTextLength(),
                             view.getCarShapes(),
@@ -395,5 +407,22 @@ public class ClientController {
      */
     public GUI getMainGui() {
         return mainGui;
+    }
+
+    public boolean isSoundEnabled() {
+        return soundEnabled;
+    }
+
+    public void setSoundEnabled(boolean soundEnabled) {
+        this.soundEnabled = soundEnabled;
+    }
+
+
+    public String getTextType() {
+        return textType;
+    }
+
+    public void setTextType(String textType) {
+        this.textType = textType;
     }
 }

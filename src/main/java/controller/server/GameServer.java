@@ -1,32 +1,23 @@
-
 package controller.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import communication.messages.*;
-import game.GameState;
 import game.Text;
 import game.TypingPlayer;
 
-
 public class GameServer {
 
-    private static final int SERVER_PORT = 12345;
+    private static final int SERVER_PORT = 8080;
     private final ServerSocket serverSocket;
     private final List<ConnectionManager> connectionManagers;
     private List<String> playerNamesList;
-            //= new ArrayList<>();
     private final Moshi moshi;
-
-    private String providedText;
     private String hostPlayerName;
 
     /**
@@ -35,14 +26,21 @@ public class GameServer {
      * @throws IOException for ServerSocket.
      */
     public GameServer() throws IOException {
-        this.serverSocket = new ServerSocket(SERVER_PORT, 50, InetAddress.getByName("0.0.0.0"));
+        this.serverSocket = new ServerSocket(SERVER_PORT);
         this.connectionManagers = new ArrayList<>();
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
-
-
-
         System.out.println("Server started, listening...");
+    }
+
+    /**
+     * Create server socket server socket.
+     *
+     * @return the server socket
+     * @throws IOException the io exception
+     */
+    protected ServerSocket createServerSocket() throws IOException {
+        return new ServerSocket(SERVER_PORT, 50, InetAddress.getByName("0.0.0.0"));
     }
 
     /**
@@ -57,7 +55,7 @@ public class GameServer {
             for (String playerName : playerNamesList) {
                 players.add(new TypingPlayer(playerName));
             }
-            this.providedText = Text.getRandomText();
+            String providedText = request.getProvidedText();
             GameStartNotification gameStartNotification = new GameStartNotification(players, providedText);
 
             String json = moshi.adapter(GameStartNotification.class).toJson(gameStartNotification);
@@ -65,12 +63,10 @@ public class GameServer {
         }
     }
 
-
     /**
      * Start Method for server socket.
      */
     public void start() {
-
         System.out.println("Waiting for clients...");
         while (true) {
             try {
@@ -81,11 +77,11 @@ public class GameServer {
                 connectionManager.start();
             } catch (IOException e) {
                 System.out.println("Error connecting to client!");
-
                 e.printStackTrace();
             }
         }
     }
+
     /**
      * Method broadcast each message.
      *
@@ -106,12 +102,11 @@ public class GameServer {
         broadcastMessage(json);
     }
 
-
     /**
      * Method for adding new players in the server.
      *
      * @param playerName id of the player.
-*/
+     */
     public synchronized void addPlayer(String playerName) {
         if (!playerNamesList.contains(playerName)) {
             playerNamesList.add(playerName);
@@ -121,8 +116,7 @@ public class GameServer {
                 hostPlayerName = playerName;
                 System.out.println("Host set: " + hostPlayerName);
             }
-
-        }else {
+        } else {
             System.out.println("Player rejoined: " + playerName);
         }
         broadcastPlayerListUpdate();
@@ -201,7 +195,6 @@ public class GameServer {
         return connectionManagers;
     }
 
-
     /**
      * The entry point of application.
      *
@@ -216,5 +209,4 @@ public class GameServer {
             e.printStackTrace();
         }
     }
-
 }
