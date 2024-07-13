@@ -2,9 +2,9 @@ package communication.messages;
 
 public class MessageType {
 
-    private String messageType;
+  private String messageType;
 
-    public String getMessageType() {
-        return messageType;
-    }
+  public String getMessageType() {
+    return messageType;
+  }
 }

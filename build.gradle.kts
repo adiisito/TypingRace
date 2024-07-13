@@ -1,36 +1,32 @@
+
+
 plugins {
-  // Apply the application plugin to add support for building a CLI application in Java.
-  application
+  id("java")
+  id("application")
+  id("checkstyle")
+  id("com.diffplug.spotless") version "6.25.0"
 }
 
 repositories {
-  // Use Maven Central for resolving dependencies.
   mavenCentral()
 }
 
 dependencies {
-  // Use JUnit Jupiter for testing.
   testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
   testImplementation("com.google.truth:truth:1.4.3")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
   testImplementation("org.mockito:mockito-core:5.11.0")
 
-  // Add Moshi dependencies
   implementation("com.squareup.moshi:moshi:1.12.0")
   implementation("com.squareup.moshi:moshi-adapters:1.12.0")
   implementation("com.squareup.moshi:moshi-kotlin:1.12.0")
-
-  implementation ("org.json:json:20240303")
-
+  implementation("org.json:json:20240303")
 }
 
 application {
-  // Define the main class for the application.
-
   mainClass.set("view.GUI")
 }
-
 
 tasks.named<JavaExec>("run") {
   standardInput = System.`in`
@@ -38,19 +34,28 @@ tasks.named<JavaExec>("run") {
 }
 
 tasks.named<Test>("test") {
-  // Use JUnit Platform for unit tests.
   useJUnitPlatform()
 }
 
-// May be needed when JavaFX is used
-// javafx {
-//   version = "21.0.3"
-//   modules(
-//       "javafx.base",
-//       "javafx.swing",
-//       "javafx.graphics",
-//       "javafx.controls",
-//       "javafx.fxml",
-//       "javafx.media",
-//       "javafx.web")
-// }
+tasks.withType<Javadoc> {
+  options {
+    this as StandardJavadocDocletOptions
+    addBooleanOption("Werror", true)
+  }
+}
+
+checkstyle {
+  toolVersion = "10.15.0"
+  configFile = file("config/checkstyle/checkstyle.xml")
+}
+
+tasks.withType<Checkstyle> {
+  maxWarnings = 0
+}
+
+spotless {
+  java {
+    googleJavaFormat()
+    lineEndings = com.diffplug.spotless.LineEnding.UNIX
+  }
+}

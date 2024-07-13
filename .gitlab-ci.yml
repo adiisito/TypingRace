@@ -1,9 +1,5 @@
 image: gradle:8.7-jdk21
 
-# Disable the Gradle daemon for Continuous Integration servers as correctness
-# is usually a priority over speed in CI environments. Using a fresh
-# runtime for each build is more reliable since the runtime is completely
-# isolated from any previous builds.
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
@@ -12,7 +8,7 @@ before_script:
 
 stages:
   - build
-  - javadoc
+  - code_quality
   - test
 
 build:
@@ -31,11 +27,17 @@ test:
     paths:
       - build/reports/tests/test
 
-javadoc:
-  stage: javadoc
+code_quality:
+  stage: code_quality
   script:
     - gradle javadoc
+    - gradle checkstyleMain
+    - gradle checkstyleTest
+    - gradle spotlessApply
+    - gradle spotlessCheck
   artifacts:
     paths:
       - build/docs/javadoc
+      - build/reports/checkstyle
+      - build/reports/spotless
     expire_in: 2 weeks
