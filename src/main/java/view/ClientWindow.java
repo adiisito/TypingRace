@@ -112,9 +112,6 @@ public class ClientWindow extends JFrame {
             buttonPanel.setOpaque(false);
 
             this.startButton = create3DButton("START GAME");
-            if (!clientController.isHost(playerName)) {
-                this.startButton.setBackground(Color.GRAY);
-            }
             startButton.addActionListener(e -> {
                 if (clientController.isHost(playerName)) {
                     clientController.startGame(playerName);
@@ -129,7 +126,7 @@ public class ClientWindow extends JFrame {
             exitButton.addActionListener(e -> {
                 try {
                     clientController.playerLeft(playerName);
-                    dispose();
+                    clientController.toMainMenu();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

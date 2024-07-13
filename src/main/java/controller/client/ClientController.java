@@ -3,10 +3,7 @@ package controller.client;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory;
 import communication.messages.*;
-import game.GameState;
-import game.Player;
-import game.Text;
-import game.TypingPlayer;
+import game.*;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -182,6 +179,26 @@ public class ClientController {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        });
+    }
+
+    public void toMainMenu() {
+        SwingUtilities.invokeLater(() -> {
+
+          JFrame frame;
+          if (resultScreen != null) {
+              frame = (JFrame) SwingUtilities.getWindowAncestor(resultScreen);
+              resultScreen = null;
+          } else {
+              frame = clientWindow;
+          }
+          frame.setVisible(false);
+          GUI newGUI = new GUI(new GameState(), this);
+          frame = newGUI;
+          setMainGui(newGUI);
+          frame.revalidate();
+          frame.repaint();
+          frame.setVisible(true);
         });
     }
 

@@ -91,11 +91,18 @@ public class ResultScreen extends JPanel {
 
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
-        newGameButton.setBackground(Color.BLACK);
-        newGameButton.setBackground(Color.WHITE);
+        newGameButton.setBackground(Color.GREEN);
         newGameButton.addActionListener(e -> {
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
+        });
+
+        JButton menuButton = new JButton("Return to Menu");
+        menuButton.setFont(new Font("Nougat", Font.PLAIN, 16));
+        menuButton.setBackground(Color.WHITE);
+        menuButton.addActionListener(e -> {
+            clientController.playerLeft(currentPlayer.getName());
+            clientController.toMainMenu();
         });
 
         JButton exitButton = new JButton("Exit");
@@ -109,6 +116,7 @@ public class ResultScreen extends JPanel {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(newGameButton);
+        buttonPanel.add(menuButton);
         buttonPanel.add(exitButton);
 
         String stat_text = "<html>Time: " + time + " seconds <br> WPM: " + wpm + "<br> Accuracy: " +

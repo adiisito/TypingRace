@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 - Handler for too long names
+- Exit button in lobby sends you back to main menu
+- Main menu button in results
 
 ## Fixed
 - Host can't have an empty name
