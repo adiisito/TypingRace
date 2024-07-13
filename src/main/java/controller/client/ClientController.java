@@ -7,7 +7,6 @@ import game.GameState;
 import game.Player;
 import game.Text;
 import game.TypingPlayer;
-import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -26,8 +25,7 @@ public class ClientController {
     private GameState gameState;
     private List<TypingPlayer> players;
     private GameScreen view;
-    private int numPlayers;
-    private final Moshi moshi;
+  private final Moshi moshi;
     private ClientWindow clientWindow;
     private GUI mainGui;
     private TypingPlayer currentPlayer;
@@ -48,7 +46,6 @@ public class ClientController {
                         .withSubtype(TypingPlayer.class, "typing"))
                 .build();
         this.gameState = new GameState();
-        this.numPlayers = 0;
     }
 
     /**
@@ -132,7 +129,6 @@ public class ClientController {
     }
 
     public void handlePlayerJoined (PlayerJoinedNotification notification) {
-        this.numPlayers = notification.getNumPlayers();
     }
 
     /**
@@ -142,8 +138,7 @@ public class ClientController {
      */
     public void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
-        this.numPlayers = gameStartNotification.getNumPlayers();
-        this.providedText = gameStartNotification.getText();
+      this.providedText = gameStartNotification.getText();
         gameState.startNewRace();
 
         for (int i = 0; i < players.size(); i++) {
@@ -187,6 +182,26 @@ public class ClientController {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        });
+    }
+
+    public void toMainMenu() {
+        SwingUtilities.invokeLater(() -> {
+
+          JFrame frame;
+          if (resultScreen != null) {
+              frame = (JFrame) SwingUtilities.getWindowAncestor(resultScreen);
+              resultScreen = null;
+          } else {
+              frame = clientWindow;
+          }
+          frame.setVisible(false);
+          GUI newGUI = new GUI(this);
+          frame = newGUI;
+          setMainGui(newGUI);
+          frame.revalidate();
+          frame.repaint();
+          frame.setVisible(true);
         });
     }
 
@@ -389,6 +404,7 @@ public class ClientController {
     public void handleLobbyFull() {
         SwingUtilities.invokeLater(() -> clientWindow.updateLobbyStatus());
     }
+
     /**
      * Retrieves the name of the current player.
      *
@@ -407,20 +423,44 @@ public class ClientController {
         return mainGui;
     }
 
+    /**
+     * Gives the information whether the sound setting is on.
+     *
+     * @return true if it's enabled, false if not
+     */
     public boolean isSoundEnabled() {
         return soundEnabled;
     }
 
+    /**
+     * Changes the setting for playing sounds.
+     * @param soundEnabled determines if sound should be enabled or disabled
+     */
     public void setSoundEnabled(boolean soundEnabled) {
         this.soundEnabled = soundEnabled;
     }
 
-
+    /**
+     * Retrieves the chosen text type.
+     * @return the text type name
+     */
     public String getTextType() {
         return textType;
     }
 
+    /**
+     * Changes the text type for the round text.
+     * @param textType the name of the text type
+     */
     public void setTextType(String textType) {
         this.textType = textType;
+    }
+
+    /**
+     * Gives a list of players in the round.
+     * @return the player list
+     */
+    public List<TypingPlayer> getPlayers () {
+        return players;
     }
 }
