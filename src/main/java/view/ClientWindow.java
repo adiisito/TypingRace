@@ -115,8 +115,6 @@ public class ClientWindow extends JFrame {
             startButton.addActionListener(e -> {
                 if (clientController.isHost(playerName)) {
                     clientController.startGame(playerName);
-                } else {
-                    JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
                 }
             });
             buttonPanel.add(Box.createRigidArea(new Dimension(20, 0))); // Space between buttons
@@ -220,8 +218,6 @@ public class ClientWindow extends JFrame {
             if (clientController.isHost(playerName)) {
                 System.out.println("Start game");
                 clientController.startGame(playerName);
-            } else {
-                JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
             }
         });
         JPanel waitingPanel = (JPanel) getContentPane();

@@ -72,7 +72,7 @@ public class ResultScreen extends JPanel {
         // updateRankingTable(gameState.getPlayers());
 
         try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon.jpeg");
+            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon_2.jpeg");
             if (imageStream != null) {
                 backgroundImage = ImageIO.read(imageStream);
             } else {
