@@ -5,6 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import communication.messages.GameEndNotification;
 import communication.messages.GameStartNotification;
 import communication.messages.GameStateNotification;
+import communication.messages.HostNotification;
 import communication.messages.PlayerJoinedNotification;
 import communication.messages.PlayerLeftRequest;
 import communication.messages.PlayerListUpdateNotification;
@@ -74,7 +75,7 @@ public class ClientTest {
     }
 
     private int countPairs(JSONObject jsonObject) {
-        int count = jsonObject.length(); // Directly counts keys at current level
+        int count = jsonObject.length();
 
         for (String key : jsonObject.keySet()) {
             Object value = jsonObject.get(key);
@@ -104,48 +105,39 @@ public class ClientTest {
     }
 
     @Test
-    public void testClient1_sendJoinGameRequest() throws IOException, InterruptedException {
+    public void testClient1_sendJoinGameRequest() throws InterruptedException {
         String messageToSend = "{\"messageType\":\"JoinGameRequest\",\"playerName\":\"DummyUser\"}";
         gameClient.sendMessage(messageToSend);
 
-        // Allow some time for the message to be processed
         Thread.sleep(500);
 
         String sentMessages = outputStream.toString();
-        // Remove all whitespace and newline characters for a direct comparison
         sentMessages = sentMessages.replaceAll("\\s+","");
 
         assertThat(sentMessages).contains(messageToSend);
 
-        // Improved regex that considers possible whitespace within JSON keys and values
         assertThat(sentMessages).matches(".*\"messageType\":\"JoinGameRequest\".*");
         assertThat(sentMessages).matches(".*\"playerName\":\"DummyUser\".*");
 
-        // Function to check if the message contains only two key-value pairs
         assertThatContainsNKeyValuePairs(sentMessages, 2);
     }
 
     @Test
-    public void testClient2_receivePlayerListUpdateNotification() throws IOException {
-        // Setup a JSON string that simulates a PlayerListUpdateNotification from the server
+    public void testClient2_receivePlayerListUpdateNotification() {
         String jsonNotification = "{\"messageType\":\"PlayerListUpdateNotification\",\"playerNames\":[\"Alice\", \"Bob\"]}";
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread
         gameClient.startListening();
 
-        // Sleep briefly to give the listening thread time to process the message
         try {
-            Thread.sleep(500);  // Adjust timing as necessary for your environment
+            Thread.sleep(500);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();  // Handle interrupted exception
+            Thread.currentThread().interrupt();
         }
 
-        // Prepare the expected notification object
         PlayerListUpdateNotification expectedNotification = new PlayerListUpdateNotification(Arrays.asList("Alice", "Bob"));
 
-        // Verify that the controller handles the player list update correctly
         verify(clientController, timeout(1000)).handlePlayerListUpdate(argThat(notification ->
                 notification.getPlayerNames().containsAll(Arrays.asList("Alice", "Bob")) &&
                         notification.getPlayerNames().size() == 2
@@ -154,103 +146,88 @@ public class ClientTest {
     }
 
     @Test
-    public void testClient3_receivePlayerJoinedNotification() throws IOException {
-        // Prepare the JSON message as it might be received from the server
+    public void testClient3_receivePlayerJoinedNotification() {
         String playerName = "NewPlayer";
         int numPlayers = 5;
         String jsonNotification = String.format("{\"messageType\":\"PlayerJoinedNotification\",\"newPlayerName\":\"%s\",\"numPlayers\":%d}",
                 playerName, numPlayers);
 
-        // Change the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread
         gameClient.startListening();
 
-        // Sleep briefly to give the listening thread time to process the message
         try {
-            Thread.sleep(500);  // Adjust timing as necessary for your environment
+            Thread.sleep(500);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();  // Handle interrupted exception
+            Thread.currentThread().interrupt();
         }
 
-        // Verify that the controller handled the update correctly
         verify(clientController, timeout(1000)).handlePlayerJoined(any(PlayerJoinedNotification.class));
 
     }
 
     @Test
-    public void testClient4_receiveLobbyFullNotification() throws IOException {
-        // Prepare the JSON message as it might be received from the server
+    public void testClient4_receiveLobbyFullNotification() {
         String jsonNotification = "{\"messageType\":\"LobbyFullNotification\"}";
 
-        // Change the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread
         gameClient.startListening();
 
-        // Sleep briefly to give the listening thread time to process the message
         try {
-            Thread.sleep(500);  // Adjust timing as necessary for your environment
+            Thread.sleep(500);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();  // Handle interrupted exception
+            Thread.currentThread().interrupt();
         }
 
-        // Verify that the controller handled the lobby full notification correctly
         verify(clientController, timeout(1000)).handleLobbyFull();
 
     }
 
     @Test
-    public void testClient5_sendStartGameRequest() throws IOException, InterruptedException {
-        // Create a StartGameRequest with a dummy host player name
+    public void testClient5_sendStartGameRequest() {
         String hostPlayerName = "HostPlayer";
         String providedText = "text";
         StartGameRequest request = new StartGameRequest(hostPlayerName, providedText);
         String messageToSend = "{\"messageType\":\"StartGameRequest\",\"hostPlayerName\":\"" + hostPlayerName + "\"}";
 
-        // Send the message
         gameClient.sendMessage(messageToSend);
 
-        // Allow some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Retrieve the data sent to the server from the outputStream
         String sentMessages = outputStream.toString().replaceAll("\\s+", "");
 
-        // Assertions to ensure the message was sent as expected
         assertThat(sentMessages).contains(messageToSend);
 
-        // Use regex to check that the message contains the correct messageType and hostPlayerName
         assertThat(sentMessages).matches(".*\"messageType\":\"StartGameRequest\".*");
         assertThat(sentMessages).matches(".*\"hostPlayerName\":\"" + hostPlayerName + "\".*");
 
-        // Function to check if the message contains only two key-value pairs
         assertThatContainsNKeyValuePairs(sentMessages, 2);
     }
 
     @Test
-    public void testClient6_receiveGameStartNotification() throws IOException, InterruptedException {
-        // Prepare the JSON message as it might be received from the server
+    public void testClient6_receiveGameStartNotification() {
         String jsonNotification = "{\"messageType\":\"GameStartNotification\","
                 + "\"players\":[{\"name\":\"Alice\", \"wpm\":0, \"accuracy\":0.0}],"
                 + "\"text\":\"Sample game text\"}";
 
-        // Set the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread in the GameClient
         gameClient.startListening();
 
-        // Give some time for the message to be processed
-        Thread.sleep(500); // Adjust timing based on the async behavior
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Verify that the handleGameStart method was called on the ClientController
-        // with the correct notification details
         verify(clientController, timeout(1000)).handleGameStart(argThat(notification ->
                 "GameStartNotification".equals(notification.getMessageType()) &&
                         notification.getPlayers().size() == 1 &&
@@ -263,28 +240,26 @@ public class ClientTest {
 
 
     @Test
-    public void testClient7_sendUpdateProgressRequest() throws IOException, InterruptedException {
-        // Arrange the request details
+    public void testClient7_sendUpdateProgressRequest() {
         String playerName = "DummyUser";
         int wpm = 120;
         int time = 60;
         int progress = 50;
         double accuracy = 95.5;
 
-        // Construct the JSON message that should be sent
         String messageToSend = String.format("{\"messageType\":\"UpdateProgressRequest\",\"playerName\":\"%s\",\"wpm\":%d,\"time\":%d,\"progress\":%d,\"accuracy\":%.1f}",
                 playerName, wpm, time, progress, accuracy);
 
-        // Act by sending the message
         gameClient.sendMessage(messageToSend);
 
-        // Allow some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Retrieve the data sent to the server from the outputStream
         String sentMessages = outputStream.toString().replaceAll("\\s+", "");
 
-        // Assert that the sent message matches what was expected
         assertThat(sentMessages).contains(messageToSend);
         assertThat(sentMessages).matches(".*\"messageType\":\"UpdateProgressRequest\".*");
         assertThat(sentMessages).matches(".*\"playerName\":\"" + playerName + "\".*");
@@ -293,13 +268,11 @@ public class ClientTest {
         assertThat(sentMessages).matches(".*\"progress\":" + progress + ".*");
         assertThat(sentMessages).matches(".*\"accuracy\":" + accuracy + ".*");
 
-        // Check that the message contains exactly five key-value pairs
         assertThatContainsNKeyValuePairs(sentMessages, 6);
     }
 
     @Test
-    public void testClient8_receiveGameStateNotification() throws IOException, InterruptedException {
-        // Prepare the JSON message as it might be received from the server
+    public void testClient8_receiveGameStateNotification() {
         String playerName = "DummyPlayer";
         int wpm = 100;
         int time = 30;
@@ -308,17 +281,17 @@ public class ClientTest {
         String jsonNotification = String.format("{\"messageType\":\"GameStateNotification\",\"playerName\":\"%s\",\"wpm\":%d,\"time\":%d,\"progress\":%d,\"accuracy\":%f}",
                 playerName, wpm, time, progress, accuracy);
 
-        // Set the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread in the GameClient
         gameClient.startListening();
 
-        // Give some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Validate that the handleProgress method was called on the ClientController with the correct data
         GameStateNotification expectedNotification = new GameStateNotification(playerName, wpm, time, progress, accuracy);
         verify(clientController, timeout(1000)).handleProgress(argThat(notification ->
                 notification.getPlayerName().equals(expectedNotification.getPlayerName()) &&
@@ -331,51 +304,43 @@ public class ClientTest {
     }
 
     @Test
-    public void testClient9_sendPlayerLeftRequest() throws InterruptedException {
-        // Arrange: Create the request object with the player's name
+    public void testClient9_sendPlayerLeftRequest() {
         String playerName = "DummyPlayer";
         PlayerLeftRequest request = new PlayerLeftRequest(playerName);
         String expectedMessage = String.format("{\"messageType\":\"PlayerLeftRequest\",\"playerName\":\"%s\"}", playerName);
 
-        // Act: Send the message using the gameClient
         gameClient.sendMessage(expectedMessage);
 
-        // Allow some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Assert: Retrieve the data sent to the server from the outputStream
         String sentMessages = outputStream.toString().replaceAll("\\s+", "");
 
-        // Assertions to ensure the message was sent as expected
         assertThat(sentMessages).contains(expectedMessage);
 
-        // Use regex to check that the message contains the correct messageType and playerName
         assertThat(sentMessages).matches(".*\"messageType\":\"PlayerLeftRequest\".*");
         assertThat(sentMessages).matches(".*\"playerName\":\"" + playerName + "\".*");
 
-        // Function to check if the message contains only two key-value pairs
         assertThatContainsNKeyValuePairs(sentMessages, 2);
     }
 
     @Test
-    public void testClient10_receivePlayerLeftNotification() throws IOException, InterruptedException {
-        // Prepare the JSON message as it might be received from the server
+    public void testClient10_receivePlayerLeftNotification() throws InterruptedException {
         String playerName = "DummyPlayer";
         int numPlayers = 4;
         String jsonNotification = String.format("{\"messageType\":\"PlayerLeftNotification\",\"playerName\":\"%s\",\"numPlayers\":%d}",
                 playerName, numPlayers);
 
-        // Set the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread in the GameClient
         gameClient.startListening();
 
-        // Allow some time for the message to be processed
         Thread.sleep(500);
 
-        // Assert: Check if the handlePlayerLeft method was called on the ClientController with the correct data
         verify(clientController, timeout(1000)).handlePlayerLeft(argThat(notification ->
                 notification.getPlayerName().equals(playerName) &&
                         notification.getNumPlayers() == numPlayers));
@@ -383,43 +348,38 @@ public class ClientTest {
     }
 
     @Test
-    public void testClient11_sendEndGameRequest() throws IOException, InterruptedException {
-        // Arrange: Create the request details
+    public void testClient11_sendEndGameRequest() {
         String playerName = "TestPlayer";
-        int time = 300; // in seconds
-        int wpm = 50; // words per minute
-        double accuracy = 97.5; // percentage
+        int time = 300;
+        int wpm = 50;
+        double accuracy = 97.5;
 
-        // Construct the JSON message that should be sent
         String expectedMessage = String.format("{\"messageType\":\"EndGameRequest\",\"playerName\":\"%s\",\"time\":%d,\"wpm\":%d,\"accuracy\":%.1f}",
                 playerName, time, wpm, accuracy);
 
-        // Act: Send the message using the gameClient
         gameClient.sendMessage(expectedMessage);
 
-        // Allow some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Assert: Retrieve the data sent to the server from the outputStream
         String sentMessages = outputStream.toString().replaceAll("\\s+", "");
 
-        // Assertions to ensure the message was sent as expected
         assertThat(sentMessages).contains(expectedMessage);
 
-        // Use regex to check that the message contains the correct messageType and player details
         assertThat(sentMessages).matches(".*\"messageType\":\"EndGameRequest\".*");
         assertThat(sentMessages).matches(".*\"playerName\":\"" + playerName + "\".*");
         assertThat(sentMessages).matches(".*\"time\":" + time + ".*");
         assertThat(sentMessages).matches(".*\"wpm\":" + wpm + ".*");
         assertThat(sentMessages).matches(".*\"accuracy\":" + accuracy + ".*");
 
-        // Function to check if the message contains exactly five key-value pairs
         assertThatContainsNKeyValuePairs(sentMessages, 5);
     }
 
     @Test
     public void testClient12_receiveGameEndNotification() throws IOException, InterruptedException {
-        // Prepare the JSON message as it might be received from the server
         String playerName = "TestPlayer";
         int wpm = 75;
         int time = 360;
@@ -427,20 +387,19 @@ public class ClientTest {
         String jsonNotification = String.format("{\"messageType\":\"GameEndNotification\",\"playerName\":\"%s\",\"wpm\":%d,\"accuracy\":%.1f,\"time\":%d}",
                 playerName, wpm, accuracy, time);
 
-        // Set the input stream for the mock socket to simulate receiving the message
         ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
         mockSocket.setInputStream(inputStream);
 
-        // Start the listening thread in the GameClient
         gameClient.startListening();
 
-        // Allow some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Construct the expected GameEndNotification object to be passed to the handleGameEnd method
         GameEndNotification expectedNotification = new GameEndNotification(playerName, wpm, accuracy, time);
 
-        // Verify that handleGameEnd is called with the correct notification
         verify(clientController, timeout(1000)).handleGameEnd(argThat(notification ->
                 notification.getPlayerName().equals(expectedNotification.getPlayerName()) &&
                         notification.getWpm() == expectedNotification.getWpm() &&
@@ -451,7 +410,7 @@ public class ClientTest {
     }
 
     @Test
-    public void testClient13_sendUpdateRankingRequest() throws IOException, InterruptedException {
+    public void testClient13_sendUpdateRankingRequest() {
 
         TypingPlayer player1 = new TypingPlayer("Alice");
         player1.setWpm(40);
@@ -466,30 +425,102 @@ public class ClientTest {
         player2.setHasFinished(true);
         List<TypingPlayer> players = Arrays.asList(player1, player2);
 
-        // Create the UpdateRankingRequest with the list of players
         UpdateRankingRequest request = new UpdateRankingRequest(players);
         String messageToSend = "{\"messageType\":\"UpdateRankingRequest\",\"players\":["
                 + "{\"name\":\"Alice\",\"wpm\":40,\"accuracy\":95.5,\"progress\":100,\"hasFinished\":true},"
                 + "{\"name\":\"Bob\",\"wpm\":30,\"accuracy\":80.5,\"progress\":100,\"hasFinished\":true}"
                 + "]}";
-        // Act: Send the message using the gameClient
+
         gameClient.sendMessage(messageToSend);
 
-        // Allow some time for the message to be processed
-        Thread.sleep(500);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
-        // Assert: Retrieve the data sent to the server from the outputStream
         String sentMessages = outputStream.toString().replaceAll("\\s+", "");
 
-        // Assertions to ensure the message was sent as expected
         assertThat(sentMessages).contains(messageToSend);
 
-        // Use regex to check that the message contains the correct messageType and players data
         assertThat(sentMessages).matches(".*\"messageType\":\"UpdateRankingRequest\".*");
         assertThat(sentMessages).matches(".*\"players\":\\[\\{\"name\":\"Alice\",\"wpm\":40,\"accuracy\":95\\.5,\"progress\":100,\"hasFinished\":true\\},\\{\"name\":\"Bob\",\"wpm\":30,\"accuracy\":80\\.5,\"progress\":100,\"hasFinished\":true\\}\\].*");
 
-        // Function to check if the message contains only two key-value pairs
         assertThatContainsNKeyValuePairs(sentMessages, 12);
     }
+
+    @Test
+    public void testClient14_receiveRankingNotification() {
+
+        String jsonNotification = "{\"messageType\":\"RankingNotification\",\"rankings\":["
+                + "{\"name\":\"Alice\",\"wpm\":100,\"accuracy\":95.5,\"progress\":100},"
+                + "{\"name\":\"Bob\",\"wpm\":80,\"accuracy\":90.0,\"progress\":80}"
+                + "]}";
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
+        mockSocket.setInputStream(inputStream);
+
+        gameClient.startListening();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+
+        TypingPlayer player1 = new TypingPlayer("Alice");
+        player1.setWpm(100);
+        player1.setAccuracy(95.5);
+        player1.setProgress(100);
+
+        TypingPlayer player2 = new TypingPlayer("Bob");
+        player2.setWpm(80);
+        player2.setAccuracy(90.0);
+        player2.setProgress(80);
+        List<TypingPlayer> expectedRankings = Arrays.asList(player1, player2);
+
+        verify(clientController, timeout(1000)).handleRankingNotification(argThat(notification -> {
+            if (notification.getRankings().size() != expectedRankings.size()) {
+                return false;
+            }
+            for (int i = 0; i < notification.getRankings().size(); i++) {
+                TypingPlayer expected = expectedRankings.get(i);
+                TypingPlayer actual = notification.getRankings().get(i);
+                if (!expected.getName().equals(actual.getName()) ||
+                        expected.getWpm() != actual.getWpm() ||
+                        expected.getAccuracy() != actual.getAccuracy() ||
+                        expected.getProgress() != actual.getProgress()) {
+                    return false;
+                }
+            }
+            return true;
+        }));
+
+        verify(clientController).handleRankingNotification(any(RankingNotification.class));
+    }
+
+    @Test
+    public void testClient15_receiveHostNotification() {
+        String hostName = "HostPlayer";
+        String jsonNotification = "{\"messageType\":\"HostNotification\",\"host\":\"" + hostName + "\"}";
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonNotification.getBytes());
+        mockSocket.setInputStream(inputStream);
+
+        gameClient.startListening();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        verify(clientController, timeout(1000)).handleHostNotification(argThat(notification -> hostName.equals(notification.getHost())));
+
+        verify(clientController).handleHostNotification(any(HostNotification.class));
+    }
+
+
 
 }
