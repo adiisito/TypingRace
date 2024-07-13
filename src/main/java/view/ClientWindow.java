@@ -176,6 +176,13 @@ public class ClientWindow extends JFrame {
         return button;
     }
 
+    /**
+     * Initiates a dot animation on a JLabel to indicate a waiting state.
+     * This method cyclically appends dots to the label's text every 500 milliseconds,
+     * resetting after three dots to convey ongoing activity.
+     *
+     * @param label The JLabel that displays the waiting message.
+     */
     private void startDotAnimation(JLabel label) {
         dotAnimationTimer = new Timer(500, e -> {
             String currentText = label.getText();
@@ -223,6 +230,11 @@ public class ClientWindow extends JFrame {
         JOptionPane.showMessageDialog(this, playerName + " has left the game.", "Player Left", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Adds a status label to the user interface.
+     * This method configures and adds a new label to the main window that displays various status messages.
+     * The label is centered and set with specific styling including font size and color.
+     */
     public void addStatusLabel () {
         statusLabel = new JLabel();
         statusLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));
