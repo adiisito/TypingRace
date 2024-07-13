@@ -18,6 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * The window from which the players participate in the SpaceRally.
+ *
+ */
 public class GameScreen extends JPanel {
     private final ArrayList<CarShape> carShapes;
     private GameState gameState;
@@ -31,7 +35,6 @@ public class GameScreen extends JPanel {
     private JLabel timeLabel;
     private java.util.List<TypingPlayer> racers;
     private JPanel carPanel;
-    private java.util.List<ResultScreen> resultScreens = new ArrayList<>();
     private boolean isFinished = false;
     private int wrongChars = 0;
 
@@ -191,6 +194,9 @@ public class GameScreen extends JPanel {
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
     }
 
+    /**
+     * Adds cars / UFOs and their racetracks to the game window.
+     */
     public void addCars() {
         for (Player player : racers) {
             Car newCar = new Car(player);
@@ -215,6 +221,12 @@ public class GameScreen extends JPanel {
         updateCarPositions(currentPlayer.getName(), progress, wpm);
     }
 
+    /**
+     * Updates the position of a specified player's car in the window.
+     * @param playerName the player to move
+     * @param progress the player's progress
+     * @param wpm the player's wpm count
+     */
     public void updateCarPositions(String playerName, int progress, int wpm) {
         int totalLength = providedText.length();
         double trackMultiplier = (isFinished) ? 0.915 : 0.7; // To match the screen lengths
@@ -345,6 +357,10 @@ public class GameScreen extends JPanel {
         carPanel.setPreferredSize(new Dimension(600, 300));
     }
 
+    /**
+     * Retrieves the game window's car panel.
+     * @return the car panel
+     */
     public JPanel getCarPanel() {
         return this.carPanel;
     }

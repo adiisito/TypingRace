@@ -9,18 +9,25 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * The GUI is the starting window for players.
+ * From here the player can create a game room, connect to another lobby,
+ * and access game settings.
+ */
 public class GUI extends JFrame {
     private JTextField playerNameField;
     private JButton joinButton;
     private JButton createGameButton;
-    private GameState gameState;
-    private DefaultListModel<String> playerListModel;
     private List<ClientWindow> clientWindows = new ArrayList<>();
     public Font dozerFont;
     private ClientController clientController;
 
-    public GUI(GameState gameState, ClientController clientController) {
-        this.gameState = gameState;
+    /**
+     * Creates a GUI instance and builds a screen for the player to interact with.
+     *
+     * @param clientController the controller to assign to the GUI
+     */
+    public GUI(ClientController clientController) {
         this.clientController = clientController;
         loadFont();
         initComponents();
@@ -168,6 +175,10 @@ public class GUI extends JFrame {
         timer.start();
     }
 
+    /**
+     * Creates a new game client for this GUI instance.
+     * @param playerName the player name to display
+     */
     public void createNewClient(String playerName) {
         try {
             ClientWindow clientWindow = new ClientWindow(playerName, clientController);
@@ -179,6 +190,11 @@ public class GUI extends JFrame {
         }
     }
 
+    /**
+     * Updates all clients with the specified list of players.
+     *
+     * @param playerNames the list of current players
+     */
     public void updateAllClientWindows(List<String> playerNames) {
         for (ClientWindow clientWindow : clientWindows) {
             clientWindow.updatePlayerList(playerNames);
@@ -200,12 +216,16 @@ public class GUI extends JFrame {
         GameState gameState = new GameState();
         ClientController controller = new ClientController();
         SwingUtilities.invokeLater(() -> {
-            GUI mainGui = new GUI(gameState, controller);
+            GUI mainGui = new GUI(controller);
             controller.setMainGui(mainGui);
             mainGui.setVisible(true);
         });
     }
 
+    /**
+     * Retrieves the GUI's client controller.
+     * @return the client controller
+     */
     public ClientController getClientController() {
         return clientController;
     }

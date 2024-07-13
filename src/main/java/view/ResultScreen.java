@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Creates a result screen when the game ends.
+ * Contains statistics of the round, a display of the game state and a ranking of the players.
  */
 public class ResultScreen extends JPanel {
     private final int wpm;
