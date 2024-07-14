@@ -38,45 +38,38 @@ public class ResultScreen extends JPanel {
   private final int time;
   private final int wrongChars;
   private final ClientController clientController;
-  private final SoundPlayer soundPlayer;
   private DefaultTableModel rankingModel;
   private Image backgroundImage;
+  private final SoundPlayer soundPlayer;
   private boolean firstPlace = false;
 
-  /**
-   * Creates a window with game results.
-   *
-   * @param gameState the final game state
-   * @param currentPlayer the player to display the window for
-   * @param wpm the words per minute counter
-   * @param accuracy the amount of correctly typed characters
-   * @param elapsedTime the time spent in the game
-   * @param carPanel for the final race track display
-   * @param wrongChars the amount of wrong inputs during the round
-   * @param clientController the client controller for this window
-   */
-  public ResultScreen(
-      GameState gameState,
-      Player currentPlayer,
-      int wpm,
-      double accuracy,
-      int elapsedTime,
-      JPanel carPanel,
-      int wrongChars,
-      ClientController clientController) {
-    this.gameState = gameState;
-    this.currentPlayer = currentPlayer;
-    this.wpm = wpm;
-    this.accuracy = accuracy;
-    this.time = elapsedTime;
-    this.endState = carPanel;
-    this.wrongChars = wrongChars;
-    this.clientController = clientController;
-    clientController.setResultScreen(this);
-    soundPlayer = new SoundPlayer();
-    soundPlayer.playSound("result.wav");
-    initComponents();
-  }
+    /**
+     * Creates a window with game results.
+     * @param gameState the final game state
+     * @param currentPlayer the player to display the window for
+     * @param wpm the words per minute counter
+     * @param accuracy the amount of correctly typed characters
+     * @param elapsedTime the time spent in the game
+     * @param carPanel for the final race track display
+     * @param wrongChars the amount of wrong inputs during the round
+     * @param clientController the client controller for this window
+     */
+    public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
+                        double accuracy, int elapsedTime, JPanel carPanel,
+                        int wrongChars, ClientController clientController) {
+        this.gameState = gameState;
+        this.currentPlayer = currentPlayer;
+        this.wpm = wpm;
+        this.accuracy = accuracy;
+        this.time = elapsedTime;
+        this.endState = carPanel;
+        this.wrongChars = wrongChars;
+        this.clientController = clientController;
+        clientController.setResultScreen(this);
+        soundPlayer = new SoundPlayer();
+        soundPlayer.playSound("result.wav");
+        initComponents();
+    }
 
   /** Builds the results screen for the GUI. */
   private void initComponents() {
@@ -87,7 +80,6 @@ public class ResultScreen extends JPanel {
     if (gameState.getCompletedPlayers().size() == 1) {
       firstPlace = true;
     }
-    // updateRankingTable(gameState.getPlayers());
 
     try {
       InputStream imageStream =
@@ -166,7 +158,6 @@ public class ResultScreen extends JPanel {
     stats.setForeground(Color.WHITE);
     stats.setOpaque(false);
     stats.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-    // stats.setBackground(new Color(184, 112, 247));
 
     endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
     JPanel westPanel = new JPanel(new BorderLayout());
@@ -178,7 +169,6 @@ public class ResultScreen extends JPanel {
     buttonPanel.setOpaque(false);
 
     add(resultLabel, BorderLayout.NORTH);
-    // add(tablePanel, BorderLayout.EAST);
     add(westPanel, BorderLayout.WEST);
     add(buttonPanel, BorderLayout.PAGE_END);
   }
@@ -203,7 +193,6 @@ public class ResultScreen extends JPanel {
     JScrollPane scrollPane = new JScrollPane(rankingTable);
     scrollPane.setPreferredSize(new Dimension(185, 150));
     scrollPane.getViewport().setBackground(Color.BLACK);
-    // scrollPane.getViewport().setBackground(new Color(20, 5, 30));
 
     JPanel tableContainer = new JPanel(new BorderLayout());
     tableContainer.add(scrollPane, BorderLayout.CENTER);
