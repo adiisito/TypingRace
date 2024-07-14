@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 public class GameClient {
 
   private static final String HOSTNAME = "localhost";
-  private static final int SERVER_PORT = 8080;
+  private static final int SERVER_PORT = 12345;
 
   private final Socket socket;
   private final PrintWriter out;

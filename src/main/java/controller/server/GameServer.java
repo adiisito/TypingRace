@@ -19,7 +19,7 @@ import java.util.List;
 /** The type Game server. */
 public class GameServer {
   /** The port number on which the server is listening. */
-  public static final int SERVER_PORT = 8080;
+  public static final int SERVER_PORT = 12345;
 
   /** The server socket that listens for incoming client connections. */
   private final ServerSocket serverSocket;
