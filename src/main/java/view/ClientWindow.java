@@ -33,13 +33,28 @@ import javax.swing.Timer;
 
 /** The Client window aka Lobby of players where players wait before entering the game!. */
 public class ClientWindow extends JFrame {
+  /** The name of the player using this client window. */
   private final String playerName;
+
+  /** The controller that manages the interaction between the client and the game server. */
   private final ClientController clientController;
+
+  /** The current state of the game, including all players and game status. */
   private final GameState gameState;
+
+  /** List model for managing the names of players in the lobby. */
   private DefaultListModel<String> playerListModel;
+
+  /** Custom font used for text elements within the client window. */
   private Font dozerFont;
+
+  /** Button that initiates the start of the game. Only enabled for the host. */
   private JButton startButton;
+
+  /** Timer used to animate a series of dots in a label to indicate waiting. */
   private Timer dotAnimationTimer;
+
+  /** Label displaying current status or instructions in the lobby. */
   private JLabel statusLabel;
 
   /**

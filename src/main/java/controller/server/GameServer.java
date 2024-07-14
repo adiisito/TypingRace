@@ -55,9 +55,11 @@ public class GameServer {
   }
 
   /**
-   * StartGame method.
+   * Initiates a game session if the requester is the host. This method sets up the game with
+   * players and the provided text, then broadcasts a start notification to all players.
    *
-   * <p>After checked that all the players are there
+   * @param request A {@link StartGameRequest} containing details like the host's name and the text
+   *     for the game.
    */
   public void startGame(StartGameRequest request) {
     if (request.getHostPlayerName().equals(hostPlayerName)) {

@@ -7,8 +7,10 @@ import java.util.Random;
 /** The type Text. */
 public class Text {
 
+  /** A map holding arrays of text snippets categorized by type. */
   private static final Map<String, String[]> textLibrary = new HashMap<>();
 
+  // Static initializer to populate the text library.
   static {
     textLibrary.put(
         "Random",
@@ -65,7 +67,7 @@ public class Text {
           "What you lack in talent can be made up with desire, "
               + "hustle and giving 110% all the time.",
           "Do what you can with all you have, wherever you are.",
-          "Develop an ‘attitude of gratitude’. Say thank you to everyone you "
+          "Develop an attitude of gratitude. Say thank you to everyone you "
               + "meet for everything they do for you."
         });
     textLibrary.put(
@@ -129,6 +131,9 @@ public class Text {
           "I would avoid the sushi if I was you. It’s a little fishy."
         });
   }
+
+  /** Private constructor to prevent instantiation of this utility class. */
+  private Text() {}
 
   /**
    * Gets random text by category.

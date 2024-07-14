@@ -30,17 +30,40 @@ import javax.swing.table.DefaultTableModel;
  * game state and a ranking of the players.
  */
 public class ResultScreen extends JPanel {
+  /** Words per minute achieved by the current player. */
   private final int wpm;
+
+  /** Accuracy percentage of the current player, calculated as correctly typed characters. */
   private final double accuracy;
+
+  /** State of the game including details like game progress and player states. */
   private final GameState gameState;
+
+  /** The player instance representing the current player for whom the results are shown. */
   private final Player currentPlayer;
+
+  /** Panel that displays the final state of the game, like the last frame of the race. */
   private final JPanel endState;
+
+  /** Total time spent by the player in the game session, measured in seconds. */
   private final int time;
+
+  /** Number of incorrect inputs made by the player during the game session. */
   private final int wrongChars;
+
+  /** Controller handling client-side operations and interactions. */
   private final ClientController clientController;
+
+  /** Component responsible for playing sounds. */
   private final SoundPlayer soundPlayer;
+
+  /** The model for the ranking table that displays player standings. */
   private DefaultTableModel rankingModel;
+
+  /** The background image for the results screen. */
   private Image backgroundImage;
+
+  /** Flag to indicate whether the current player finished in the first place. */
   private boolean firstPlace = false;
 
   /**

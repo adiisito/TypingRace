@@ -35,27 +35,70 @@ import javax.swing.text.StyledDocument;
 
 /** The window from which the players participate in the SpaceRally. */
 public class GameScreen extends JPanel {
+  /** Collection of graphical car shapes displayed on the screen, each representing a player. */
   private final ArrayList<CarShape> carShapes;
+
+  /** Current state of the game, providing access to overall game data like players and scores. */
   private final GameState gameState;
+
+  /** The current player using this instance of the game screen. */
   private final Player currentPlayer;
+
+  /** The text that players need to type correctly to advance in the game. */
   private final String providedText;
+
+  /** List of players participating in the game, used to manage race progress and scoring. */
   private final java.util.List<TypingPlayer> racers;
+
+  /** Controller responsible for handling client-side logic and interactions with the server. */
   private final ClientController clientController;
+
+  /** Background image for the game screen, enhancing the visual appeal. */
   private final ImageIcon backgroundImage;
+
+  /** Component for playing game sounds, enhancing the interactive experience. */
   private final SoundPlayer soundPlayer;
+
+  /** Boolean flag to control whether sounds are enabled or disabled during the game. */
   private final boolean soundOn;
+
+  /** Sound player specifically for playing error sounds when players make typing mistakes. */
   private final SoundPlayer errorSoundPlayer;
+
+  /** Text area where players input their typing responses. */
   private JTextPane typingArea;
+
+  /** Label displaying the current words per minute (WPM) of the player. */
   private JLabel wpmLabel;
+
+  /** Label showing the typing accuracy percentage of the player. */
   private JLabel accuracyLabel;
+
+  /** Label that presents the text players need to type. */
   private JLabel providedTextLabel;
+
+  /** Timer used for game timing and managing session progress. */
   private Timer timer;
+
+  /** Label displaying the countdown or elapsed time during the game. */
   private JLabel timeLabel;
+
+  /** Panel displaying graphical representations of cars corresponding to players. */
   private JPanel carPanel;
+
+  /** Flag indicating whether the current game session has finished. */
   private boolean isFinished = false;
+
+  /** Counter for the number of incorrect characters typed by the player. */
   private int wrongChars = 0;
+
+  /** Timestamp marking the start of the current game session. */
   private long startTime;
+
+  /** Count of key presses made by the player during the game, used for accuracy calculations. */
   private int keyPressCount;
+
+  /** Custom font used throughout the game screen for consistent styling. */
   private Font customFont;
 
   /**

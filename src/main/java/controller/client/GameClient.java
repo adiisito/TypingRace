@@ -41,6 +41,7 @@ public class GameClient {
    *
    * @param clientController the controller that manages client-side logic
    * @param playerName the name of the player
+   * @param serverIp the IP address of server
    * @throws IOException if an I/O error occurs when creating the socket
    */
   public GameClient(ClientController clientController, String playerName, String serverIp)

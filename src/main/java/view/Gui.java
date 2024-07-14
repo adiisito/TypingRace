@@ -27,11 +27,31 @@ import javax.swing.Timer;
  * to another lobby, and access game settings.
  */
 public class Gui extends JFrame {
+  /** A list of open client windows. This list helps manage multiple game sessions or views. */
   private final List<ClientWindow> clientWindows = new ArrayList<>();
+
+  /**
+   * The controller that manages game and network interactions for this GUI. It facilitates
+   * communication between the GUI and the server-side components.
+   */
   private final ClientController clientController;
+
+  /** Custom font used throughout the GUI for consistency in styling. */
   public Font dozerFont;
+
+  /** Field for players to enter their name. This is required to join or create a game session. */
   private JTextField playerNameField;
+
+  /**
+   * Button that allows players to join an existing game. This action is managed by the
+   * clientController.
+   */
   private JButton joinButton;
+
+  /**
+   * Button that allows players to create a new game room. This action is managed by the
+   * clientController.
+   */
   private JButton createGameButton;
 
   /**
