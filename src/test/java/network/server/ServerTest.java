@@ -9,11 +9,9 @@ import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
-import communication.messages.GameStateNotification;
-import communication.messages.JoinGameRequest;
-import communication.messages.StartGameRequest;
-import communication.messages.UpdateProgressRequest;
+import communication.messages.*;
 import controller.server.ConnectionManager;
 import controller.server.GameServer;
 import org.junit.jupiter.api.AfterEach;
@@ -96,8 +94,8 @@ public class ServerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testHandleJoinGameRequestAddsPlayer() throws IOException {
-        String playerName = "newPlayer";
+    public void test01HandleJoinGameRequestAddsPlayer() throws IOException {
+        String playerName = "Alice";
         JoinGameRequest joinRequest = new JoinGameRequest(playerName);
 
         server.handleJoinGameRequest(joinRequest);
@@ -106,15 +104,15 @@ public class ServerTest {
         assertEquals(1, server.playerNamesList.size());
     }
     @Test
-    public void testJoinGameRequestHandlingAndNotifications() throws IOException {
+    public void test02JoinGameRequestHandlingAndNotifications() throws IOException {
         // Simulate there is a join game request.
-        JoinGameRequest joinRequest = new JoinGameRequest("newPlayer");
+        JoinGameRequest joinRequest = new JoinGameRequest("Alice");
 
         // Dealing with the request.
         server.handleJoinGameRequest(joinRequest);
 
         // Check if the player was added correctly.
-        assertTrue(server.playerNamesList.contains("newPlayer"), "Player should be added.");
+        assertTrue(server.playerNamesList.contains("Alice"), "Player should be added.");
 
 
         // Check if the Notis were sent correctly.
@@ -133,7 +131,7 @@ public class ServerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testLobbyFullNotificationSent() throws IOException {
+    public void test03LobbyFullNotificationSent() throws IOException {
         // Assume that the lobby will be fulled by 6 players.
         for (int i = 1; i <= 6; i++) {
             JoinGameRequest joinRequest = new JoinGameRequest("Player" + i);
@@ -150,14 +148,14 @@ public class ServerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testStartGameHandlingAndNotification() throws IOException {
+    public void test04StartGameHandlingAndNotification() throws IOException {
         // Add some players to test.
         for (int i = 1; i <= 3; i++) {
             server.addPlayer("Player" + i);
         }
-        server.hostPlayerName = "Player1";  // hostplayer.
+        server.hostPlayerName = "Alice";  // hostplayer.
 
-        StartGameRequest startRequest = new StartGameRequest("Player1", "Sample text for the game.");
+        StartGameRequest startRequest = new StartGameRequest("Alice", "Sample text for the game.");
         server.startGame(startRequest);
 
         // Check if the game start noti is sent successfully.
@@ -173,9 +171,9 @@ public class ServerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testUpdateProgressHandlingAndNotification() throws IOException {
+    public void test05UpdateProgressHandlingAndNotification() throws IOException {
         // Setup initial conditions
-        String playerName = "Player1";
+        String playerName = "Alice";
         int wpm = 120;
         int progress = 95;
         double accuracy = 98.5;
@@ -206,7 +204,36 @@ public class ServerTest {
         assertTrue(capturedMessage.contains("\"playerName\":\"" + playerName + "\""));
         assertTrue(capturedMessage.contains("GameStateNotification"));
     }
+    /**
+     * Test handling of player leaving and the sending of notifications.
+     */
+    @Test
+    public void test06PlayerLeftHandlingAndNotifications() {
+        // Setup: Add multiple players to ensure complex interactions like host reassignment
+        server.addPlayer("Alice");
+        server.addPlayer("Amy");
+        server.hostPlayerName = "Alice"; // Alice is initially the host
 
+        // Action: Simulate Alice leaving the game
+        server.removePlayer("Alice");
+
+        // Capture all messages sent during the process
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(mockedConnectionManager, atLeastOnce()).sendMessage(messageCaptor.capture());
+        List<String> sentMessages = messageCaptor.getAllValues();
+
+        // Verification of expected messages
+        boolean playerLeftNotification = sentMessages.stream().anyMatch(msg -> msg.contains("PlayerLeftNotification") && msg.contains("Alice"));
+        boolean playerListUpdateNotification = sentMessages.stream().anyMatch(msg -> msg.contains("PlayerListUpdateNotification"));
+        boolean hostNotification = sentMessages.stream().anyMatch(msg -> msg.contains("HostNotification") && msg.contains("Amy")); // Assuming Amy becomes the new host
+
+        assertTrue(playerLeftNotification, "Should send PlayerLeftNotification for Alice.");
+        assertTrue(playerListUpdateNotification, "Should send PlayerListUpdateNotification after Alice leaves.");
+        assertTrue(hostNotification, "Should send HostNotification as Amy is the new host.");
+
+        // Check the exact number of messages sent
+        assertEquals(5, sentMessages.size(), "Should only send five notifications: PlayerLeft * 2, PlayerListUpdate * 2, and Host * 1.");
+    }
 
 
 
