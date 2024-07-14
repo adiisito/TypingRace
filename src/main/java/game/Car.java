@@ -1,5 +1,8 @@
 package game;
 
+/**
+ * The type Car.
+ */
 public class Car implements Player {
     private String name;
     private int wpm;
@@ -9,6 +12,11 @@ public class Car implements Player {
     private boolean hasFinished;
 
 
+    /**
+     * Instantiates a new Car.
+     *
+     * @param player the player
+     */
     public Car(Player player) {
         this.player = player;
         this.name = player.getName();
@@ -68,10 +76,20 @@ public class Car implements Player {
         return hasFinished;
     }
 
+    /**
+     * Gets player.
+     *
+     * @return the player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Sets player.
+     *
+     * @param player the player
+     */
     public void setPlayer(Player player) {
         this.player = player;
     }

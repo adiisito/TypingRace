@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * The type Game screen.
+ */
 public class GameScreen extends JPanel {
     private final ArrayList<CarShape> carShapes;
     private GameState gameState;
@@ -44,6 +47,15 @@ public class GameScreen extends JPanel {
     private SoundPlayer errorSoundPlayer;
     private int wrongChars = 0;
 
+    /**
+     * Instantiates a new Game screen.
+     *
+     * @param gameState        the game state
+     * @param currentPlayer    the current player
+     * @param clientController the client controller
+     * @param providedText     the provided text
+     * @param soundOn          the sound on
+     */
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText, boolean soundOn) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
@@ -190,6 +202,9 @@ public class GameScreen extends JPanel {
         SwingUtilities.invokeLater(() -> typingArea.requestFocusInWindow());
     }
 
+    /**
+     * Add cars.
+     */
     public void addCars() {
         for (Player player : racers) {
             Car newCar = new Car(player);
@@ -200,6 +215,11 @@ public class GameScreen extends JPanel {
         }
     }
 
+    /**
+     * Update progress.
+     *
+     * @param typedText the typed text
+     */
     public void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
         if (gameState.getCurrentRace() != null) {
@@ -214,6 +234,13 @@ public class GameScreen extends JPanel {
         updateCarPositions(currentPlayer.getName(), progress, wpm);
     }
 
+    /**
+     * Update car positions.
+     *
+     * @param playerName the player name
+     * @param progress   the progress
+     * @param wpm        the wpm
+     */
     public void updateCarPositions(String playerName, int progress, int wpm) {
         int totalLength = providedText.length();
         double trackMultiplier = (isFinished) ? 0.915 : 0.7;
@@ -344,12 +371,18 @@ public class GameScreen extends JPanel {
         carPanel.setPreferredSize(new Dimension(600, 300));
     }
 
+    /**
+     * Gets car panel.
+     *
+     * @return the car panel
+     */
     public JPanel getCarPanel() {
         return this.carPanel;
     }
 
     /**
      * Gets the list of car entities that move according to progress.
+     *
      * @return the car shapes
      */
     public ArrayList<CarShape> getCarShapes() {
@@ -386,7 +419,6 @@ public class GameScreen extends JPanel {
 
     /**
      * Updates the display with the current WPM and accuracy.
-     *
      */
     public void updateProgressDisplay() {
         wpmLabel.setText("WPM: " + currentPlayer.getWpm());
@@ -395,6 +427,7 @@ public class GameScreen extends JPanel {
 
     /**
      * Gives the amount of wrong inputs for the player.
+     *
      * @return the amount of counted wrong characters
      */
     public int getWrongChars() {

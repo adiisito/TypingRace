@@ -8,6 +8,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The type Car shape.
+ */
 public class CarShape {
     private int x;
     private int y;
@@ -22,7 +25,17 @@ public class CarShape {
     private Font font;
 
 
-
+    /**
+     * Instantiates a new Car shape.
+     *
+     * @param car    the car
+     * @param player the player
+     * @param x      the x
+     * @param y      the y
+     * @param width  the width
+     * @param height the height
+     * @param font   the font
+     */
     public CarShape(Car car, Player player, int x, int y, int width, int height, Font font) {
         this.x = x;
         this.y = y;
@@ -44,28 +57,57 @@ public class CarShape {
     }
 
 
-
-
+    /**
+     * Sets font.
+     *
+     * @param font the font
+     */
     public void setFont(Font font) {
         this.font = font;
     }
 
+    /**
+     * Gets x.
+     *
+     * @return the x
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets y.
+     *
+     * @return the y
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Gets height.
+     *
+     * @return the height
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Sets x.
+     *
+     * @param x the x
+     */
     public void setX(int x) {
         this.x = x;
     }
 
+    /**
+     * Draw.
+     *
+     * @param g          the g
+     * @param roadLength the road length
+     */
     public void draw(Graphics g, int roadLength) {
         if (carImage != null) {
             g.drawImage(carImage, x, y, width, height, null);
@@ -98,18 +140,38 @@ public class CarShape {
         g2d.drawLine(startX, y + height, endX, y + height);
     }
 
+    /**
+     * Gets wpm.
+     *
+     * @return the wpm
+     */
     public int getWpm() {
         return wpm;
     }
 
+    /**
+     * Sets wpm.
+     *
+     * @param wpm the wpm
+     */
     public void setWpm(int wpm) {
         this.wpm = wpm;
     }
 
+    /**
+     * Gets player.
+     *
+     * @return the player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Sets player.
+     *
+     * @param player the player
+     */
     public void setPlayer(Player player) {
         this.player = player;
     }
