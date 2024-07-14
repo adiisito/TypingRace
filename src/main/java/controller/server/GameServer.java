@@ -17,9 +17,9 @@ public class GameServer {
 
     private static final int SERVER_PORT = 8080;
     private final ServerSocket serverSocket;
-    private final List<ConnectionManager> connectionManagers;
-    private List<String> playerNamesList;
-    private final Moshi moshi;
+    public List<ConnectionManager> connectionManagers;
+    public List<String> playerNamesList;
+    public Moshi moshi;
     private String hostPlayerName;
 
     /**
@@ -162,7 +162,7 @@ public class GameServer {
      *
      * @param request from client
      */
-    synchronized void handleJoinGameRequest(JoinGameRequest request) {
+    public synchronized void handleJoinGameRequest(JoinGameRequest request) {
         // this.playerName = request.getPlayerName();
         System.out.println("Handle join game request for " + request.getPlayerName());
         addPlayer(request.getPlayerName());

@@ -1,59 +1,99 @@
 package network.server;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import communication.messages.JoinGameRequest;
+import controller.server.ConnectionManager;
+import controller.server.GameServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
-public class ServerTest {
-/*
-    @Mock
-    private ServerSocket serverSocket;
-    @Mock
-    private Socket clientSocket;
+import com.squareup.moshi.Moshi;
 
-    private GameServer gameServer;
-
-    @BeforeEach
-    public void setup() throws IOException {
-        MockitoAnnotations.openMocks(this);
-        gameServer = new GameServer(serverSocket);
-    }
-
-    @Test
-    public void testAcceptClient() throws IOException {
-        when(serverSocket.accept()).thenReturn(clientSocket);
-        Socket returnedSocket = gameServer.acceptClient();
-        verify(serverSocket).accept();  // 验证是否调用了accept方法
-        assertSame(clientSocket, returnedSocket);  // 验证返回的Socket是否是预期的Socket
-    }
-
-    @Test
-    public void testProcessClient() throws IOException {
-        doNothing().when(serverSocket).close();  // 确保在测试中不关闭serverSocket
-        when(serverSocket.accept()).thenReturn(clientSocket).thenReturn(null);  // 模拟接受一个客户端然后返回null结束循环
-        new Thread(() -> {
-            try {
-                gameServer.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-        try {
-            Thread.sleep(100);  // 稍等片刻让服务器运行
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        gameServer.stop();  // 停止服务器循环
-        verify(serverSocket, atLeastOnce()).accept();  // 验证至少调用一次accept方法
-        verify(clientSocket, atLeastOnce()).getInputStream();  // 如果processClient读取了输入流，这里可以验证
-    }
-
+/**
+ * The type Server test.
  */
+public class ServerTest {
+    @Mock
+    private ServerSocket mockedServerSocket;
+    @Mock
+    private Socket mockedSocket;
+    @Mock
+    private ConnectionManager mockedConnectionManager;
+
+    private GameServer server;
+    private AutoCloseable closeable;
+    private ConnectionManager manager;
+    private BufferedReader in;
+    private PrintWriter out;
+    /**
+     * Sets up.
+     *
+     * @throws Exception the exception
+     */
+    @BeforeEach
+    public void setUp() throws Exception {
+        closeable = MockitoAnnotations.openMocks(this);
+        when(mockedServerSocket.accept()).thenReturn(mockedSocket);
+
+        server = new GameServer();  // 使用无参构造器
+        setMockServerSocket(server, mockedServerSocket);  // 使用反射设置私有成员
+        server.connectionManagers = new ArrayList<>(); // Directly manipulating the list to simulate behavior.
+        server.playerNamesList = new ArrayList<>();
+        server.moshi = new Moshi.Builder().build();
+    }
+
+    /**
+     * Set a mock server socket to test the connection with client.
+     *
+     * @param server
+     * @param serverSocket
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    private void setMockServerSocket(GameServer server, ServerSocket serverSocket) throws NoSuchFieldException, IllegalAccessException {
+        Field field = GameServer.class.getDeclaredField("serverSocket");
+        field.setAccessible(true);
+        field.set(server, serverSocket);
+    }
+
+    /**
+     * Tear down.
+     *
+     * @throws Exception the exception
+     */
+    @AfterEach
+    public void tearDown() throws Exception {
+        closeable.close();
+    }
+
+    /**
+     * Test handle join game request adds player.
+     *
+     * @throws IOException the io exception
+     */
+    @Test
+    public void testHandleJoinGameRequestAddsPlayer() throws IOException {
+        String playerName = "newPlayer";
+        JoinGameRequest joinRequest = new JoinGameRequest(playerName);
+
+        server.handleJoinGameRequest(joinRequest);
+
+        assertTrue(server.playerNamesList.contains(playerName));
+        assertEquals(1, server.playerNamesList.size());
+    }
+
+
+
+
 }
