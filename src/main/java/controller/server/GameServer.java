@@ -1,5 +1,15 @@
 package controller.server;
 
+import com.squareup.moshi.Moshi;
+import communication.messages.GameStartNotification;
+import communication.messages.HostNotification;
+import communication.messages.JoinGameRequest;
+import communication.messages.LobbyFullNotification;
+import communication.messages.PlayerJoinedNotification;
+import communication.messages.PlayerLeftNotification;
+import communication.messages.PlayerListUpdateNotification;
+import communication.messages.StartGameRequest;
+import game.TypingPlayer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -22,18 +32,18 @@ public class GameServer {
     public Moshi moshi;
     private String hostPlayerName;
 
-    /**
-     * Constructor for GameServer class.
-     *
-     * @throws IOException for ServerSocket.
-     */
-    public GameServer() throws IOException {
-        this.serverSocket = new ServerSocket(SERVER_PORT);
-        this.connectionManagers = new ArrayList<>();
-        this.playerNamesList = new ArrayList<>();
-        this.moshi = new Moshi.Builder().build();
-        System.out.println("Server started, listening...");
-    }
+  /**
+   * Constructor for GameServer class.
+   *
+   * @throws IOException for ServerSocket.
+   */
+  public GameServer() throws IOException {
+    this.serverSocket = new ServerSocket(SERVER_PORT);
+    this.connectionManagers = new ArrayList<>();
+    this.playerNamesList = new ArrayList<>();
+    this.moshi = new Moshi.Builder().build();
+    System.out.println("Server started, listening...");
+  }
 
     /**
      * StartGame method.
@@ -85,77 +95,74 @@ public class GameServer {
         }
     }
 
-    /**
-     * Method for update the player List.
-     */
-    public void broadcastPlayerListUpdate() {
-        PlayerListUpdateNotification updateNotification = new PlayerListUpdateNotification(new ArrayList<>(playerNamesList));
-        String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
+  /** Method for update the player List. */
+  public void broadcastPlayerListUpdate() {
+    PlayerListUpdateNotification updateNotification =
+        new PlayerListUpdateNotification(new ArrayList<>(playerNamesList));
+    String json = moshi.adapter(PlayerListUpdateNotification.class).toJson(updateNotification);
+    broadcastMessage(json);
+  }
+
+  /**
+   * Method for adding new players in the server.
+   *
+   * @param playerName id of the player.
+   */
+  public synchronized void addPlayer(String playerName) {
+    if (!playerNamesList.contains(playerName)) {
+      playerNamesList.add(playerName);
+      System.out.println("Player added: " + playerName);
+
+      if (playerNamesList.size() == 1) {
+        hostPlayerName = playerName;
+        System.out.println("Host set: " + hostPlayerName);
+      }
+    } else {
+      System.out.println("Player rejoined: " + playerName);
+    }
+    broadcastPlayerListUpdate();
+    if (playerNamesList.size() == 6) {
+      broadcastLobbyFull();
+    }
+  }
+
+  /** Method to remind when lobby is full. */
+  private void broadcastLobbyFull() {
+    LobbyFullNotification lobbyFullNotification = new LobbyFullNotification();
+    String json = moshi.adapter(LobbyFullNotification.class).toJson(lobbyFullNotification);
+    broadcastMessage(json);
+  }
+
+  /**
+   * Method for remove the players from the server.
+   *
+   * @param name id of the player.
+   */
+  public void removePlayer(String name) {
+    playerNamesList.remove(name);
+    boolean wasHost = name.equals(hostPlayerName);
+
+    int numPlayer = playerNamesList.size();
+
+    PlayerLeftNotification leftNotification = new PlayerLeftNotification(name, numPlayer);
+    String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
+    broadcastMessage(json);
+
+    if (wasHost) {
+      if (!playerNamesList.isEmpty()) {
+        hostPlayerName = playerNamesList.get(0); // Set new host
+        HostNotification hostNotification = new HostNotification(hostPlayerName);
+        json = moshi.adapter(HostNotification.class).toJson(hostNotification);
         broadcastMessage(json);
+        System.out.println("New host assigned: " + hostPlayerName);
+      } else {
+        hostPlayerName = null; // No players left to be host
+      }
     }
 
-    /**
-     * Method for adding new players in the server.
-     *
-     * @param playerName id of the player.
-     */
-    public synchronized void addPlayer(String playerName) {
-        if (!playerNamesList.contains(playerName)) {
-            playerNamesList.add(playerName);
-            System.out.println("Player added: " + playerName);
-
-            if (playerNamesList.size() == 1) {
-                hostPlayerName = playerName;
-                System.out.println("Host set: " + hostPlayerName);
-            }
-        } else {
-            System.out.println("Player rejoined: " + playerName);
-        }
-        broadcastPlayerListUpdate();
-        if (playerNamesList.size() == 6) {
-            broadcastLobbyFull();
-        }
-    }
-
-    /**
-     * Method to remind when lobby is full.
-     */
-    private void broadcastLobbyFull() {
-        LobbyFullNotification lobbyFullNotification = new LobbyFullNotification();
-        String json = moshi.adapter(LobbyFullNotification.class).toJson(lobbyFullNotification);
-        broadcastMessage(json);
-    }
-
-    /**
-     * Method for remove the players from the server.
-     *
-     * @param name id of the player.
-     */
-    public void removePlayer(String name) {
-        playerNamesList.remove(name);
-        boolean wasHost = name.equals(hostPlayerName);
-
-        int numPlayer = playerNamesList.size();
-
-        PlayerLeftNotification leftNotification = new PlayerLeftNotification(name, numPlayer);
-        String json = moshi.adapter(PlayerLeftNotification.class).toJson(leftNotification);
-        broadcastMessage(json);
-
-        if (wasHost) {
-            if (!playerNamesList.isEmpty()) {
-                hostPlayerName = playerNamesList.get(0); // Set new host
-                HostNotification hostNotification = new HostNotification(hostPlayerName);
-                json = moshi.adapter(HostNotification.class).toJson(hostNotification);
-                broadcastMessage(json);
-                System.out.println("New host assigned: " + hostPlayerName);
-            } else {
-                hostPlayerName = null; // No players left to be host
-            }
-        }
-
-        broadcastPlayerListUpdate();
-        System.out.println("Player " + name + " has left the game.");
-    }
+    broadcastPlayerListUpdate();
+    System.out.println("Player " + name + " has left the game.");
+  }
 
     /**
      * Handle join game request.
