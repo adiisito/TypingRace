@@ -174,10 +174,10 @@ public class ServerTest {
     public void test05UpdateProgressHandlingAndNotification() throws IOException {
         // Setup initial conditions
         String playerName = "Alice";
-        int wpm = 120;
+        int wpm = 45;
         int progress = 95;
         double accuracy = 98.5;
-        int time = 99;
+        int time = 56;
 
         // Prepare the test request
         UpdateProgressRequest updateRequest = new UpdateProgressRequest(playerName, wpm, progress, accuracy, time);
@@ -235,6 +235,47 @@ public class ServerTest {
         assertEquals(5, sentMessages.size(), "Should only send five notifications: PlayerLeft * 2, PlayerListUpdate * 2, and Host * 1.");
     }
 
+    /**
+     * Test handling of the end game request and sending of the game end notification.
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void test07EndGameHandlingAndNotification() throws IOException {
+        // Setup: Add player to ensure they are part of the game
+        String playerName = "Alice";
+        server.addPlayer(playerName);
+
+        // Create an EndGameRequest with sample data
+        EndGameRequest endGameRequest = new EndGameRequest(playerName, 60000, 43, 98.5);
+        String jsonRequest = server.moshi.adapter(EndGameRequest.class).toJson(endGameRequest);
+
+        // Prepare input stream from the JSON request to simulate receiving it from a client
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonRequest.getBytes());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        // Prepare the connection manager to use this input stream
+        ConnectionManager manager = new ConnectionManager(mockedSocket, server);
+        manager.in = reader; // Use the custom BufferedReader
+
+        // Reset interactions to ignore previous test effects
+        reset(mockedConnectionManager);
+
+        // Run the method that processes messages
+        manager.run();
+
+        // Verify the correct GameEndNotification was sent
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(mockedConnectionManager, times(1)).sendMessage(messageCaptor.capture());
+        String sentMessage = messageCaptor.getValue();
+
+        // Assertions to check the correct format and data of the GameEndNotification
+        assertTrue(sentMessage.contains("GameEndNotification"), "Should contain 'GameEndNotification'");
+        assertTrue(sentMessage.contains("\"playerName\":\"" + playerName + "\""), "Should include the player's name.");
+        assertTrue(sentMessage.contains("\"wpm\":43"), "Should include WPM of 43.");
+        assertTrue(sentMessage.contains("\"accuracy\":98.5"), "Should include accuracy of 98.5.");
+        assertTrue(sentMessage.contains("\"time\":60000"), "Should include time of 60000 milliseconds.");
+    }
 
 
 
