@@ -9,11 +9,13 @@ import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import communication.messages.*;
 import controller.server.ConnectionManager;
 import controller.server.GameServer;
+import game.TypingPlayer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +56,7 @@ public class ServerTest {
         when(mockedSocket.getOutputStream()).thenReturn(outputStream);
         when(mockedSocket.getInputStream()).thenReturn(inputStream);
 
-        server = new GameServer();  // Constructor
+        server = new GameServer(0);  // Constructor
         setMockServerSocket(server, mockedServerSocket);  // Reflection
         server.connectionManagers.add(mockedConnectionManager);
 
@@ -277,6 +279,41 @@ public class ServerTest {
         assertTrue(sentMessage.contains("\"time\":60000"), "Should include time of 60000 milliseconds.");
     }
 
+    /**
+     * Tests the reception of an UpdateRankingRequest and the dispatch of a RankingNotification.
+     */
+    @Test
+    public void test08UpdateRankingRequestAndNotification() throws IOException {
+        // Setup initial conditions
+        List<TypingPlayer> players = Arrays.asList(
+                new TypingPlayer("Alice"),
+                new TypingPlayer("Amy"),
+                new TypingPlayer("Allen")
+        );
+        UpdateRankingRequest updateRankingRequest = new UpdateRankingRequest(players);
+        String jsonRequest = server.moshi.adapter(UpdateRankingRequest.class).toJson(updateRankingRequest);
 
+        // Prepare input stream from the JSON request to simulate receiving it from a client
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonRequest.getBytes());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        manager.in = reader; // Use the custom BufferedReader
+
+        // Reset interactions to ignore previous test effects
+        reset(mockedConnectionManager);
+
+        // Execute the method that processes messages
+        manager.run(); // This method needs to handle the actual message processing
+
+        // Verify the correct RankingNotification was sent
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(mockedConnectionManager, times(1)).sendMessage(messageCaptor.capture());
+        String sentMessage = messageCaptor.getValue();
+
+        // Assertions to check the correct format and data of the RankingNotification
+        assertTrue(sentMessage.contains("RankingNotification"), "The message should contain 'RankingNotification'");
+        assertTrue(sentMessage.contains("Alice"), "The message should include Alice's ranking details.");
+        assertTrue(sentMessage.contains("Amy"), "The message should include Amy's ranking details.");
+        assertTrue(sentMessage.contains("Allen"), "The message should include Allen's ranking details.");
+    }
 
 }

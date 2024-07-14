@@ -15,7 +15,7 @@ import game.TypingPlayer;
  */
 public class GameServer {
 
-    private static final int SERVER_PORT = 8080;
+    private static final int DEFAULT_SERVER_PORT = 8080;
     private final ServerSocket serverSocket;
     public List<ConnectionManager> connectionManagers;
     public List<String> playerNamesList;
@@ -27,12 +27,20 @@ public class GameServer {
      *
      * @throws IOException for ServerSocket.
      */
-    public GameServer() throws IOException {
-        this.serverSocket = new ServerSocket(SERVER_PORT);
+    public GameServer(int port) throws IOException {
+        this.serverSocket = new ServerSocket(port);
         this.connectionManagers = new ArrayList<>();
         this.playerNamesList = new ArrayList<>();
         this.moshi = new Moshi.Builder().build();
         System.out.println("Server started, listening...");
+    }
+    /**
+     * Default constructor for GameServer class using the default port.
+     *
+     * @throws IOException for ServerSocket.
+     */
+    public GameServer() throws IOException {
+        this(DEFAULT_SERVER_PORT);
     }
 
     /**
