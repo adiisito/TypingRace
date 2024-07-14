@@ -14,11 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
 ## 2024-07-14
-
-## Added
+### Added
 - Grayed out text selection for non-hosts
 - complete CheckStyle and SpotLess
 - JavaDoc
+- Test classes of Client and Server added.
+- JavaDoc of Client and Server added.
 - Readme with new features added
 
 ## Fixed
@@ -28,28 +29,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2024-07-13
 
-## Added
-- Progress loading Bar on GameScreen
+### Added
 - Handler for too long names
 - Exit button in lobby sends you back to main menu
 - Main menu button in results
 - Grayed out start game button for non-hosts
+- Readme merged in main.
 
-## Fixed
+### Fixed
 - Host can't have an empty name
 - Game lock when 6 players are in the lobby
 - Can't start a new round when current one isn't finished yet
 
 ## 2024-07-12
 
-## Added
-- Settings Windows
-- New Text Categories
-- Sounds Toggle- On/Off
+### Added
 - New result screen background and visuals
 - Counter for the number of wrong inputs
 
-## Fixed
+### Fixed
 - Player characters being misaligned on the end results
 - Accuracy going above 100 (only happens with too many inputs at once)
 
