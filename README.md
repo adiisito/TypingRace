@@ -61,7 +61,7 @@ This command starts the GUI allowing players to join and play the game.
 4. **Run the GUI**:
 
 - Open a new IDE run configuration within the IDE.
-- Navigate to the com.game.typeracer.view.GUI class in the src directory.
+- Navigate to the com.game.typeracer.view.Gui class in the src directory.
 - Right-click on the class file and select Run 'GUI.main()' or a similar option in your IDE.
 
 ### Notes
