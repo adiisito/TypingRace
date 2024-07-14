@@ -57,21 +57,25 @@ public class SettingsWindow extends JFrame {
     String[] textTypes = {"Random", "English", "German", "Dad Jokes", "Facts"};
     JComboBox<String> textTypeComboBox = new JComboBox<>(textTypes);
     textTypeComboBox.setFont(mainGui.dozerFont);
-    textTypeComboBox.setSelectedItem(mainGui.getClientController().getTextType());
-    textTypeComboBox.addActionListener(
+    if(mainGui.getClientController().isHost(mainGui.getClientController().getCurrentPlayerName())) {
+      textTypeComboBox.setSelectedItem(mainGui.getClientController().getTextType());
+      textTypeComboBox.addActionListener(
         e -> {
           mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
         });
+    } else {
+      textTypeComboBox.setBackground(Color.BLACK);
+      textTypeComboBox.setForeground(Color.DARK_GRAY);
+    }
     add(textTypeComboBox, gbc);
 
-    // Save button
-    JButton saveButton = new JButton("Save");
-    saveButton.setFont(mainGui.dozerFont);
-    saveButton.addActionListener(
-        e -> {
-          mainGui.getClientController().setSoundEnabled(soundToggle.isSelected());
-          mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
-          this.dispose();
+        // Save button
+        JButton saveButton = new JButton("Save");
+        saveButton.setFont(mainGui.dozerFont);
+        saveButton.addActionListener(e -> {
+            mainGui.getClientController().setSoundEnabled(soundToggle.isSelected());
+            mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
+            this.dispose();
         });
     add(saveButton, gbc);
 

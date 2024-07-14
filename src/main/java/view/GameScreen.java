@@ -228,6 +228,7 @@ public class GameScreen extends JPanel {
 
   /** Adds cars / UFOs and their racetracks to the game window. */
   public void addCars() {
+    carShapes.clear();
     for (Player player : racers) {
       Car newCar = new Car(player);
       CarShape newCarShape =
@@ -264,13 +265,13 @@ public class GameScreen extends JPanel {
    * @param wpm the player's wpm count
    */
   public void updateCarPositions(String playerName, int progress, int wpm) {
-    int totalLength = providedText.length();
-    double trackMultiplier = (isFinished) ? 0.915 : 0.7; // To match the screen lengths
-    int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
+    int roadLength = carPanel.getWidth() - 100; // Use carPanel width for movement bounds
+
     for (CarShape carShape : carShapes) {
       if (carShape.getPlayer().getName().equals(playerName)) {
         int newProgress = (progress * roadLength) / totalLength;
         carShape.setHorizontal(newProgress);
+        carShape.setProgress(progress);
         carShape.setWpm(wpm);
         System.out.println("Updating car position for player " + playerName + " to " + newProgress);
         break;
@@ -289,8 +290,8 @@ public class GameScreen extends JPanel {
         break; // Stop at the first incorrect character
       }
     }
-    System.out.println("Calculated progress: " + correctChars + " characters");
-    return correctChars;
+    int totalLength = providedText.length();
+    return (correctChars * 100) / totalLength; // Return progress percentage
   }
 
   private double calculateAccuracy(String typedText) {
@@ -376,6 +377,12 @@ public class GameScreen extends JPanel {
     currentPlayer.setAccuracy(accuracy);
     clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
 
+    for (CarShape carShape : carShapes) {
+      if (carShape.getPlayer().isCompleted()) {
+        carShape.setX(440);
+      }
+    }
+
     isFinished = true;
     createCarPanel();
   }
@@ -386,8 +393,7 @@ public class GameScreen extends JPanel {
           @Override
           protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            double trackMultiplier = (isFinished) ? 0.9 : 0.7; // To match the screen lengths
-            int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
+            int roadLength = getWidth() - 100; // Use the width of carPanel
             for (CarShape carShape : carShapes) {
               carShape.draw(g, roadLength);
             }
