@@ -2,11 +2,9 @@ package view;
 
 import game.Car;
 import game.Player;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +22,7 @@ public class CarShape {
 
   private Player player;
   private int wpm;
+  private int progress;
   private Font font;
 
   /**
@@ -47,6 +46,7 @@ public class CarShape {
     this.car = car;
     this.player = player;
     this.wpm = 0;
+    this.progress = 0;
     this.font = font;
 
     try {
@@ -58,54 +58,9 @@ public class CarShape {
   }
 
   /**
-   * Sets font.
+   * Draws a car for the specified player.
    *
-   * @param font the font
-   */
-  public void setFont(Font font) {
-    this.font = font;
-  }
-
-  /**
-   * Gets x.
-   *
-   * @return the x
-   */
-  public int getHorizontal() {
-    return horizontal;
-  }
-
-  /**
-   * Sets x.
-   *
-   * @param horizontal the x
-   */
-  public void setHorizontal(int horizontal) {
-    this.horizontal = horizontal;
-  }
-
-  /**
-   * Gets y.
-   *
-   * @return the y
-   */
-  public int getVertical() {
-    return vertical;
-  }
-
-  /**
-   * Gets height.
-   *
-   * @return the height
-   */
-  public int getHeight() {
-    return height;
-  }
-
-  /**
-   * Draw.
-   *
-   * @param g the g
+   * @param g the Graphics object
    * @param roadLength the road length
    */
   public void draw(Graphics g, int roadLength) {
@@ -119,29 +74,27 @@ public class CarShape {
     if (name != null) {
       g.setFont(font.deriveFont(Font.BOLD, 15));
       g.setColor(Color.LIGHT_GRAY);
-      g.drawString(name, horizontal, vertical + height + 15);
+      g.drawString(name, horizontal, vertical + height + 1);
     }
     if (player != null) {
       g.setFont(font.deriveFont(Font.BOLD, 15));
       g.setColor(Color.LIGHT_GRAY);
       g.drawString(
           "WPM: " + wpm,
-          horizontal + width + 10,
+          horizontal + width + 5,
           vertical + height / 2); // Display WPM to the right of the car
     }
 
-    // the road (dotted line)
-    Graphics2D g2d = (Graphics2D) g;
-    g2d.setColor(Color.WHITE);
-    float[] dash = {5f, 5f};
-    BasicStroke bs =
-        new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
-    g2d.setStroke(bs);
+    // Draw progress bar below the car shape
+    int progressBarY = vertical + height + 7; // Position it right below the car
+    g.setColor(Color.GREEN);
+    int progressBarWidth = (int) ((progress / 100.0) * roadLength);
+    g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
 
-    int startX = 0; // Starting from the left side of the panel
-    int endX = roadLength; // 70% of the screen width
-
-    g2d.drawLine(startX, vertical + height, endX, vertical + height);
+    // Draw progress percentage
+    g.setColor(Color.WHITE);
+    g.setFont(font.deriveFont(Font.PLAIN, 12));
+    g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
   }
 
   /**
@@ -178,5 +131,68 @@ public class CarShape {
    */
   public void setPlayer(Player player) {
     this.player = player;
+  }
+
+  /**
+   * Sets the current progress of the car's player.
+   *
+   * @param progress the new progress status
+   */
+  public void setProgress(int progress) {
+    this.progress = progress;
+  }
+
+  /**
+   * Sets font.
+   *
+   * @param font the font
+   */
+  public void setFont(Font font) {
+    this.font = font;
+  }
+
+  /**
+   * Gets the horizontal position.
+   *
+   * @return the car's horizontal position
+   */
+  public int getHorizontal() {
+    return horizontal;
+  }
+
+  /**
+   * Sets the horizontal position.
+   *
+   * @param horizontal the new horizontal position
+   */
+  public void setHorizontal(int horizontal) {
+    this.horizontal = horizontal;
+  }
+
+  /**
+   * Gets the vertical position.
+   *
+   * @return the car's vertical position
+   */
+  public int getVertical() {
+    return vertical;
+  }
+
+  /**
+   * Gets height.
+   *
+   * @return the height
+   */
+  public int getHeight() {
+    return height;
+  }
+
+  /**
+   * Gets the width.
+   *
+   * @return the car's width
+   */
+  public int getWidth() {
+    return width;
   }
 }
