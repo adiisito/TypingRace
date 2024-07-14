@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Grayed out text selection for non-hosts
 - complete CheckStyle and SpotLess
 - JavaDoc
+- Readme with new features added
 
 ## Fixed
 - UFO going off the progress bar in results

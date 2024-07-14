@@ -32,14 +32,14 @@ This command starts the game server which manages the game state and player conn
 ```
 Wait for the command line to display the prompt ‘Server started, listening...
 Waiting for clients... ’, then proceed to the next step.
-2. **Run the GUI**:
+2. **Run the Gui**:
 
 This command starts the GUI allowing players to join and play the game.
 
 ```bash
 ./gradlew runGui
 ```
-- If the host wants to be both a server and a player, the host needs to open a new Terminal in this file directory to execute the command to run the GUI.
+- If the host wants to be both a server and a player, the host needs to open a new Terminal in this file directory to execute the command to run the Gui.
 
 
 ### Using an IDE
@@ -81,26 +81,39 @@ The game is controlled using a simple graphical user interface (GUI). Here are t
     - Click "Join New Game" to enter the lobby where you can prepare for the game.
     - Click "Start Game" to begin the race.
     - Click "Exit" to leave the game.
+    - Click "Settings"
+      - to turn the sound on or off.
+      - to choose the text type:
+        - RAMDOM.
+        - ENGLISH.
+        - GERMAN.
+        - DAD JOCKES.
+        - FACTS.
+      - Click "Save" to save your preferences.
+    - Click "New Game" to start a new game from the end screen.
+    - Click "Return to manu" to go back to the manu window.
 
 ## How to Play
 The player who completes the race first and reaches the finish line is declared the winner.
 
 ### Setup
 1. Host: run the 'GameServer'.
-2. Guest: run the 'GUI'.
+2. Guest: run the 'Gui'.
 3. Enter your name in the provided text field.
-4. As a guest: Enter the IPv4-address of the host
+4. Change the game settings in Settings according to your preferences, such as sound and text content(host only!).
+5. As a guest: Enter the IPv4-address of the host
    - As a host: Leave the server-address blanc
-5. Join a game or wait for others to join.
-6. As a host: click "Start Game" once all players are ready.
+6. Join a game or wait for others to join.
+7. As a host: click "Start Game" once all players are ready.
    - As a guest: wait for the host to start the game.
 
 
 ### Game Play
 
-- Players receive random phrases to type.
+- Players receive random text from a specified topic chosen by the host to type.
 - Each correct word accelerates your car along the track.
 - First player to reach the end of the track wins.
+- In the settlement window, the player's time spent, WPM (Words Per Minute), accuracy, and number of mistakes(wrong inputs) for the round will be displayed.
 
 ## Troubleshooting
 If you encounter any issues while installing or playing the game, try the following solutions:

@@ -1,6 +1,7 @@
 package controller.server;
 
 import com.squareup.moshi.Moshi;
+import communication.messages.*;
 import communication.messages.GameStartNotification;
 import communication.messages.HostNotification;
 import communication.messages.JoinGameRequest;
@@ -21,9 +22,9 @@ public class GameServer {
 
   private static final int SERVER_PORT = 8080;
   private final ServerSocket serverSocket;
-  private final List<ConnectionManager> connectionManagers;
-  private final Moshi moshi;
-  private final List<String> playerNamesList;
+  public List<ConnectionManager> connectionManagers;
+  public List<String> playerNamesList;
+  public Moshi moshi;
   private String hostPlayerName;
 
   /**
@@ -37,21 +38,6 @@ public class GameServer {
     this.playerNamesList = new ArrayList<>();
     this.moshi = new Moshi.Builder().build();
     System.out.println("Server started, listening...");
-  }
-
-  /**
-   * The entry point of application.
-   *
-   * @param args the input arguments
-   */
-  public static void main(String[] args) {
-    try {
-      GameServer server = new GameServer();
-      server.start();
-    } catch (IOException e) {
-      System.out.println("Failed to start the server");
-      e.printStackTrace();
-    }
   }
 
   /**
@@ -177,7 +163,7 @@ public class GameServer {
    *
    * @param request from client
    */
-  synchronized void handleJoinGameRequest(JoinGameRequest request) {
+  public synchronized void handleJoinGameRequest(JoinGameRequest request) {
     // this.playerName = request.getPlayerName();
     System.out.println("Handle join game request for " + request.getPlayerName());
     addPlayer(request.getPlayerName());
@@ -191,6 +177,21 @@ public class GameServer {
       HostNotification hostNotification = new HostNotification(hostPlayerName);
       String json2 = moshi.adapter(HostNotification.class).toJson(hostNotification);
       broadcastMessage(json2);
+    }
+  }
+
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
+  public static void main(String[] args) {
+    try {
+      GameServer server = new GameServer();
+      server.start();
+    } catch (IOException e) {
+      System.out.println("Failed to start the server");
+      e.printStackTrace();
     }
   }
 }
