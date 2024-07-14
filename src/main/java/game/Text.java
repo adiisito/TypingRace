@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * The type Text.
+ */
 public class Text {
 
     private static final Map<String, String[]> textLibrary = new HashMap<>();
@@ -110,6 +113,12 @@ public class Text {
         });
     }
 
+    /**
+     * Gets random text by category.
+     *
+     * @param category the category
+     * @return the random text by category
+     */
     public static String getRandomTextByCategory(String category) {
         String[] texts = textLibrary.getOrDefault(category, textLibrary.get("Random"));
         return texts[new Random().nextInt(texts.length)];

@@ -47,6 +47,15 @@ public class GameScreen extends JPanel {
     private boolean soundOn;
     private SoundPlayer errorSoundPlayer;
 
+    /**
+     * Instantiates a new Game screen.
+     *
+     * @param gameState        the game state
+     * @param currentPlayer    the current player
+     * @param clientController the client controller
+     * @param providedText     the provided text
+     * @param soundOn          the sound on
+     */
     public GameScreen(GameState gameState, Player currentPlayer, ClientController clientController, String providedText, boolean soundOn) {
         this.gameState = gameState;
         this.currentPlayer = currentPlayer;
@@ -206,6 +215,11 @@ public class GameScreen extends JPanel {
         }
     }
 
+    /**
+     * Update progress.
+     *
+     * @param typedText the typed text
+     */
     public void updateProgress(String typedText) {
         int progress = calculateProgress(typedText);
         if (gameState.getCurrentRace() != null) {
@@ -367,6 +381,7 @@ public class GameScreen extends JPanel {
 
     /**
      * Gets the list of car entities that move according to progress.
+     *
      * @return the car shapes
      */
     public ArrayList<CarShape> getCarShapes() {
@@ -403,7 +418,6 @@ public class GameScreen extends JPanel {
 
     /**
      * Updates the display with the current WPM and accuracy.
-     *
      */
     public void updateProgressDisplay() {
         wpmLabel.setText("WPM: " + currentPlayer.getWpm());
@@ -412,6 +426,7 @@ public class GameScreen extends JPanel {
 
     /**
      * Gives the amount of wrong inputs for the player.
+     *
      * @return the amount of counted wrong characters
      */
     public int getWrongChars() {
