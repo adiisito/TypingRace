@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test classes of Client and Server added.
 - JavaDoc of Client and Server added.
 
+- Readme with new features added.
+
 ## 2024-07-13
 
 ### Added
