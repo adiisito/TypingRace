@@ -15,12 +15,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2024-07-14
 
-## Added 
-
+## Added
+- Grayed out text selection for non-hosts
 - complete CheckStyle and SpotLess
 - JavaDoc
+- Readme with new features added
 
-- Readme with new features added.
+## Fixed
+- UFO going off the progress bar in results
+- Dad jokes category being unselectable
+- Special characters in texts
 
 ## 2024-07-13
 
