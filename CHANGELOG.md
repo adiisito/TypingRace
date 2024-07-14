@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-14
+
+## Added
+- Grayed out text selection for non-hosts
+
+## Fixed
+- UFO going off the progress bar in results
+- Dad jokes category being unselectable
+- Special characters in texts
+
 ## 2024-07-13
 
 ## Added
