@@ -13,9 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-14
+
+## Added 
+
+- complete CheckStyle and SpotLess
+- JavaDoc
+
 ## 2024-07-13
 
 ## Added
+- Progress loading Bar on GameScreen
 - Handler for too long names
 - Exit button in lobby sends you back to main menu
 - Main menu button in results
@@ -29,6 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2024-07-12
 
 ## Added
+- Settings Windows
+- New Text Categories
+- Sounds Toggle- On/Off
 - New result screen background and visuals
 - Counter for the number of wrong inputs
 
