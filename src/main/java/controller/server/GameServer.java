@@ -18,21 +18,38 @@ import java.util.List;
 
 /** The type Game server. */
 public class GameServer {
+  /** The port number on which the server is listening. */
+  public static final int SERVER_PORT = 8080;
 
-  private static final int SERVER_PORT = 8080;
+  /** The server socket that listens for incoming client connections. */
   private final ServerSocket serverSocket;
-  private final List<ConnectionManager> connectionManagers;
-  private final Moshi moshi;
-  private final List<String> playerNamesList;
-  private String hostPlayerName;
+
+  /**
+   * A list of ConnectionManager instances, each managing a client connection. This field is public
+   * to allow external manipulation and monitoring of client connections.
+   */
+  public final List<ConnectionManager> connectionManagers;
+
+  /** The Moshi JSON parser instance for handling serialization and deserialization of messages. */
+  public Moshi moshi;
+
+  /** A list of player names currently connected to the server. */
+  public List<String> playerNamesList;
+
+  /**
+   * The player name of the current host of the game. The host manages certain administrative tasks
+   * such as starting the game.
+   */
+  public String hostPlayerName;
 
   /**
    * Constructor for GameServer class.
    *
+   * @param port port of server
    * @throws IOException for ServerSocket.
    */
-  public GameServer() throws IOException {
-    this.serverSocket = new ServerSocket(SERVER_PORT);
+  public GameServer(int port) throws IOException {
+    this.serverSocket = new ServerSocket(port);
     this.connectionManagers = new ArrayList<>();
     this.playerNamesList = new ArrayList<>();
     this.moshi = new Moshi.Builder().build();
@@ -40,26 +57,18 @@ public class GameServer {
   }
 
   /**
-   * The entry point of application.
+   * Default constructor for GameServer class using the default port.
    *
-   * @param args the input arguments
+   * @throws IOException for ServerSocket.
    */
-  public static void main(String[] args) {
-    try {
-      GameServer server = new GameServer();
-      server.start();
-    } catch (IOException e) {
-      System.out.println("Failed to start the server");
-      e.printStackTrace();
-    }
+  public GameServer() throws IOException {
+    this(SERVER_PORT);
   }
 
   /**
-   * Initiates a game session if the requester is the host. This method sets up the game with
-   * players and the provided text, then broadcasts a start notification to all players.
+   * StartGame method.
    *
-   * @param request A {@link StartGameRequest} containing details like the host's name and the text
-   *     for the game.
+   * <p>After checked that all the players are there
    */
   public void startGame(StartGameRequest request) {
     if (request.getHostPlayerName().equals(hostPlayerName)) {
@@ -179,7 +188,7 @@ public class GameServer {
    *
    * @param request from client
    */
-  synchronized void handleJoinGameRequest(JoinGameRequest request) {
+  public synchronized void handleJoinGameRequest(JoinGameRequest request) {
     // this.playerName = request.getPlayerName();
     System.out.println("Handle join game request for " + request.getPlayerName());
     addPlayer(request.getPlayerName());
@@ -193,6 +202,21 @@ public class GameServer {
       HostNotification hostNotification = new HostNotification(hostPlayerName);
       String json2 = moshi.adapter(HostNotification.class).toJson(hostNotification);
       broadcastMessage(json2);
+    }
+  }
+
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
+  public static void main(String[] args) {
+    try {
+      GameServer server = new GameServer();
+      server.start();
+    } catch (IOException e) {
+      System.out.println("Failed to start the server");
+      e.printStackTrace();
     }
   }
 }
