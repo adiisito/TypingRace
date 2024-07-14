@@ -36,6 +36,7 @@ public class ServerTest {
     private ConnectionManager manager;
     private BufferedReader in;
     private PrintWriter out;
+    private ByteArrayOutputStream outputStream;
     /**
      * Sets up.
      *
@@ -45,12 +46,15 @@ public class ServerTest {
     public void setUp() throws Exception {
         closeable = MockitoAnnotations.openMocks(this);
         when(mockedServerSocket.accept()).thenReturn(mockedSocket);
+        // Initializing of the two stream.
+        outputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
 
-        when(mockedSocket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
-        when(mockedSocket.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[0]));
+        when(mockedSocket.getOutputStream()).thenReturn(outputStream);
+        when(mockedSocket.getInputStream()).thenReturn(inputStream);
 
-        server = new GameServer();  // 使用无参构造器
-        setMockServerSocket(server, mockedServerSocket);  // 使用反射设置私有成员
+        server = new GameServer();  // Constructor
+        setMockServerSocket(server, mockedServerSocket);  // Reflex
         server.connectionManagers.add(mockedConnectionManager);
 
         server.playerNamesList = new ArrayList<>();
@@ -97,6 +101,27 @@ public class ServerTest {
 
         assertTrue(server.playerNamesList.contains(playerName));
         assertEquals(1, server.playerNamesList.size());
+    }
+    @Test
+    public void testJoinGameRequestHandlingAndNotifications() throws IOException {
+        // Simulate there is a join game request.
+        JoinGameRequest joinRequest = new JoinGameRequest("newPlayer");
+
+        // Dealing with the request.
+        server.handleJoinGameRequest(joinRequest);
+
+        // Check if the player was added correctly.
+        assertTrue(server.playerNamesList.contains("newPlayer"), "Player should be added.");
+
+
+        // Check if the Notis were sent correctly.
+        verify(mockedConnectionManager, times(1)).sendMessage(contains("PlayerJoinedNotification"));
+        verify(mockedConnectionManager, times(1)).sendMessage(contains("PlayerListUpdateNotification"));
+
+        // If the new Player is the first player, check if we sent the host noti.
+        if (server.playerNamesList.size() == 1) {
+            verify(mockedConnectionManager, times(1)).sendMessage(contains("HostNotification"));
+        }
     }
 
 

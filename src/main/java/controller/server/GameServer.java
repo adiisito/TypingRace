@@ -20,7 +20,7 @@ public class GameServer {
     public List<ConnectionManager> connectionManagers;
     public List<String> playerNamesList;
     public Moshi moshi;
-    private String hostPlayerName;
+    public String hostPlayerName;
 
     /**
      * Constructor for GameServer class.
