@@ -232,7 +232,7 @@ public class GameScreen extends JPanel {
     for (Player player : racers) {
       Car newCar = new Car(player);
       CarShape newCarShape =
-          new CarShape(newCar, player, 0, carShapes.size() * 50, 60, 50, customFont);
+          new CarShape(newCar, player, 0, carShapes.size() * 60, 60, 50, customFont);
       carShapes.add(newCarShape);
       repaint();
     }
@@ -269,7 +269,7 @@ public class GameScreen extends JPanel {
 
     for (CarShape carShape : carShapes) {
       if (carShape.getPlayer().getName().equals(playerName)) {
-        int newProgress = (progress * roadLength) / totalLength;
+        int newProgress = (progress * (roadLength - carShape.getWidth())) / 100;
         carShape.setHorizontal(newProgress);
         carShape.setProgress(progress);
         carShape.setWpm(wpm);
@@ -379,7 +379,7 @@ public class GameScreen extends JPanel {
 
     for (CarShape carShape : carShapes) {
       if (carShape.getPlayer().isCompleted()) {
-        carShape.setX(440);
+        carShape.setHorizontal(440);
       }
     }
 

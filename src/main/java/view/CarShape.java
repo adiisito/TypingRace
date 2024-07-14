@@ -60,6 +60,82 @@ public class CarShape {
   }
 
   /**
+   * Draws a car for the specified player.
+   *
+   * @param g the Graphics object
+   * @param roadLength the road length
+   */
+  public void draw(Graphics g, int roadLength) {
+    if (carImage != null) {
+      g.drawImage(carImage, horizontal, vertical, width, height, null);
+    } else {
+      g.setColor(Color.RED);
+      g.fillOval(horizontal, vertical, width, height);
+    }
+
+    if (name != null) {
+      g.setFont(font.deriveFont(Font.BOLD, 15));
+      g.setColor(Color.LIGHT_GRAY);
+      g.drawString(name, horizontal, vertical + height + 1);
+    }
+    if (player != null) {
+      g.setFont(font.deriveFont(Font.BOLD, 15));
+      g.setColor(Color.LIGHT_GRAY);
+      g.drawString(
+          "WPM: " + wpm,
+          horizontal + width + 5,
+          vertical + height / 2); // Display WPM to the right of the car
+    }
+
+      // Draw progress bar below the car shape
+      int progressBarY = vertical + height + 7; // Position it right below the car
+      g.setColor(Color.GREEN);
+      int progressBarWidth = (int) ((progress / 100.0) * roadLength);
+      g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
+
+      // Draw progress percentage
+      g.setColor(Color.WHITE);
+      g.setFont(font.deriveFont(Font.PLAIN, 12));
+      g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
+   }
+
+  /**
+   * Gets wpm.
+   *
+   * @return the wpm
+   */
+  public int getWpm() {
+    return wpm;
+  }
+
+  /**
+   * Sets wpm.
+   *
+   * @param wpm the wpm
+   */
+  public void setWpm(int wpm) {
+    this.wpm = wpm;
+  }
+
+  /**
+   * Gets player.
+   *
+   * @return the player
+   */
+  public Player getPlayer() {
+    return player;
+  }
+
+  /**
+   * Sets player.
+   *
+   * @param player the player
+   */
+  public void setPlayer(Player player) {
+    this.player = player;
+  }
+
+  /**
    * Sets the current progress of the car's player.
    * @param progress the new progress status
    */
@@ -113,88 +189,11 @@ public class CarShape {
   }
 
   /**
-   * Draws a car for the specified player.
+   * Gets the width.
    *
-   * @param g the Graphics object
-   * @param roadLength the road length
+   * @return the car's width
    */
-  public void draw(Graphics g, int roadLength) {
-    if (carImage != null) {
-      g.drawImage(carImage, horizontal, vertical, width, height, null);
-    } else {
-      g.setColor(Color.RED);
-      g.fillOval(horizontal, vertical, width, height);
-    }
-
-    if (name != null) {
-      g.setFont(font.deriveFont(Font.BOLD, 15));
-      g.setColor(Color.LIGHT_GRAY);
-      g.drawString(name, horizontal, vertical + height + 15);
-    }
-    if (player != null) {
-      g.setFont(font.deriveFont(Font.BOLD, 15));
-      g.setColor(Color.LIGHT_GRAY);
-      g.drawString(
-          "WPM: " + wpm,
-          horizontal + width + 10,
-          vertical + height / 2); // Display WPM to the right of the car
-    }
-
-      // Draw progress bar below the car shape
-      int progressBarY = vertical + height + 7; // Position it right below the car
-      g.setColor(Color.GREEN);
-      int progressBarWidth = (int) ((progress / 100.0) * roadLength);
-      g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
-
-      // Draw progress percentage
-      g.setColor(Color.WHITE);
-      g.setFont(font.deriveFont(Font.PLAIN, 12));
-      g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
-      // Draw progress bar below the car shape
-      int progressBarY = vertical + height + 7; // Position it right below the car
-      g.setColor(Color.GREEN);
-      int progressBarWidth = (int) ((progress / 100.0) * roadLength);
-      g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
-        // Draw progress percentage
-        g.setColor(Color.WHITE);
-        g.setFont(font.deriveFont(Font.PLAIN, 12));
-        g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
-      }
-   }
-
-  /**
-   * Gets wpm.
-   *
-   * @return the wpm
-   */
-  public int getWpm() {
-    return wpm;
-  }
-
-  /**
-   * Sets wpm.
-   *
-   * @param wpm the wpm
-   */
-  public void setWpm(int wpm) {
-    this.wpm = wpm;
-  }
-
-  /**
-   * Gets player.
-   *
-   * @return the player
-   */
-  public Player getPlayer() {
-    return player;
-  }
-
-  /**
-   * Sets player.
-   *
-   * @param player the player
-   */
-  public void setPlayer(Player player) {
-    this.player = player;
+  public int getWidth() {
+    return width;
   }
 }
