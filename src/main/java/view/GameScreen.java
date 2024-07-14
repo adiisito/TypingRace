@@ -333,6 +333,12 @@ public class GameScreen extends JPanel {
         currentPlayer.setAccuracy(accuracy);
         clientController.endGame(currentPlayer.getName(), elapsedTime, wpm, accuracy);
 
+        for (CarShape carShape : carShapes) {
+            if (carShape.getPlayer().isCompleted()) {
+                carShape.setX(440);
+            }
+        }
+
         isFinished = true;
         createCarPanel();
     }
