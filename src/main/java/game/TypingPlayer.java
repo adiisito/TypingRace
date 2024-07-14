@@ -1,7 +1,8 @@
 package game;
 
-import java.util.UUID;
-
+/**
+ * The type Typing player.
+ */
 public class TypingPlayer implements Player {
     private String name;
     private int wpm;
@@ -11,6 +12,11 @@ public class TypingPlayer implements Player {
 
     // private String id;
 
+    /**
+     * Instantiates a new Typing player.
+     *
+     * @param name the name
+     */
     public TypingPlayer(String name) {
         this.name = name;
         this.wpm = 0;
