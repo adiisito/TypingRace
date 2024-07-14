@@ -26,7 +26,7 @@ application {
 }
 
 tasks.register<JavaExec>("runGui") {
-  mainClass.set("view.GUI")
+  mainClass.set("view.Gui")
   classpath = sourceSets.main.get().runtimeClasspath
   standardInput = System.`in`
   args = listOf("optional", "arguments", "here")
