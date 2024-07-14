@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import communication.messages.JoinGameRequest;
+import communication.messages.StartGameRequest;
 import controller.server.ConnectionManager;
 import controller.server.GameServer;
 import org.junit.jupiter.api.AfterEach;
@@ -123,6 +124,37 @@ public class ServerTest {
             verify(mockedConnectionManager, times(1)).sendMessage(contains("HostNotification"));
         }
     }
+
+    @Test
+    public void testLobbyFullNotificationSent() throws IOException {
+        // 假设大厅满员需要6个玩家
+        for (int i = 1; i <= 6; i++) {
+            JoinGameRequest joinRequest = new JoinGameRequest("Player" + i);
+            server.handleJoinGameRequest(joinRequest);
+        }
+
+        // 验证是否正确地发送了大厅满员通知
+        verify(mockedConnectionManager, times(1)).sendMessage(contains("LobbyFullNotification"));
+    }
+
+    @Test
+    public void testStartGameHandlingAndNotification() throws IOException {
+        // 先添加一些玩家以满足游戏开始的条件
+        for (int i = 1; i <= 3; i++) {
+            server.addPlayer("Player" + i);
+        }
+        server.hostPlayerName = "Player1";  // 设置主机玩家
+
+        StartGameRequest startRequest = new StartGameRequest("Player1", "Sample text for the game.");
+        server.startGame(startRequest);
+
+        // 验证是否成功发送了游戏开始通知
+        verify(mockedConnectionManager, times(1)).sendMessage(argThat(message ->
+                message.contains("GameStartNotification") &&
+                        message.contains("Sample text for the game.")
+        ));
+    }
+
 
 
 
