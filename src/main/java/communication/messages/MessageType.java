@@ -1,16 +1,18 @@
 package communication.messages;
 
 /**
- * The type Message type.
+ * Represents the type of a message used in communication between the client and server.
+ * This class serves as a base or part of a messaging framework where different types of
+ * messages can be identified and processed according to their 'messageType'.
  */
 public class MessageType {
 
     private String messageType;
 
     /**
-     * Gets message type.
+     * Retrieves the type of message this instance represents.
      *
-     * @return the message type
+     * @return A string indicating the type of the message.
      */
     public String getMessageType() {
         return messageType;

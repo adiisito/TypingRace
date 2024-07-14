@@ -200,7 +200,6 @@ public class GameScreen extends JPanel {
     public void addCars() {
         for (Player player : racers) {
             Car newCar = new Car(player);
-            //gameState.addPlayer(player);
             CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 60, 50, customFont);
             carShapes.add(newCarShape);
             repaint();
@@ -358,7 +357,8 @@ public class GameScreen extends JPanel {
     }
 
     /**
-     * Retrieves the game window's car panel.
+     * Gets car panel.
+     *
      * @return the car panel
      */
     public JPanel getCarPanel() {
