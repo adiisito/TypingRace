@@ -2,14 +2,30 @@ package network.server;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.helpers.AnnotationRegistry.reset;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.reset;
+import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.squareup.moshi.Moshi;
-import communication.messages.*;
+import communication.messages.JoinGameRequest;
+import communication.messages.EndGameRequest;
+import communication.messages.StartGameRequest;
+import communication.messages.UpdateProgressRequest;
+import communication.messages.UpdateRankingRequest;
 import controller.server.ConnectionManager;
 import controller.server.GameServer;
 import game.TypingPlayer;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,19 +35,21 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /** The type Server test. */
 public class ServerTest {
-  @Mock private ServerSocket mockedServerSocket;
+  @Mock
+  private ServerSocket mockedServerSocket;
   @Mock private Socket mockedSocket;
   @Mock private ConnectionManager mockedConnectionManager;
 
   private GameServer server;
   private AutoCloseable closeable;
   private ConnectionManager manager;
-  private BufferedReader in;
-  private PrintWriter out;
+
   private ByteArrayOutputStream outputStream;
 
   /**
@@ -60,14 +78,6 @@ public class ServerTest {
     manager = new ConnectionManager(mockedSocket, server);
   }
 
-  /**
-   * Set a mock server socket to test the connection with client.
-   *
-   * @param server
-   * @param serverSocket
-   * @throws NoSuchFieldException
-   * @throws IllegalAccessException
-   */
   private void setMockServerSocket(GameServer server, ServerSocket serverSocket)
       throws NoSuchFieldException, IllegalAccessException {
     Field field = GameServer.class.getDeclaredField("serverSocket");
@@ -310,7 +320,7 @@ public class ServerTest {
     manager.in = reader; // Use the custom BufferedReader
 
     // Reset interactions to ignore previous test effects
-    reset(mockedConnectionManager);
+    reset();
 
     // Execute the method that processes messages
     manager.run(); // This method needs to handle the actual message processing

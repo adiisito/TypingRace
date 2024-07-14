@@ -27,18 +27,19 @@ import java.util.Set;
 
 /** The type Connection manager. */
 public class ConnectionManager extends Thread {
+  /** Reader to handle incoming messages from the client. */
+  public BufferedReader in;
 
   private final Socket clientSocket;
   private final GameServer server;
+  private PrintWriter out;
   private final JsonAdapter<MessageType> messageAdapter;
   private final Moshi moshi = new Moshi.Builder().build();
+  private String playerName;
   private final List<ConnectionManager> connectionManagers;
   private final List<String> playerNames;
   private final Set<String> finishedPlayers = new HashSet<>();
   private final Map<String, Integer> playerResults;
-  public BufferedReader in;
-  private final PrintWriter out;
-  private String playerName;
 
   /**
    * Instantiates a new Connection manager.

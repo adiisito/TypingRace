@@ -1,30 +1,53 @@
 package controller.server;
 
+import com.squareup.moshi.Moshi;
+import communication.messages.GameStartNotification;
+import communication.messages.HostNotification;
+import communication.messages.JoinGameRequest;
+import communication.messages.LobbyFullNotification;
+import communication.messages.PlayerJoinedNotification;
+import communication.messages.PlayerLeftNotification;
+import communication.messages.PlayerListUpdateNotification;
+import communication.messages.StartGameRequest;
+import game.TypingPlayer;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import com.squareup.moshi.Moshi;
-import communication.messages.*;
-import game.TypingPlayer;
 
 /**
  * The type Game server.
  */
 public class GameServer {
+    /** The port number on which the server is listening. */
+    public static final int SERVER_PORT = 8080;
 
-    private static final int DEFAULT_SERVER_PORT = 8080;
+    /** The server socket that listens for incoming client connections. */
     private final ServerSocket serverSocket;
-    public List<ConnectionManager> connectionManagers;
-    public List<String> playerNamesList;
+
+    /**
+     * A list of ConnectionManager instances, each managing a client connection. This field is public
+     * to allow external manipulation and monitoring of client connections.
+     */
+    public final List<ConnectionManager> connectionManagers;
+
+    /** The Moshi JSON parser instance for handling serialization and deserialization of messages. */
     public Moshi moshi;
+
+    /** A list of player names currently connected to the server. */
+    public List<String> playerNamesList;
+
+    /**
+     * The player name of the current host of the game. The host manages certain administrative tasks
+     * such as starting the game.
+     */
     public String hostPlayerName;
 
     /**
      * Constructor for GameServer class.
      *
+     * @param port port of server
      * @throws IOException for ServerSocket.
      */
     public GameServer(int port) throws IOException {
@@ -34,15 +57,15 @@ public class GameServer {
         this.moshi = new Moshi.Builder().build();
         System.out.println("Server started, listening...");
     }
+
     /**
      * Default constructor for GameServer class using the default port.
      *
      * @throws IOException for ServerSocket.
      */
     public GameServer() throws IOException {
-        this(DEFAULT_SERVER_PORT);
+        this(SERVER_PORT);
     }
-
     /**
      * StartGame method.
      *
