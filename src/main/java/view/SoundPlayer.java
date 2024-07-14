@@ -16,6 +16,12 @@ public class SoundPlayer {
 
   private Clip clip;
 
+  /** Default constructor for the SoundPlayer class. */
+  public SoundPlayer() {
+    super();
+    // Initialization can be placed here if necessary
+  }
+
   /**
    * Play sound.
    *

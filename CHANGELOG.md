@@ -17,10 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Grayed out text selection for non-hosts
 - complete CheckStyle and SpotLess
+- Completed JavaDoc
+- Readme with new features added.
 - JavaDoc
 - Test classes of Client and Server added.
-- JavaDoc of Client and Server added.
-- Readme with new features added
 
 ## Fixed
 - UFO going off the progress bar in results
@@ -44,6 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 2024-07-12
 
 ### Added
+- Settings Windows
+- New Text Categories
+- Sounds Toggle- On/Off
 - New result screen background and visuals
 - Counter for the number of wrong inputs
 

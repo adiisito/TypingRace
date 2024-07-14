@@ -7,8 +7,10 @@ import java.util.Random;
 /** The type Text. */
 public class Text {
 
+  /** A map holding arrays of text snippets categorized by type. */
   private static final Map<String, String[]> textLibrary = new HashMap<>();
 
+  // Static initializer to populate the text library.
   static {
     textLibrary.put(
         "Random",
@@ -20,7 +22,7 @@ public class Text {
           "Russia is bigger than Pluto.",
           "Australia is wider than the moon.",
           "A day on Venus is longer than a year on Venus.",
-          "There are more stars in the universe than grains of sand on all the Earth's beaches.",
+          "There are more stars in the universe than grains of sand on all the Earth’s beaches.",
           "More people live in Tokyo than in all of Canada.",
           "The shortest war in history was between Britain and Zanzibar on August 27, 1896."
               + " Zanzibar surrendered after 38 minutes.",
@@ -45,19 +47,19 @@ public class Text {
           "The pessimist sees difficulty in every opportunity. The optimist "
               + "sees opportunity in every difficulty.",
           "Don't let yesterday take up too much of today.",
-          "You learn more from failure than from success. Don't let it stop you. "
+          "You learn more from failure than from success. Don’t let it stop you. "
               + "Failure builds character.",
-          "It's not whether you get knocked down, it's whether you get up.",
-          "If you are working on something that you really care about, you don't "
+          "It’s not whether you get knocked down, it’s whether you get up.",
+          "If you are working on something that you really care about, you don’t "
               + "have to be pushed. The vision pulls you.",
           "People who are crazy enough to think they can change the world, are the ones who do.",
           "Failure will never overtake me if my determination to succeed is strong enough.",
           "Entrepreneurs are great at dealing with uncertainty and also very "
-              + "good at minimizing risk. That's the classic entrepreneur.",
+              + "good at minimizing risk. That’s the classic entrepreneur.",
           "We may encounter many defeats but we must not be defeated.",
           "Knowing is not enough; we must apply. Wishing is not enough; we must do.",
           "We generate fears while we sit. We overcome them by action.",
-          "Whether you think you can or think you can't, you're right.",
+          "Whether you think you can or think you can’t, you’re right.",
           "Security is mostly a superstition. Life is either a daring adventure or nothing.",
           "The man who has confidence in himself gains the confidence of others.",
           "The only limit to our realization of tomorrow is our doubts of today.",
@@ -65,7 +67,7 @@ public class Text {
           "What you lack in talent can be made up with desire, "
               + "hustle and giving 110% all the time.",
           "Do what you can with all you have, wherever you are.",
-          "Develop an 'attitude of gratitude'. Say thank you to everyone you "
+          "Develop an attitude of gratitude. Say thank you to everyone you "
               + "meet for everything they do for you."
         });
     textLibrary.put(
@@ -105,14 +107,14 @@ public class Text {
         });
 
     textLibrary.put(
-        "Dad Jokes",
+        "DadJokes",
         new String[] {
           "I'm reading a book on anti-gravity. It's impossible to put down!",
           "Why don't skeletons fight each other? They don't have the guts.",
           "What do you call fake spaghetti? An impasta!",
           "How does a penguin build its house? Igloos it together.",
           "Why don't some couples go to the gym? Because some relationships don't work out.",
-          "I would avoid the sushi if I was you. It's a little fishy.",
+          "I would avoid the sushi if I was you. It’s a little fishy.",
           "Want to hear a joke about construction? I'm still working on it.",
           "Why don't programmers like nature? It has too many bugs.",
           "How do you organize a space party? You planet.",
@@ -126,9 +128,12 @@ public class Text {
           "What do you call fake spaghetti? An impasta!",
           "How does a penguin build its house? Igloos it together.",
           "Why don't some couples go to the gym? Because some relationships don't work out.",
-          "I would avoid the sushi if I was you. It's a little fishy."
+          "I would avoid the sushi if I was you. It’s a little fishy."
         });
   }
+
+  /** Private constructor to prevent instantiation of this utility class. */
+  private Text() {}
 
   /**
    * Gets random text by category.

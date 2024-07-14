@@ -2,30 +2,29 @@ package network.server;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.helpers.AnnotationRegistry.reset;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.reset;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.squareup.moshi.Moshi;
-import communication.messages.JoinGameRequest;
 import communication.messages.EndGameRequest;
+import communication.messages.JoinGameRequest;
 import communication.messages.StartGameRequest;
 import communication.messages.UpdateProgressRequest;
 import communication.messages.UpdateRankingRequest;
 import controller.server.ConnectionManager;
 import controller.server.GameServer;
 import game.TypingPlayer;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -41,8 +40,7 @@ import org.mockito.MockitoAnnotations;
 
 /** The type Server test. */
 public class ServerTest {
-  @Mock
-  private ServerSocket mockedServerSocket;
+  @Mock private ServerSocket mockedServerSocket;
   @Mock private Socket mockedSocket;
   @Mock private ConnectionManager mockedConnectionManager;
 

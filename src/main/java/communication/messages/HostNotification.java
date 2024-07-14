@@ -3,9 +3,9 @@ package communication.messages;
 /** The type Host notification. */
 public class HostNotification {
 
-  public String messageType = "HostNotification";
+  private String messageType = "HostNotification";
 
-  public String host;
+  private String host;
 
   /**
    * Instantiates a new Host notification.
