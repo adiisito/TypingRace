@@ -46,11 +46,17 @@ public class ServerTest {
         closeable = MockitoAnnotations.openMocks(this);
         when(mockedServerSocket.accept()).thenReturn(mockedSocket);
 
+        when(mockedSocket.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+        when(mockedSocket.getInputStream()).thenReturn(new ByteArrayInputStream(new byte[0]));
+
         server = new GameServer();  // 使用无参构造器
         setMockServerSocket(server, mockedServerSocket);  // 使用反射设置私有成员
-        server.connectionManagers = new ArrayList<>(); // Directly manipulating the list to simulate behavior.
+        server.connectionManagers.add(mockedConnectionManager);
+
         server.playerNamesList = new ArrayList<>();
         server.moshi = new Moshi.Builder().build();
+        setMockServerSocket(server, mockedServerSocket);
+        manager = new ConnectionManager(mockedSocket, server);
     }
 
     /**
@@ -92,6 +98,7 @@ public class ServerTest {
         assertTrue(server.playerNamesList.contains(playerName));
         assertEquals(1, server.playerNamesList.size());
     }
+
 
 
 
