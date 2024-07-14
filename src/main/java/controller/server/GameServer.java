@@ -68,7 +68,7 @@ public class GameServer {
   /**
    * StartGame method.
    *
-   * <p>After checked that all the players are there
+   * @param request the request for start game from client
    */
   public void startGame(StartGameRequest request) {
     if (request.getHostPlayerName().equals(hostPlayerName)) {
