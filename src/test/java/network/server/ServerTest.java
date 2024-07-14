@@ -10,8 +10,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import communication.messages.GameStateNotification;
 import communication.messages.JoinGameRequest;
 import communication.messages.StartGameRequest;
+import communication.messages.UpdateProgressRequest;
 import controller.server.ConnectionManager;
 import controller.server.GameServer;
 import org.junit.jupiter.api.AfterEach;
@@ -55,7 +57,7 @@ public class ServerTest {
         when(mockedSocket.getInputStream()).thenReturn(inputStream);
 
         server = new GameServer();  // Constructor
-        setMockServerSocket(server, mockedServerSocket);  // Reflex
+        setMockServerSocket(server, mockedServerSocket);  // Reflection
         server.connectionManagers.add(mockedConnectionManager);
 
         server.playerNamesList = new ArrayList<>();
@@ -125,36 +127,85 @@ public class ServerTest {
         }
     }
 
+    /**
+     * Test lobby full notification sent.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testLobbyFullNotificationSent() throws IOException {
-        // 假设大厅满员需要6个玩家
+        // Assume that the lobby will be fulled by 6 players.
         for (int i = 1; i <= 6; i++) {
             JoinGameRequest joinRequest = new JoinGameRequest("Player" + i);
             server.handleJoinGameRequest(joinRequest);
         }
 
-        // 验证是否正确地发送了大厅满员通知
+        // Check if the lobbyfullnoti is sent successfully.
         verify(mockedConnectionManager, times(1)).sendMessage(contains("LobbyFullNotification"));
     }
 
+    /**
+     * Test start game handling and notification.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testStartGameHandlingAndNotification() throws IOException {
-        // 先添加一些玩家以满足游戏开始的条件
+        // Add some players to test.
         for (int i = 1; i <= 3; i++) {
             server.addPlayer("Player" + i);
         }
-        server.hostPlayerName = "Player1";  // 设置主机玩家
+        server.hostPlayerName = "Player1";  // hostplayer.
 
         StartGameRequest startRequest = new StartGameRequest("Player1", "Sample text for the game.");
         server.startGame(startRequest);
 
-        // 验证是否成功发送了游戏开始通知
+        // Check if the game start noti is sent successfully.
         verify(mockedConnectionManager, times(1)).sendMessage(argThat(message ->
                 message.contains("GameStartNotification") &&
                         message.contains("Sample text for the game.")
         ));
     }
 
+    /**
+     * Test update progress handling and notification.
+     *
+     * @throws IOException the io exception
+     */
+    @Test
+    public void testUpdateProgressHandlingAndNotification() throws IOException {
+        // Setup initial conditions
+        String playerName = "Player1";
+        int wpm = 120;
+        int progress = 95;
+        double accuracy = 98.5;
+        int time = 99;
+
+        // Prepare the test request
+        UpdateProgressRequest updateRequest = new UpdateProgressRequest(playerName, wpm, progress, accuracy, time);
+        String jsonRequest = server.moshi.adapter(UpdateProgressRequest.class).toJson(updateRequest);
+
+        // Inject the JSON request into the ConnectionManager processing method
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(jsonRequest.getBytes());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        ConnectionManager manager = new ConnectionManager(mockedSocket, server);
+        manager.in = reader; // Set the custom BufferedReader
+
+        // Execute the method that processes messages
+        manager.run(); // Might need adjustment to directly call processMessage depending on method visibility
+
+        // Verification: Check if the GameStateNotification with expected values was sent
+        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+        verify(mockedConnectionManager, times(1)).sendMessage(messageCaptor.capture());
+        String capturedMessage = messageCaptor.getValue();
+
+        assertTrue(capturedMessage.contains("\"wpm\":" + wpm));
+        assertTrue(capturedMessage.contains("\"progress\":" + progress));
+        assertTrue(capturedMessage.contains("\"time\":" + time));
+        assertTrue(capturedMessage.contains("\"accuracy\":" + accuracy));
+        assertTrue(capturedMessage.contains("\"playerName\":\"" + playerName + "\""));
+        assertTrue(capturedMessage.contains("GameStateNotification"));
+    }
 
 
 

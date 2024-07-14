@@ -36,7 +36,7 @@ public class ConnectionManager extends Thread {
   private final List<String> playerNames;
   private final Set<String> finishedPlayers = new HashSet<>();
   private final Map<String, Integer> playerResults;
-  private final BufferedReader in;
+  public BufferedReader in;
   private final PrintWriter out;
   private String playerName;
 
@@ -100,7 +100,7 @@ public class ConnectionManager extends Thread {
    * @param message messages to client.
    * @throws IOException for Json messages.
    */
-  private void processMessage(String message) throws IOException {
+  public void processMessage(String message) throws IOException {
     MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
     String messageType = messageObject.getMessageType();
 
