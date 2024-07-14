@@ -67,6 +67,14 @@ public class GameClient {
         }
     }
 
+    /**
+     * Alternative constructor using an existing socket for connection.
+     *
+     * @param clientController the controller managing client-side game logic
+     * @param playerName the name of the player to be registered
+     * @param socket the pre-existing socket to use for communication
+     * @throws IOException if an error occurs obtaining the socket's output stream
+     */
     public GameClient(ClientController clientController, String playerName, Socket socket) throws IOException {
         this.clientController = clientController;
         this.playerName = playerName;

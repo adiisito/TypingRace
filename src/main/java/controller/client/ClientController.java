@@ -7,7 +7,6 @@ import game.GameState;
 import game.Player;
 import game.Text;
 import game.TypingPlayer;
-import game.TypingPlayer;
 import view.ClientWindow;
 import view.GUI;
 import view.GameScreen;
@@ -26,8 +25,7 @@ public class ClientController {
     private GameState gameState;
     private List<TypingPlayer> players;
     private GameScreen view;
-    private int numPlayers;
-    private final Moshi moshi;
+  private final Moshi moshi;
     private ClientWindow clientWindow;
     private GUI mainGui;
     private TypingPlayer currentPlayer;
@@ -38,6 +36,7 @@ public class ClientController {
     private String serverIP;
     private boolean soundEnabled = true;
     private String textType = "Random"; // Default category, which we have in settings
+    private int numPlayers;
 
     /**
      * Constructs a new ClientController instance with a new game state and initializes JSON adapter settings.
@@ -48,16 +47,6 @@ public class ClientController {
                         .withSubtype(TypingPlayer.class, "typing"))
                 .build();
         this.gameState = new GameState();
-        this.numPlayers = 0;
-    }
-
-    /**
-     * Sets server ip.
-     *
-     * @param serverIP the server ip
-     */
-    public void setServerIP(String serverIP) {
-        this.serverIP = serverIP;
     }
 
     /**
@@ -123,15 +112,19 @@ public class ClientController {
     public void handlePlayerListUpdate(PlayerListUpdateNotification updateNotification) {
         this.playerNames = updateNotification.getPlayerNames();
         clientWindow.updatePlayerList(playerNames);
-        // clientWindow.updateStartButtonState(isHost(clientWindow.getPlayerName()));
         System.out.println("Updated player list in client: " + playerNames);
         mainGui.updateAllClientWindows(playerNames);
-//        if (playerNames.size() == 6) {
-//            clientWindow.showLobbyFullButton();
-//        }
     }
 
-    public void handlePlayerJoined (PlayerJoinedNotification notification) {
+    /**
+     * Handles the event of a player joining the game.
+     * This method updates the internal count of the number of players based on the information
+     * provided in the player joined notification.
+     *
+     * @param notification The notification object containing details about the event, including
+     *                     the number of players currently in the game.
+     */
+    public void handlePlayerJoined(PlayerJoinedNotification notification) {
         this.numPlayers = notification.getNumPlayers();
     }
 
@@ -142,8 +135,7 @@ public class ClientController {
      */
     public void handleGameStart(GameStartNotification gameStartNotification) {
         this.players = gameStartNotification.getPlayers();
-        this.numPlayers = gameStartNotification.getNumPlayers();
-        this.providedText = gameStartNotification.getText();
+      this.providedText = gameStartNotification.getText();
         gameState.startNewRace();
 
         for (int i = 0; i < players.size(); i++) {
@@ -190,6 +182,26 @@ public class ClientController {
         });
     }
 
+    public void toMainMenu() {
+        SwingUtilities.invokeLater(() -> {
+
+          JFrame frame;
+          if (resultScreen != null) {
+              frame = (JFrame) SwingUtilities.getWindowAncestor(resultScreen);
+              resultScreen = null;
+          } else {
+              frame = clientWindow;
+          }
+          frame.setVisible(false);
+          GUI newGUI = new GUI(this);
+          frame = newGUI;
+          setMainGui(newGUI);
+          frame.revalidate();
+          frame.repaint();
+          frame.setVisible(true);
+        });
+    }
+
     /**
      * Sends a player left request for the specified player.
      *
@@ -230,10 +242,23 @@ public class ClientController {
         System.out.println("Game started");
     }
 
-    public void handleHostNotification (HostNotification hostNotification) {
+    /**
+     * Processes a host notification to update the internal reference to the current game host.
+     * This method captures the host player's name from the notification and updates the local state to reflect the new host.
+     *
+     * @param hostNotification The notification object that contains the host player's name.
+     */
+    public void handleHostNotification(HostNotification hostNotification) {
         hostPlayer = hostNotification.getHost();
     }
 
+    /**
+     * Checks if the specified player is the host of the current game.
+     * This is determined by comparing the given player name with the stored host player's name.
+     *
+     * @param playerName The name of the player to check against the current host.
+     * @return true if the specified player is the host; false otherwise.
+     */
     public boolean isHost(String playerName) {
         return playerName.equals(hostPlayer);
     }
@@ -389,6 +414,7 @@ public class ClientController {
     public void handleLobbyFull() {
         SwingUtilities.invokeLater(() -> clientWindow.updateLobbyStatus());
     }
+
     /**
      * Retrieves the name of the current player.
      *
@@ -407,20 +433,49 @@ public class ClientController {
         return mainGui;
     }
 
+    /**
+     * Checks if the sound is enabled in the application.
+     *
+     * @return true if sound is enabled, otherwise false.
+     */
     public boolean isSoundEnabled() {
         return soundEnabled;
     }
 
+    /**
+     * Sets the sound enabled state in the application.
+     *
+     * @param soundEnabled A boolean value where true enables sound and false disables it.
+     */
     public void setSoundEnabled(boolean soundEnabled) {
         this.soundEnabled = soundEnabled;
     }
 
-
+    /**
+     * Retrieves the type of text used in the application.
+     * This can refer to different categories of text such as 'Random', 'Fixed', etc., depending on the context.
+     *
+     * @return A String representing the type of text.
+     */
     public String getTextType() {
         return textType;
     }
 
+    /**
+     * Sets the type of text to be used in the application.
+     * This method allows the specification of text categories such as 'Random', 'Fixed', etc.
+     *
+     * @param textType The type of text as a String.
+     */
     public void setTextType(String textType) {
         this.textType = textType;
+    }
+
+    /**
+     * Gives a list of players in the round.
+     * @return the player list
+     */
+    public List<TypingPlayer> getPlayers () {
+        return players;
     }
 }

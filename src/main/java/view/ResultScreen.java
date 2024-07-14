@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Creates a result screen when the game ends.
+ * Contains statistics of the round, a display of the game state and a ranking of the players.
  */
 public class ResultScreen extends JPanel {
     private final int wpm;
@@ -40,7 +41,7 @@ public class ResultScreen extends JPanel {
      * @param accuracy the amount of correctly typed characters
      * @param elapsedTime the time spent in the game
      * @param carPanel for the final race track display
-     * @param wrongChars the amount of wrong inputs
+     * @param wrongChars the amount of wrong inputs during the round
      * @param clientController the client controller for this window
      */
     public ResultScreen(GameState gameState, Player currentPlayer, int wpm,
@@ -65,13 +66,14 @@ public class ResultScreen extends JPanel {
      */
     private void initComponents() {
         setLayout(new BorderLayout());
+
         setUpRankingTable();
         gameState.setPlayers(computeRankings(gameState.getPlayers()));
         if (gameState.getCompletedPlayers().size() == 1) firstPlace = true;
         // updateRankingTable(gameState.getPlayers());
 
         try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon.jpeg");
+            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon_2.jpeg");
             if (imageStream != null) {
                 backgroundImage = ImageIO.read(imageStream);
             } else {
@@ -90,11 +92,25 @@ public class ResultScreen extends JPanel {
 
         JButton newGameButton = new JButton("New Game");
         newGameButton.setFont(new Font("Nougat", Font.PLAIN, 16));
-        newGameButton.setBackground(Color.BLACK);
-        newGameButton.setBackground(Color.WHITE);
+        newGameButton.setBackground(Color.GREEN);
         newGameButton.addActionListener(e -> {
+            for(TypingPlayer player : clientController.getPlayers()) {
+                if (!player.isCompleted()) {
+                    JOptionPane.showMessageDialog(this,
+                            "The current round has not finished yet!", "Round isn't over", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
             gameState.startNewRace();
             clientController.startNewGame(currentPlayer.getName());
+        });
+
+        JButton menuButton = new JButton("Return to Menu");
+        menuButton.setFont(new Font("Nougat", Font.PLAIN, 16));
+        menuButton.setBackground(Color.WHITE);
+        menuButton.addActionListener(e -> {
+            clientController.playerLeft(currentPlayer.getName());
+            clientController.toMainMenu();
         });
 
         JButton exitButton = new JButton("Exit");
@@ -108,6 +124,7 @@ public class ResultScreen extends JPanel {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(newGameButton);
+        buttonPanel.add(menuButton);
         buttonPanel.add(exitButton);
 
         String stat_text = "<html>Time: " + time + " seconds <br> WPM: " + wpm + "<br> Accuracy: " +

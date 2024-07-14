@@ -120,8 +120,6 @@ public class ClientWindow extends JFrame {
             startButton.addActionListener(e -> {
                 if (clientController.isHost(playerName)) {
                     clientController.startGame(playerName);
-                } else {
-                    JOptionPane.showMessageDialog(this, "You are not the host. Only the host can start the game.", "Access Denied", JOptionPane.ERROR_MESSAGE);
                 }
             });
             buttonPanel.add(Box.createRigidArea(new Dimension(20, 0))); // Space between buttons
@@ -131,7 +129,7 @@ public class ClientWindow extends JFrame {
             exitButton.addActionListener(e -> {
                 try {
                     clientController.playerLeft(playerName);
-                    dispose();
+                    clientController.toMainMenu();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -178,6 +176,13 @@ public class ClientWindow extends JFrame {
         return button;
     }
 
+    /**
+     * Initiates a dot animation on a JLabel to indicate a waiting state.
+     * This method cyclically appends dots to the label's text every 500 milliseconds,
+     * resetting after three dots to convey ongoing activity.
+     *
+     * @param label The JLabel that displays the waiting message.
+     */
     private void startDotAnimation(JLabel label) {
         dotAnimationTimer = new Timer(500, e -> {
             String currentText = label.getText();
@@ -202,6 +207,15 @@ public class ClientWindow extends JFrame {
                 playerListModel.addElement(player);
                 TypingPlayer newPlayer = new TypingPlayer(player);
                 gameState.addPlayer(newPlayer);
+
+            }
+            //System.out.println(clientController.hostPlayer);
+            if (!clientController.isHost(playerName) && players.size() > 1) {
+                startButton.setForeground(Color.DARK_GRAY);
+                startButton.setBackground(new Color(34, 34, 34));
+            } else {
+                startButton.setForeground(Color.WHITE);
+                startButton.setBackground(Color.DARK_GRAY);
             }
             updateLobbyStatus();
         });
@@ -216,6 +230,11 @@ public class ClientWindow extends JFrame {
         JOptionPane.showMessageDialog(this, playerName + " has left the game.", "Player Left", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Adds a status label to the user interface.
+     * This method configures and adds a new label to the main window that displays various status messages.
+     * The label is centered and set with specific styling including font size and color.
+     */
     public void addStatusLabel () {
         statusLabel = new JLabel();
         statusLabel.setFont(dozerFont.deriveFont(Font.PLAIN, 20));

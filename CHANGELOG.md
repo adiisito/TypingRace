@@ -13,6 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:  
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+## 2024-07-13
+
+## Added
+- Handler for too long names
+- Exit button in lobby sends you back to main menu
+- Main menu button in results
+- Grayed out start game button for non-hosts
+
+## Fixed
+- Host can't have an empty name
+- Game lock when 6 players are in the lobby
+- Can't start a new round when current one isn't finished yet
+
 ## 2024-07-12
 
 ## Added
@@ -35,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2024-07-10
 ### Fixed
-- join game by entering ip-address
+- join game by entering ip-adress
 
 ## 2024-07-09
 ### Added
