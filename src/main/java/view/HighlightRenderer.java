@@ -13,6 +13,10 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class HighlightRenderer extends DefaultTableCellRenderer {
 
+  /**
+   * The name of the player to be highlighted in the table. Rows with a cell matching this player's
+   * name will be rendered with a distinct style to differentiate them from others.
+   */
   private final String playerName;
 
   /**

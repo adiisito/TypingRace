@@ -34,9 +34,9 @@ public class ClientController {
 
   private final Moshi moshi;
   private final GameState gameState;
-  public GameClient clientModel;
-  public String hostPlayer = null;
-  List<String> playerNames;
+  private GameClient clientModel;
+  private String hostPlayer = null;
+  private List<String> playerNames;
   private List<TypingPlayer> players;
   private GameScreen view;
   private ClientWindow clientWindow;
@@ -94,6 +94,7 @@ public class ClientController {
    * Attempts to join a game with the specified player name.
    *
    * @param playerName the name of player
+   * @param serverIp IP address of server
    * @throws IOException if there is an issue sending the join game request over the network
    */
   public void joinGame(String playerName, String serverIp) throws IOException {
@@ -239,7 +240,11 @@ public class ClientController {
         });
   }
 
-  /** Start game. */
+  /**
+   * Start the game.
+   *
+   * @param playerName the player name
+   */
   public void startGame(String playerName) {
     String providedText = Text.getRandomTextByCategory(textType);
     StartGameRequest request = new StartGameRequest(playerName, providedText);

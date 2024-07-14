@@ -2,11 +2,9 @@ package view;
 
 import game.Car;
 import game.Player;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -87,17 +85,17 @@ public class CarShape {
           vertical + height / 2); // Display WPM to the right of the car
     }
 
-      // Draw progress bar below the car shape
-      int progressBarY = vertical + height + 7; // Position it right below the car
-      g.setColor(Color.GREEN);
-      int progressBarWidth = (int) ((progress / 100.0) * roadLength);
-      g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
+    // Draw progress bar below the car shape
+    int progressBarY = vertical + height + 7; // Position it right below the car
+    g.setColor(Color.GREEN);
+    int progressBarWidth = (int) ((progress / 100.0) * roadLength);
+    g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
 
-      // Draw progress percentage
-      g.setColor(Color.WHITE);
-      g.setFont(font.deriveFont(Font.PLAIN, 12));
-      g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
-   }
+    // Draw progress percentage
+    g.setColor(Color.WHITE);
+    g.setFont(font.deriveFont(Font.PLAIN, 12));
+    g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
+  }
 
   /**
    * Gets wpm.
@@ -137,6 +135,7 @@ public class CarShape {
 
   /**
    * Sets the current progress of the car's player.
+   *
    * @param progress the new progress status
    */
   public void setProgress(int progress) {

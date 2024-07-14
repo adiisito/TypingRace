@@ -27,6 +27,7 @@ import java.util.Set;
 
 /** The type Connection manager. */
 public class ConnectionManager extends Thread {
+
   /** Reader to handle incoming messages from the client. */
   public BufferedReader in;
 
@@ -101,7 +102,7 @@ public class ConnectionManager extends Thread {
    * @param message messages to client.
    * @throws IOException for Json messages.
    */
-  public void processMessage(String message) throws IOException {
+  private void processMessage(String message) throws IOException {
     MessageType messageObject = moshi.adapter(MessageType.class).fromJson(message);
     String messageType = messageObject.getMessageType();
 

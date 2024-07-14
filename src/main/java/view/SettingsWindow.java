@@ -11,15 +11,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 
-/** Settings window window class, where you can choose your different settings. */
+/** Settings window class, where you can choose your different settings. */
 public class SettingsWindow extends JFrame {
+  /**
+   * The main GUI of the application that this settings window modifies. It provides access to the
+   * application's central control and display mechanisms, enabling the settings window to enact
+   * changes directly to the application's behavior and visual presentation.
+   */
   private final Gui mainGui;
 
+  /**
+   * Constructs a new SettingsWindow that is used to modify settings of the main GUI.
+   *
+   * @param mainGui The main GUI interface of the application which this settings window will
+   *     modify.
+   */
   public SettingsWindow(Gui mainGui) {
     this.mainGui = mainGui;
     initComponents();
   }
 
+  /**
+   * Initializes and lays out all GUI components of the settings window. This includes setting up
+   * the layout manager, configuring constraints for components, and creating and positioning all
+   * the components like labels, toggle buttons, combo boxes, and buttons.
+   */
   private void initComponents() {
     setTitle("Settings");
     setSize(400, 300);
@@ -57,25 +73,28 @@ public class SettingsWindow extends JFrame {
     String[] textTypes = {"Random", "English", "German", "Dad Jokes", "Facts"};
     JComboBox<String> textTypeComboBox = new JComboBox<>(textTypes);
     textTypeComboBox.setFont(mainGui.dozerFont);
-    if(mainGui.getClientController().isHost(mainGui.getClientController().getCurrentPlayerName())) {
+    if (mainGui
+        .getClientController()
+        .isHost(mainGui.getClientController().getCurrentPlayerName())) {
       textTypeComboBox.setSelectedItem(mainGui.getClientController().getTextType());
       textTypeComboBox.addActionListener(
-        e -> {
-          mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
-        });
+          e -> {
+            mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
+          });
     } else {
       textTypeComboBox.setBackground(Color.BLACK);
       textTypeComboBox.setForeground(Color.DARK_GRAY);
     }
     add(textTypeComboBox, gbc);
 
-        // Save button
-        JButton saveButton = new JButton("Save");
-        saveButton.setFont(mainGui.dozerFont);
-        saveButton.addActionListener(e -> {
-            mainGui.getClientController().setSoundEnabled(soundToggle.isSelected());
-            mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
-            this.dispose();
+    // Save button
+    JButton saveButton = new JButton("Save");
+    saveButton.setFont(mainGui.dozerFont);
+    saveButton.addActionListener(
+        e -> {
+          mainGui.getClientController().setSoundEnabled(soundToggle.isSelected());
+          mainGui.getClientController().setTextType((String) textTypeComboBox.getSelectedItem());
+          this.dispose();
         });
     add(saveButton, gbc);
 
