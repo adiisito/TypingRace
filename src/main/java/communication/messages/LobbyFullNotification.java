@@ -10,6 +10,9 @@ public class LobbyFullNotification {
   /** The type of message being sent, indicating that the lobby is full. */
   private final String messageType = "LobbyFullNotification";
 
+  /** Instantiates a new Lobby full notification. */
+  public LobbyFullNotification() {}
+
   /**
    * Retrieves the type of message. This method returns a constant value that identifies the message
    * as a lobby full notification, which can be used by message handling systems to route or process

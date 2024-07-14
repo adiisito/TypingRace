@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added 
 
 - complete CheckStyle and SpotLess
-- JavaDoc
+- Completed JavaDoc
+- Readme with new features added.
 
 ## 2024-07-13
 
@@ -126,7 +127,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ranking List on Results Screen 
 - Ranking Broadcast
-- 
 
 ### Fixed 
 

@@ -10,6 +10,15 @@ public class MessageType {
   private String messageType;
 
   /**
+   * Instantiates a new Message type.
+   *
+   * @param messageType the message type
+   */
+  public MessageType(String messageType) {
+    this.messageType = messageType;
+  }
+
+  /**
    * Retrieves the type of message this instance represents.
    *
    * @return A string indicating the type of the message.
