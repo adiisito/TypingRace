@@ -16,12 +16,10 @@ public class CarShape {
     private String name;
     private Car car;
     private Image carImage;
-
     private Player player;
     private int wpm;
+    private int progress;
     private Font font;
-
-
 
     public CarShape(Car car, Player player, int x, int y, int width, int height, Font font) {
         this.x = x;
@@ -32,19 +30,51 @@ public class CarShape {
         this.car = car;
         this.player = player;
         this.wpm = 0;
+        this.progress = 0;
         this.font = font;
 
         try {
             carImage = ImageIO.read(new File("src/main/resources/test-ufo-removebg-preview.png"));
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             carImage = null;
         }
     }
 
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
 
+    public void draw(Graphics g, int roadLength) {
+        if (carImage != null) {
+            g.drawImage(carImage, x, y, width, height, null);
+        } else {
+            g.setColor(Color.RED);
+            g.fillOval(x, y, width, height);
+        }
 
+        if (name != null) {
+            g.setFont(font.deriveFont(Font.BOLD, 15));
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawString(name, x, y + height + 1);
+        }
+        if (player != null) {
+            g.setFont(font.deriveFont(Font.BOLD, 15));
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawString("WPM: " + wpm, x + width + 5, y + height / 2);  // Display WPM to the right of the car
+        }
+
+        // Draw progress bar below the car shape
+        int progressBarY = y + height + 7; // Position it right below the car
+        g.setColor(Color.GREEN);
+        int progressBarWidth = (int) ((progress / 100.0) * roadLength);
+        g.fillRect(0, progressBarY, progressBarWidth, 10); // Start at fixed x position
+
+        // Draw progress percentage
+        g.setColor(Color.WHITE);
+        g.setFont(font.deriveFont(Font.PLAIN, 12));
+        g.drawString(progress + "%", progressBarWidth + 5, progressBarY + 10);
+    }
 
     public void setFont(Font font) {
         this.font = font;
@@ -66,38 +96,6 @@ public class CarShape {
         this.x = x;
     }
 
-    public void draw(Graphics g, int roadLength) {
-        if (carImage != null) {
-            g.drawImage(carImage, x, y, width, height, null);
-        } else {
-            g.setColor(Color.RED);
-            g.fillOval(x, y, width, height);
-        }
-
-        if (name != null) {
-            g.setFont(font.deriveFont(Font.BOLD, 15));
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawString(name, x, y + height + 15);
-        }
-        if (player != null) {
-            g.setFont(font.deriveFont(Font.BOLD, 15));
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawString("WPM: " + wpm, x + width + 10, y + height / 2);  // Display WPM to the right of the car
-        }
-
-        //the road (dotted line)
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.WHITE);
-        float[] dash = {5f, 5f};
-        BasicStroke bs = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
-        g2d.setStroke(bs);
-
-        int startX = 0; // Starting from the left side of the panel
-        int endX = roadLength; // 70% of the screen width
-
-        g2d.drawLine(startX, y + height, endX, y + height);
-    }
-
     public int getWpm() {
         return wpm;
     }
@@ -113,5 +111,8 @@ public class CarShape {
     public void setPlayer(Player player) {
         this.player = player;
     }
-}
 
+    public int getWidth() {
+        return width;
+    }
+}

@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-
 /**
  * Creates a result screen when the game ends.
  * Contains statistics of the round, a display of the game state and a ranking of the players.
@@ -28,7 +27,6 @@ public class ResultScreen extends JPanel {
     private final int wrongChars;
     private ClientController clientController;
     private DefaultTableModel rankingModel;
-
     private Image backgroundImage;
     private SoundPlayer soundPlayer;
     private boolean firstPlace = false;
@@ -70,7 +68,6 @@ public class ResultScreen extends JPanel {
         setUpRankingTable();
         gameState.setPlayers(computeRankings(gameState.getPlayers()));
         if (gameState.getCompletedPlayers().size() == 1) firstPlace = true;
-        // updateRankingTable(gameState.getPlayers());
 
         try {
             InputStream imageStream = getClass().getClassLoader().getResourceAsStream("Result_Moon_2.jpeg");
@@ -134,7 +131,6 @@ public class ResultScreen extends JPanel {
         stats.setForeground(Color.WHITE);
         stats.setOpaque(false);
         stats.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        //stats.setBackground(new Color(184, 112, 247));
 
         endState.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 10));
         JPanel westPanel = new JPanel(new BorderLayout());
@@ -146,15 +142,10 @@ public class ResultScreen extends JPanel {
         buttonPanel.setOpaque(false);
 
         add(resultLabel, BorderLayout.NORTH);
-        // add(tablePanel, BorderLayout.EAST);
         add(westPanel, BorderLayout.WEST);
         add(buttonPanel, BorderLayout.PAGE_END);
     }
 
-    /**
-     * Initializes the ranking table with predefined column names and sets up the rendering for the table.
-     * The table is placed within a scroll pane and added to a container which is then added to the east of this panel.
-     */
     private void setUpRankingTable() {
         String[] columnNames = {"Rank", "Player", "WPM"};
         rankingModel = new DefaultTableModel(columnNames, 0);
@@ -170,11 +161,10 @@ public class ResultScreen extends JPanel {
         JScrollPane scrollPane = new JScrollPane(rankingTable);
         scrollPane.setPreferredSize(new Dimension(185, 150));
         scrollPane.getViewport().setBackground(Color.BLACK);
-        //scrollPane.getViewport().setBackground(new Color(20, 5, 30));
 
         JPanel tableContainer = new JPanel(new BorderLayout());
         tableContainer.add(scrollPane, BorderLayout.CENTER);
-        tableContainer.setPreferredSize(new Dimension(185, 150));;
+        tableContainer.setPreferredSize(new Dimension(185, 150));
 
         rankingTable.setOpaque(false);
         scrollPane.setOpaque(false);
@@ -185,12 +175,6 @@ public class ResultScreen extends JPanel {
         add(tableContainer, BorderLayout.EAST);
     }
 
-    /**
-     * Updates the ranking table with a new set of ranked players.
-     * This method is invoked on the event dispatch thread to ensure thread safety.
-     *
-     * @param rankedPlayers the list of players sorted by their rank to be displayed in the table.
-     */
     public void updateRankingTable(List<TypingPlayer> rankedPlayers) {
         SwingUtilities.invokeLater(() -> {
             rankingModel.setRowCount(0);
@@ -201,21 +185,11 @@ public class ResultScreen extends JPanel {
         });
     }
 
-    /**
-     * Computes the rankings of the players based on their words per minute (WPM) in descending order.
-     *
-     * @param completedPlayers the list of players who have completed the game.
-     * @return a sorted list of players by their WPM.
-     */
     public List<TypingPlayer> computeRankings(List<TypingPlayer> completedPlayers) {
         completedPlayers.sort((p1, p2) -> Integer.compare(p2.getWpm(), p1.getWpm()));  // Sort descending by WPM
         return completedPlayers;
     }
 
-    /**
-     * Paints the background image on the result screen.
-     * @param g the <code>Graphics</code> object to protect
-     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

@@ -128,7 +128,6 @@ public class GameScreen extends JPanel {
                     keyPressCount++;
                 }
                 String typedText = typingArea.getText();
-                // updateProgress(typedText); This function should be done by the client
                 updateTextColor(typedText);
 
                 // Calculate the time elapsed since the start of typing
@@ -198,10 +197,10 @@ public class GameScreen extends JPanel {
      * Adds cars / UFOs and their racetracks to the game window.
      */
     public void addCars() {
+        carShapes.clear(); // Clear existing car shapes to avoid duplicates
         for (Player player : racers) {
             Car newCar = new Car(player);
-            //gameState.addPlayer(player);
-            CarShape newCarShape = new CarShape(newCar, player,0, carShapes.size() * 50, 60, 50, customFont);
+            CarShape newCarShape = new CarShape(newCar, player, 0, carShapes.size() * 60, 60, 50, customFont); // Adjust y-coordinate spacing
             carShapes.add(newCarShape);
             repaint();
         }
@@ -228,13 +227,13 @@ public class GameScreen extends JPanel {
      * @param wpm the player's wpm count
      */
     public void updateCarPositions(String playerName, int progress, int wpm) {
-        int totalLength = providedText.length();
-        double trackMultiplier = (isFinished) ? 0.915 : 0.7; // To match the screen lengths
-        int roadLength = (int) (carPanel.getWidth() * trackMultiplier); // 70% of the panel width
+        int roadLength = carPanel.getWidth() - 100; // Use carPanel width for movement bounds
+
         for (CarShape carShape : carShapes) {
             if (carShape.getPlayer().getName().equals(playerName)) {
-                int newProgress = (progress * roadLength) / totalLength;
+                int newProgress = (progress * (roadLength - carShape.getWidth())) / 100; // Progress in pixels
                 carShape.setX(newProgress);
+                carShape.setProgress(progress);
                 carShape.setWpm(wpm);
                 System.out.println("Updating car position for player " + playerName + " to " + newProgress);
                 break;
@@ -253,8 +252,8 @@ public class GameScreen extends JPanel {
                 break; // Stop at the first incorrect character
             }
         }
-        System.out.println("Calculated progress: " + correctChars + " characters");
-        return correctChars;
+        int totalLength = providedText.length();
+        return (correctChars * 100) / totalLength; // Return progress percentage
     }
 
     private double calculateAccuracy(String typedText) {
@@ -291,8 +290,6 @@ public class GameScreen extends JPanel {
         gameState.setStartTime(startTime);
 
         timer = new Timer(1000, e -> {
-
-
             long elapsedTime = ((System.currentTimeMillis() - gameState.getStartTime()) / 1000);
             long remainingTime = 60 - elapsedTime;
             timeLabel.setText("TIME: " + (int) remainingTime);
@@ -345,8 +342,7 @@ public class GameScreen extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                double trackMultiplier = (isFinished) ? 0.9 : 0.7; // To match the screen lengths
-                int roadLength = (int) (getWidth() * trackMultiplier); // 70% of the panel width
+                int roadLength = getWidth() - 100; // Use the width of carPanel
                 for (CarShape carShape : carShapes) {
                     carShape.draw(g, roadLength);
                 }
