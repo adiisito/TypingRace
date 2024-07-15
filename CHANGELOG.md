@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # NETWORK:
 ### Assignees : _Yili Li and Yuanyuan Qu_
 
+(This is the latest version with NAMES.)
 (The responsible teammates' names written after every entry in the brackets)
 
 ## 2024-07-14
